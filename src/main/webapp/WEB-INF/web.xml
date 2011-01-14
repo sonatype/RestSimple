@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>rest-deflector</display-name>
+    <description>RestDelector</description>
+    <display-name>RestDelector</display-name>
+    <listener>
+        <listener-class>org.sonatype.server.setup.RestDelectorConfig</listener-class>
+    </listener>
+    <servlet>
+        <description>AtmosphereGuiceServlet</description>
+        <servlet-name>AtmosphereGuiceServlet</servlet-name>
+        <servlet-class>org.atmosphere.guice.AtmosphereGuiceServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AtmosphereGuiceServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+</web-app>
+
