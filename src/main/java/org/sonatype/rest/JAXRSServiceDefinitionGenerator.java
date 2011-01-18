@@ -156,6 +156,42 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         cw.visitEnd();
 
         byte[] bytes = cw.toByteArray();
+
+        try {
+            Class<?> clazz = new ByteClassloader(bytes, injector.getClass().getClassLoader()).loadClass("this_Stub");
+
+            // TODO: Needs to find a way to bind the resource.
+
+
+
+        } catch (ClassNotFoundException e) {
+            // TODO: LOGME        
+            e.printStackTrace();
+        }
+
+
     }
+
+    private final static class ByteClassloader extends ClassLoader {
+
+        private final byte[] clazzBytes;
+
+
+        protected ByteClassloader(byte[] clazzBytes, ClassLoader parent) {
+            this.clazzBytes = clazzBytes;
+        }
+
+        protected Class findClass(String name)
+                throws ClassNotFoundException {
+            if (name.endsWith("_Stub")) {
+                return defineClass(name, clazzBytes, 0, clazzBytes.length);
+            }
+            return super.findClass(name);
+        }
+    }
+
 }
+
+
+
 
