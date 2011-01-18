@@ -6,18 +6,15 @@ import java.lang.reflect.Method;
  * TODO: Make me a builder
  */
 public class ServiceHandler {
-    private ServiceDefinition.HttpMethod httpMethod;
-    private String path;
-    private Method method;
+    private final ServiceDefinition.HttpMethod httpMethod;
+    private final String path;
+    private final String method;
 
     public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String method) {
+        this(httpMethod, null, method);
     }
 
     public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, String method) {
-
-    }
-
-    public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, Method method) {
         this.httpMethod = httpMethod;
         this.path = path;
         this.method = method;
@@ -31,23 +28,8 @@ public class ServiceHandler {
         return path;
     }
 
-    public Method getMethod() {
+    public String getMethod() {
         return method;
     }
 
-    public ServiceHandler delegatePost(ServiceEntity delegate) {
-        return this;
-    }
-
-    public ServiceHandler delegateGet(ServiceEntity delegate) {
-        return this;
-    }
-
-    public ServiceHandler delegatePut(ServiceEntity delegate) {
-        return this;
-    }
-
-    public ServiceHandler delegateDelete(ServiceEntity delegate) {
-        return this;
-    }
 }
