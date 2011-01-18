@@ -26,7 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
  * TODO: Not sure @PathParam use is portable.
  * 
  */
-@Path("/service/:type")
+@Path("/service/")
 @Produces({APPLICATION_JSON, APPLICATION_XML})
 @Consumes({APPLICATION_JSON, APPLICATION_XML})
 public class ServiceDescriptionResource {
@@ -38,38 +38,39 @@ public class ServiceDescriptionResource {
     ServiceDefinition serviceDefinition;
 
     @POST
-    public Response post(@PathParam("createPerson(entity)") ServiceHandler serviceHandler, String entity) {
-        // Will properly invoke the "createPerson(entity)" as the ServiceHandler would have been appropriately generated
+    @Path("{id}")    
+    public Response put(@PathParam("createPerson(id)") ServiceHandler serviceHandler, @PathParam("{id}") String entity) {
+        // Will properly invoke the "createPerson(id)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);
         return response;
     }
 
     @GET
-    @Path("/:id")
-    public Response get(@PathParam("readPerson(id)") ServiceHandler serviceHandler, String entity) {
+    @Path("{id}")
+    public Response get(@PathParam("readPerson(id)") ServiceHandler serviceHandler, @PathParam("{id}") String entity) {
         // Will properly invoke the "readPerson(id)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);;
         return response;
     }
 
     @GET
-    public Response get0(@PathParam("readPeople()") ServiceHandler serviceHandler, String entity) {
+    public Response get0(@PathParam("readPersons()") ServiceHandler serviceHandler) {
         // Will properly invoke the "readPeople()" as the ServiceHandler would have been appropriately generated
-        Response response = createResponse(serviceHandler, entity);
+        Response response = createResponse(serviceHandler, null);
         return response;
     }
 
     @PUT
-    @Path("/:id")
-    public Response put(@PathParam("updatePerson(entity)") ServiceHandler serviceHandler, String entity) {
-        // Will properly invoke the "updatePerson(entity)" as the ServiceHandler would have been appropriately generated
+    @Path("{id}")
+    public Response post(@PathParam("updatePerson(id)") ServiceHandler serviceHandler, @PathParam("{id}") String entity) {
+        // Will properly invoke the "updatePerson(id)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);
         return response;
     }
 
     @DELETE
-    @Path("/:id")    
-    public Response delete(@PathParam("deletePerson(id)")ServiceHandler serviceHandler, String entity) {
+    @Path("{id}")
+    public Response delete(@PathParam("deletePerson(id)") ServiceHandler serviceHandler, String entity) {
         // Will properly invoke the "updatePerson(entity)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);
         return response;
