@@ -2,7 +2,9 @@ package org.sonatype.rest;
 
 import java.lang.reflect.Method;
 
-
+/**
+ * TODO: Make me a builder
+ */
 public class ServiceHandler {
     private ServiceDefinition.HttpMethod httpMethod;
     private String path;
