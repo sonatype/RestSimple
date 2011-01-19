@@ -8,7 +8,6 @@ import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceDefinitionProvider;
 import org.sonatype.rest.api.ServiceEntity;
-import org.sonatype.server.resources.ServiceDefinitionTest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,10 +31,10 @@ public class RestDeflectorServletModule extends ServletModule {
         bind(ServiceDefinition.class).toProvider(JAXRSServiceDefinitionProvider.class);
 
         //Finally, bind our implementation
-        bind(ServiceDefinitionTest.class).asEagerSingleton();
+        bind(ServiceDefinitionJAXRSTest.class).asEagerSingleton();
 
 
-        initParams.put("com.sun.jersey.config.property.packages", "org.sonatype.server.resources");
+        initParams.put("com.sun.jersey.config.property.packages", "org.sonatype.server.setup");
         serve("/*").with(GuiceContainer.class, initParams);
         
     }

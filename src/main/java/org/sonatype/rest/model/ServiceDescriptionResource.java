@@ -1,4 +1,4 @@
-package org.sonatype.server.resources;
+package org.sonatype.rest.model;
 
 import com.google.inject.Inject;
 import org.sonatype.rest.api.ServiceDefinition;
@@ -22,6 +22,8 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 /**
  * This is what we want to generate automatically using ASM.
+ *
+ * NOTE: This class is not used, but we do instead generate some form ot it based on {@link ServiceDefinition}
  *
  * TODO: Not sure @PathParam use is portable.
  * 
