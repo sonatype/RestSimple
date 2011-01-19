@@ -65,7 +65,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         cw.visitInnerClass("javax/ws/rs/core/Response$ResponseBuilder", "javax/ws/rs/core/Response", "ResponseBuilder", ACC_PUBLIC + ACC_STATIC + ACC_ABSTRACT);
 
         {
-            fv = cw.visitField(0, "delegate", "Lorg/sonatype/rest/ServiceEntity;", null, null);
+            fv = cw.visitField(0, "delegate", "Lorg/sonatype/rest/api/ServiceEntity;", null, null);
             {
                 av0 = fv.visitAnnotation("Lcom/google/inject/Inject;", true);
                 av0.visitEnd();
@@ -86,7 +86,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             {
                 String method = serviceHandler.getHttpMethod().name();
 
-                mv = cw.visitMethod(ACC_PUBLIC, method.toLowerCase(), "(Lorg/sonatype/rest/ServiceHandler;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                mv = cw.visitMethod(ACC_PUBLIC, method.toLowerCase(), "(Lorg/sonatype/rest/api/ServiceHandler;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
                 {
                     av0 = mv.visitAnnotation("Ljavax/ws/rs/" + method.toUpperCase() + ";", true);
                     av0.visitEnd();
@@ -105,7 +105,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitVarInsn(ALOAD, 2);
-                mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/server/resources/ServiceDescriptionResource", "createResponse", "(Lorg/sonatype/rest/ServiceHandler;Ljava/lang/String;)Ljavax/ws/rs/core/Response;");
+                mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Lorg/sonatype/rest/api/ServiceHandler;Ljava/lang/String;)Ljavax/ws/rs/core/Response;");
                 mv.visitVarInsn(ASTORE, 3);
                 mv.visitVarInsn(ALOAD, 3);
                 mv.visitInsn(ARETURN);
@@ -114,18 +114,18 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             }
         }
         {
-            mv = cw.visitMethod(ACC_PRIVATE, "createResponse", "(Lorg/sonatype/rest/ServiceHandler;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+            mv = cw.visitMethod(ACC_PRIVATE, "createResponse", "(Lorg/sonatype/rest/api/ServiceHandler;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
             mv.visitCode();
             Label l0 = new Label();
             Label l1 = new Label();
             Label l2 = new Label();
             mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Throwable");
             mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/ServiceHandler", "getMethod", "()Ljava/lang/String;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceHandler", "getMethod", "()Ljava/lang/String;");
             mv.visitVarInsn(ASTORE, 3);
             mv.visitLabel(l0);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/server/resources/ServiceDescriptionResource", "delegate", "Lorg/sonatype/rest/ServiceEntity;");
+            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "delegate", "Lorg/sonatype/rest/api/ServiceEntity;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
             mv.visitVarInsn(ALOAD, 3);
             mv.visitInsn(ICONST_1);
@@ -151,7 +151,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitLabel(l1);
             mv.visitInsn(ARETURN);
             mv.visitLabel(l2);
-            mv.visitFrame(Opcodes.F_FULL, 4, new Object[]{"org/sonatype/server/resources/ServiceDescriptionResource", "org/sonatype/rest/ServiceHandler", "java/lang/String", "java/lang/String"}, 1, new Object[]{"java/lang/Throwable"});
+            mv.visitFrame(Opcodes.F_FULL, 4, new Object[]{"org/sonatype/rest/model/ServiceDescriptionResource", "org/sonatype/rest/api/ServiceHandler", "java/lang/String", "java/lang/String"}, 1, new Object[]{"java/lang/Throwable"});
             mv.visitVarInsn(ASTORE, 4);
             mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "serverError", "()Ljavax/ws/rs/core/Response$ResponseBuilder;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
@@ -165,7 +165,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
         try {
             ClassLoader cl = new ByteClassloader(bytes, Thread.currentThread().getContextClassLoader());
-            Class<?> clazz = cl.loadClass("org.sonatype.server.resources.ServiceDescriptionResource");
+            Class<?> clazz = cl.loadClass("org.sonatype.rest.api.ServiceDescriptionResource");
             binder.bind(clazz);
         } catch (ClassNotFoundException e) {
             // TODO: LOGME        

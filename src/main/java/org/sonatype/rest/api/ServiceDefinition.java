@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface ServiceDefinition {
 
-    enum HttpMethod {
+    public enum HttpMethod {
         POST, GET, PUT, DELETE
     }
 
-    enum Media {
+    public enum Media {
         JSON, XML
     }
 
