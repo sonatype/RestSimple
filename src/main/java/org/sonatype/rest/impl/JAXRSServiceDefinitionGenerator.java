@@ -1,6 +1,7 @@
 package org.sonatype.rest.impl;
 
 import com.google.inject.Binder;
+import com.google.inject.Inject;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -8,6 +9,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.sonatype.rest.api.ResourceBinder;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceHandler;
@@ -17,11 +19,10 @@ import org.sonatype.rest.api.ServiceHandler;
  */
 public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerator, Opcodes {
 
-    private final Binder binder;
+    private final ResourceBinder binder;
 
-    public Class<?> clazz;
-
-    public JAXRSServiceDefinitionGenerator(Binder binder) {
+    @Inject
+    public JAXRSServiceDefinitionGenerator(ResourceBinder binder){
         this.binder = binder;
     }
 
@@ -165,9 +166,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         byte[] bytes = cw.toByteArray();
 
         try {
-            ClassLoader cl = new ByteClassloader(bytes, Thread.currentThread().getContextClassLoader());
-            clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
+            ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader());
+            Class<?> clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
+            
             binder.bind(clazz);
+
         } catch (Throwable e) {
             // TODO: LOGME
             e.printStackTrace();

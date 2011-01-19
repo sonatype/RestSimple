@@ -1,5 +1,6 @@
 package org.sonatype.rest.impl;
 
+import com.google.inject.Binder;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceEntity;
@@ -28,7 +29,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     // @At( "/:id" ) @Delete
     // @Get("form")
 
-    public DefaultServiceDefinition(ServiceDefinitionGenerator generator) {
+    protected DefaultServiceDefinition(ServiceDefinitionGenerator generator) {
         this.generator = generator;
     }
 
