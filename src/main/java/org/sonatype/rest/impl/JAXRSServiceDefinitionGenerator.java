@@ -19,9 +19,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
 //    @Inject
     private final Binder binder;
+    private final ClassLoader classLoader;
 
-    public JAXRSServiceDefinitionGenerator(Binder binder) {
+    public JAXRSServiceDefinitionGenerator(Binder binder, ClassLoader classLoader) {
         this.binder = binder;
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         MethodVisitor mv;
         AnnotationVisitor av0;
 
-        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, "org/sonatype/server/resources/ServiceDescriptionResource", null, "java/lang/Object", null);
+        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, "org/sonatype/rest/model/ServiceDescriptionResource", null, "java/lang/Object", null);
 
         {
             av0 = cw.visitAnnotation("Ljavax/ws/rs/Path;", true);
@@ -164,15 +166,13 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         byte[] bytes = cw.toByteArray();
 
         try {
-            ClassLoader cl = new ByteClassloader(bytes, Thread.currentThread().getContextClassLoader());
-            Class<?> clazz = cl.loadClass("org.sonatype.rest.api.ServiceDescriptionResource");
+            ClassLoader cl = new ByteClassloader(bytes, classLoader);
+            Class<?> clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
             binder.bind(clazz);
-        } catch (ClassNotFoundException e) {
-            // TODO: LOGME        
+        } catch (Throwable e) {
+            // TODO: LOGME
             e.printStackTrace();
         }
-
-
     }
 
     private final static class ByteClassloader extends ClassLoader {
@@ -180,12 +180,13 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         private final byte[] clazzBytes;
 
         protected ByteClassloader(byte[] clazzBytes, ClassLoader parent) {
+            super(parent);
             this.clazzBytes = clazzBytes;
         }
 
-        protected Class findClass(String name)
-                throws ClassNotFoundException {
-            if (name.equalsIgnoreCase("org.sonatype.server.resources.ServiceDescriptionResource")) {
+        protected Class findClass(String name) throws ClassNotFoundException {
+
+            if (name.endsWith("ServiceDescriptionResource")) {
                 return defineClass(name, clazzBytes, 0, clazzBytes.length);
             } else {
                return super.findClass(name);

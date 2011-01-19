@@ -19,7 +19,7 @@ public class ServiceDefinitionJAXRSTest {
                 .producing(ServiceDefinition.Media.XML)
                 .consuming(ServiceDefinition.Media.JSON)
                 .consuming(ServiceDefinition.Media.XML)
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "createAddressBook"))
+                //.withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
                 .usingEntity(entity)
                 .bind();

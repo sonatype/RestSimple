@@ -9,12 +9,11 @@ import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceDefinitionProvider;
 import org.sonatype.rest.api.ServiceEntity;
 
+import javax.ws.rs.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RestDeflectorServletModule extends ServletModule {
-
-    private Map<String, String> initParams = new HashMap<String, String>();
 
     @Override
     protected void configureServlets() {
@@ -24,18 +23,15 @@ public class RestDeflectorServletModule extends ServletModule {
         // First, bind our Service Provider
         bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
 
-        // Next, Define our Resource Generator
-        bind(ServiceDefinitionGenerator.class).toInstance(new JAXRSServiceDefinitionGenerator(binder()));
-
-        // Finally bind our Provider
         bind(ServiceDefinition.class).toProvider(JAXRSServiceDefinitionProvider.class);
+
+        // Next, Define our Resource Generator
+        bind(ServiceDefinitionGenerator.class).toInstance(new JAXRSServiceDefinitionGenerator(binder(), Path.class.getClassLoader()));
 
         //Finally, bind our implementation
         bind(ServiceDefinitionJAXRSTest.class).asEagerSingleton();
 
-
-        initParams.put("com.sun.jersey.config.property.packages", "org.sonatype.server.setup");
-        serve("/*").with(GuiceContainer.class, initParams);
+        serve("/*").with(GuiceContainer.class);
         
     }
 
