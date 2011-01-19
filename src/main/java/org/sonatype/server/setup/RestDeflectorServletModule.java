@@ -28,21 +28,21 @@ public class RestDeflectorServletModule extends ServletModule {
 
 // The code below works fine.
         
-//        ServiceDefinition serviceDefinition = new DefaultServiceDefinition(g);
-//
-//        serviceDefinition.withPath("/service/{id}")
-//                .producing(ServiceDefinition.Media.JSON)
-//                .producing(ServiceDefinition.Media.XML)
-//                .consuming(ServiceDefinition.Media.JSON)
-//                .consuming(ServiceDefinition.Media.XML)
-//                        //.withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-//                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
-//                .usingEntity(new AddressBookServiceEntity())
-//                .bind();
+        ServiceDefinition serviceDefinition = new DefaultServiceDefinition(g);
+
+        serviceDefinition.withPath("/service/{id}")
+                .producing(ServiceDefinition.Media.JSON)
+                .producing(ServiceDefinition.Media.XML)
+                .consuming(ServiceDefinition.Media.JSON)
+                .consuming(ServiceDefinition.Media.XML)
+                        //.withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
+                .usingEntity(new AddressBookServiceEntity())
+                .bind();
 
 
 // The injection doesn't work. The generated class is never found by Jersey.
-        bind(ServiceDefinitionJAXRSTest.class).asEagerSingleton();
+        //bind(ServiceDefinitionJAXRSTest.class).asEagerSingleton();
 
 
         serve("/*").with(GuiceContainer.class);
