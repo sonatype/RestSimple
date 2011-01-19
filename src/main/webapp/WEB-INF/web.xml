@@ -8,15 +8,14 @@
     <listener>
         <listener-class>org.sonatype.server.setup.RestDelectorConfig</listener-class>
     </listener>
-    <servlet>
-        <description>AtmosphereGuiceServlet</description>
-        <servlet-name>AtmosphereGuiceServlet</servlet-name>
-        <servlet-class>org.atmosphere.guice.AtmosphereGuiceServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AtmosphereGuiceServlet</servlet-name>
+    <filter>
+        <filter-name>guiceFilter</filter-name>
+        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>guiceFilter</filter-name>
         <url-pattern>/*</url-pattern>
-    </servlet-mapping>
+    </filter-mapping>
 </web-app>
 

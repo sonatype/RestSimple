@@ -46,6 +46,13 @@
             <version>3.3.1</version>
         </dependency>
 
+        <!-- AOP -->
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- Jersey -->
         <dependency>
             <groupId>com.sun.jersey</groupId>

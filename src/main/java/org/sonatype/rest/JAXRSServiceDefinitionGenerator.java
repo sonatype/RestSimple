@@ -1,7 +1,7 @@
 package org.sonatype.rest;
 
+import com.google.inject.Binder;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -15,8 +15,12 @@ import org.objectweb.asm.Type;
  */
 public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerator, Opcodes {
 
-    @Inject
-    Injector injector;
+//    @Inject
+    private final Binder binder;
+
+    public JAXRSServiceDefinitionGenerator(Binder binder) {
+        this.binder = binder;
+    }
 
     @Override
     public void generate(ServiceDefinition serviceDefinition) {
@@ -158,12 +162,8 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         byte[] bytes = cw.toByteArray();
 
         try {
-            Class<?> clazz = new ByteClassloader(bytes, injector.getClass().getClassLoader()).loadClass("this_Stub");
-
-            // TODO: Needs to find a way to bind the resource.
-
-
-
+            Class<?> clazz = new ByteClassloader(bytes, binder.getClass().getClassLoader()).loadClass("this_Stub");
+            binder.bind(clazz);
         } catch (ClassNotFoundException e) {
             // TODO: LOGME        
             e.printStackTrace();
@@ -176,17 +176,13 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
         private final byte[] clazzBytes;
 
-
         protected ByteClassloader(byte[] clazzBytes, ClassLoader parent) {
             this.clazzBytes = clazzBytes;
         }
 
         protected Class findClass(String name)
                 throws ClassNotFoundException {
-            if (name.endsWith("_Stub")) {
-                return defineClass(name, clazzBytes, 0, clazzBytes.length);
-            }
-            return super.findClass(name);
+            return defineClass(name, clazzBytes, 0, clazzBytes.length);
         }
     }
 
