@@ -2,12 +2,14 @@ package org.sonatype.server.setup;
 
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
-import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
-import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceDefinitionProvider;
 import org.sonatype.rest.api.ServiceEntity;
+import org.sonatype.rest.api.ServiceHandler;
+import org.sonatype.rest.impl.DefaultServiceDefinition;
+import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 
 public class RestDeflectorServletModule extends ServletModule {
 
@@ -21,17 +23,27 @@ public class RestDeflectorServletModule extends ServletModule {
 
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
 
+        JAXRSServiceDefinitionGenerator g = new JAXRSServiceDefinitionGenerator(binder());
         // Next, Define our Resource Generator
-        bind(ServiceDefinitionGenerator.class).toInstance(new JAXRSServiceDefinitionGenerator(binder()));
+        bind(ServiceDefinitionGenerator.class).toInstance(g);
 
-        //Finally, bind our implementation
-        bind(ServiceDefinitionJAXRSTest.class).asEagerSingleton();
+//        ServiceDefinition serviceDefinition = new DefaultServiceDefinition(g);
+//
+//        serviceDefinition.withPath("/service/{id}")
+//                .producing(ServiceDefinition.Media.JSON)
+//                .producing(ServiceDefinition.Media.XML)
+//                .consuming(ServiceDefinition.Media.JSON)
+//                .consuming(ServiceDefinition.Media.XML)
+//                        //.withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
+//                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
+//                .usingEntity(new AddressBookServiceEntity())
+//                .bind();
 
-        install(new JaxrsModule());
+        bind(ServiceDefinitionJAXRSTest.class);
 
 
         serve("/*").with(GuiceContainer.class);
-        
+
     }
 
 }
