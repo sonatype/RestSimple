@@ -19,7 +19,7 @@ public class RestDeflectorServletModule extends ServletModule {
         // First, bind our Service Provider
         bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
 
-        bind(ServiceDefinition.class).toProvider(JAXRSServiceDefinitionProvider.class);
+        bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
 
         // Next, Define our Resource Generator
         bind(ServiceDefinitionGenerator.class).toInstance(new JAXRSServiceDefinitionGenerator(binder()));
