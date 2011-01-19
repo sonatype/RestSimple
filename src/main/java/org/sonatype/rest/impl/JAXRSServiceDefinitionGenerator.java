@@ -17,13 +17,12 @@ import org.sonatype.rest.api.ServiceHandler;
  */
 public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerator, Opcodes {
 
-//    @Inject
     private final Binder binder;
-    private final ClassLoader classLoader;
 
-    public JAXRSServiceDefinitionGenerator(Binder binder, ClassLoader classLoader) {
+    public Class<?> clazz;
+
+    public JAXRSServiceDefinitionGenerator(Binder binder) {
         this.binder = binder;
-        this.classLoader = classLoader;
     }
 
     @Override
@@ -166,8 +165,8 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         byte[] bytes = cw.toByteArray();
 
         try {
-            ClassLoader cl = new ByteClassloader(bytes, classLoader);
-            Class<?> clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
+            ClassLoader cl = new ByteClassloader(bytes, Thread.currentThread().getContextClassLoader());
+            clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
             binder.bind(clazz);
         } catch (Throwable e) {
             // TODO: LOGME

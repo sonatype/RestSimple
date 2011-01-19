@@ -28,7 +28,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     // @At( "/:id" ) @Delete
     // @Get("form")
 
-    protected DefaultServiceDefinition(ServiceDefinitionGenerator generator) {
+    public DefaultServiceDefinition(ServiceDefinitionGenerator generator) {
         this.generator = generator;
     }
 
