@@ -1,6 +1,4 @@
-package org.sonatype.rest;
-
-import java.lang.reflect.Method;
+package org.sonatype.rest.api;
 
 /**
  * TODO: Make me a builder

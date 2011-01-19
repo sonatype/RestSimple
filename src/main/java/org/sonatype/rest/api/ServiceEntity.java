@@ -1,4 +1,4 @@
-package org.sonatype.rest;
+package org.sonatype.rest.api;
 
 public interface ServiceEntity {
 

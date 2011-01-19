@@ -1,4 +1,9 @@
-package org.sonatype.rest;
+package org.sonatype.rest.impl;
+
+import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.api.ServiceDefinitionGenerator;
+import org.sonatype.rest.api.ServiceEntity;
+import org.sonatype.rest.api.ServiceHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;

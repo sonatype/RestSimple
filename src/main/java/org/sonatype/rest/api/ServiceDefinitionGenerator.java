@@ -1,6 +1,4 @@
-package org.sonatype.rest;
-
-import java.util.List;
+package org.sonatype.rest.api;
 
 public interface ServiceDefinitionGenerator {
 

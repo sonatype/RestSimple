@@ -1,16 +1,21 @@
 package org.sonatype.server.setup;
 
-import com.google.inject.Binder;
 import com.google.inject.servlet.ServletModule;
-import org.sonatype.rest.JAXRSServiceDefinitionGenerator;
-import org.sonatype.rest.JAXRSServiceDefinitionProvider;
-import org.sonatype.rest.ServiceDefinition;
-import org.sonatype.rest.ServiceDefinitionGenerator;
-import org.sonatype.rest.ServiceDefinitionProvider;
-import org.sonatype.rest.ServiceEntity;
+import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
+import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.api.ServiceDefinitionGenerator;
+import org.sonatype.rest.api.ServiceDefinitionProvider;
+import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.server.resources.ServiceDefinitionTest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RestDeflectorServletModule extends ServletModule {
+
+    private Map<String, String> initParams = new HashMap<String, String>();
 
     @Override
     protected void configureServlets() {
@@ -29,6 +34,10 @@ public class RestDeflectorServletModule extends ServletModule {
         //Finally, bind our implementation
         bind(ServiceDefinitionTest.class).asEagerSingleton();
 
+
+        initParams.put("com.sun.jersey.config.property.packages", "org.sonatype.server.resources");
+        serve("/*").with(GuiceContainer.class, initParams);
+        
     }
 
 }

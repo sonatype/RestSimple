@@ -59,7 +59,12 @@
             <artifactId>jersey-server</artifactId>
             <version>1.5</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-guice</artifactId>
+            <version>1.5</version>
+        </dependency>
+        
         <!-- logging -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -123,7 +128,7 @@
                 <version>6.1.22</version>
                 <configuration>
                     <webDefaultXml>${basedir}/src/main/config/webdefault.xml</webDefaultXml>
-                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <scanIntervalSeconds>1</scanIntervalSeconds>
                     <contextPath>/</contextPath>
                 </configuration>
             </plugin>

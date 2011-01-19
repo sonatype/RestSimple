@@ -1,9 +1,9 @@
 package org.sonatype.server.resources;
 
 import com.google.inject.Inject;
-import org.sonatype.rest.ServiceDefinition;
-import org.sonatype.rest.ServiceEntity;
-import org.sonatype.rest.ServiceHandler;
+import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.api.ServiceEntity;
+import org.sonatype.rest.api.ServiceHandler;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -26,7 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
  * TODO: Not sure @PathParam use is portable.
  * 
  */
-@Path("/service/")
+//@Path("/service/")
 @Produces({APPLICATION_JSON, APPLICATION_XML})
 @Consumes({APPLICATION_JSON, APPLICATION_XML})
 public class ServiceDescriptionResource {
@@ -38,7 +38,7 @@ public class ServiceDescriptionResource {
     ServiceDefinition serviceDefinition;
 
     @POST
-    @Path("{id}")    
+    //@Path("{id}")
     public Response put(@PathParam("createPerson(id)") ServiceHandler serviceHandler, @PathParam("{id}") String entity) {
         // Will properly invoke the "createPerson(id)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);
@@ -46,7 +46,7 @@ public class ServiceDescriptionResource {
     }
 
     @GET
-    @Path("{id}")
+    //@Path("{id}")
     public Response get(@PathParam("readPerson(id)") ServiceHandler serviceHandler, @PathParam("{id}") String entity) {
         // Will properly invoke the "readPerson(id)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);;
@@ -61,7 +61,7 @@ public class ServiceDescriptionResource {
     }
 
     @PUT
-    @Path("{id}")
+    //@Path("{id}")
     public Response post(@PathParam("updatePerson(id)") ServiceHandler serviceHandler, @PathParam("{id}") String entity) {
         // Will properly invoke the "updatePerson(id)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);
@@ -69,7 +69,7 @@ public class ServiceDescriptionResource {
     }
 
     @DELETE
-    @Path("{id}")
+    //@Path("{id}")
     public Response delete(@PathParam("deletePerson(id)") ServiceHandler serviceHandler, String entity) {
         // Will properly invoke the "updatePerson(entity)" as the ServiceHandler would have been appropriately generated
         Response response = createResponse(serviceHandler, entity);

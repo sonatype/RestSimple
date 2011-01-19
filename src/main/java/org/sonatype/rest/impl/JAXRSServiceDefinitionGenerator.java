@@ -1,7 +1,6 @@
-package org.sonatype.rest;
+package org.sonatype.rest.impl;
 
 import com.google.inject.Binder;
-import com.google.inject.Inject;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -9,6 +8,9 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.api.ServiceDefinitionGenerator;
+import org.sonatype.rest.api.ServiceHandler;
 
 /**
  * Generate a JAXRS resource, and bind it.
@@ -42,7 +44,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             {
                 AnnotationVisitor av1 = av0.visitArray("value");
                 for (ServiceDefinition.Media m : serviceDefinition.mediaToProduce()) {
-                    av1.visit(null, m);
+                    av1.visit(null, "application/" + m.name());
                 }
                 av1.visitEnd();
             }
@@ -53,7 +55,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             {
                 AnnotationVisitor av1 = av0.visitArray("value");
                 for (ServiceDefinition.Media m : serviceDefinition.mediaToConsume()) {
-                    av1.visit(null, m);
+                    av1.visit(null, "application/" + m.name());
                 }
                 av1.visitEnd();
             }
@@ -162,7 +164,8 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         byte[] bytes = cw.toByteArray();
 
         try {
-            Class<?> clazz = new ByteClassloader(bytes, binder.getClass().getClassLoader()).loadClass("this_Stub");
+            ClassLoader cl = new ByteClassloader(bytes, Thread.currentThread().getContextClassLoader());
+            Class<?> clazz = cl.loadClass("org.sonatype.server.resources.ServiceDescriptionResource");
             binder.bind(clazz);
         } catch (ClassNotFoundException e) {
             // TODO: LOGME        
@@ -182,7 +185,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
         protected Class findClass(String name)
                 throws ClassNotFoundException {
-            return defineClass(name, clazzBytes, 0, clazzBytes.length);
+            if (name.equalsIgnoreCase("org.sonatype.server.resources.ServiceDescriptionResource")) {
+                return defineClass(name, clazzBytes, 0, clazzBytes.length);
+            } else {
+               return super.findClass(name);
+            }
         }
     }
 
