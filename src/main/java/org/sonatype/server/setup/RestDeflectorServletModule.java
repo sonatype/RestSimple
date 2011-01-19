@@ -16,17 +16,18 @@ public class RestDeflectorServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
 
+        JAXRSServiceDefinitionGenerator g = new JAXRSServiceDefinitionGenerator(binder());
+        bind(ServiceDefinitionGenerator.class).toInstance(g);
+        
         bind(ServiceEntity.class).to(AddressBookServiceEntity.class);
 
         // First, bind our Service Provider
+        bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
         bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
 
-        bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
 
-        JAXRSServiceDefinitionGenerator g = new JAXRSServiceDefinitionGenerator(binder());
-        // Next, Define our Resource Generator
-        bind(ServiceDefinitionGenerator.class).toInstance(g);
-
+// The code below works fine.
+        
 //        ServiceDefinition serviceDefinition = new DefaultServiceDefinition(g);
 //
 //        serviceDefinition.withPath("/service/{id}")
@@ -39,7 +40,9 @@ public class RestDeflectorServletModule extends ServletModule {
 //                .usingEntity(new AddressBookServiceEntity())
 //                .bind();
 
-        bind(ServiceDefinitionJAXRSTest.class);
+
+// The injection doesn't work. The generated class is never found by Jersey.
+        bind(ServiceDefinitionJAXRSTest.class).asEagerSingleton();
 
 
         serve("/*").with(GuiceContainer.class);
