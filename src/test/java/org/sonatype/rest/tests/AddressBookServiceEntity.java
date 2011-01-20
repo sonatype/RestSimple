@@ -1,4 +1,4 @@
-package org.sonatype.server;
+package org.sonatype.rest.tests;
 
 import org.sonatype.rest.api.ServiceEntity;
 

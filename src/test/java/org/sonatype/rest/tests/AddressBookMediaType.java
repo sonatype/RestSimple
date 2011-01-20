@@ -1,4 +1,4 @@
-package org.sonatype.server;
+package org.sonatype.rest.tests;
 
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 
@@ -17,12 +17,16 @@ public class AddressBookMediaType implements ServiceHandlerMediaType {
     public AddressBookMediaType visit(Object object) {
         List<String> entries = (List<String>) object;
         StringBuilder b = new StringBuilder();
-        for(String s: entries) {
-            b.append(s);
-            b.append(" - ");
+
+        if (entries == null) {
+            this.entries = "";
+        } else {
+            for(String s: entries) {
+                b.append(s);
+                b.append(" - ");
+            }
+            this.entries = b.toString();
         }
-        this.entries = b.toString();
         return this;
     }
 }
-

@@ -1,4 +1,4 @@
-package org.sonatype.server;
+package org.sonatype.rest.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;

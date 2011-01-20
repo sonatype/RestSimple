@@ -1,5 +1,0 @@
-{
-    "host" : "localhost",
-    "environment" : "test",
-    "meta-data" : [ {"service" : "service1" } ]
-}

@@ -1,4 +1,4 @@
-package org.sonatype.server;
+package org.sonatype.rest.tests;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -8,10 +8,11 @@ import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.api.ServiceHandlerMediaType;
+import org.sonatype.rest.guice.JaxrsModule;
 
 import java.util.HashMap;
 
-public class RestDeflectorServletModule extends ServletModule {
+public class JAXRSServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
@@ -23,7 +24,7 @@ public class RestDeflectorServletModule extends ServletModule {
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
-        serviceDefinition.withPath("/service/{id}")
+        serviceDefinition.withPath("/{method}/{id}")
                 .producing(ServiceDefinition.Media.JSON)
                 .producing(ServiceDefinition.Media.XML)
                 .consuming(ServiceDefinition.Media.JSON)
@@ -31,6 +32,7 @@ public class RestDeflectorServletModule extends ServletModule {
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
 
