@@ -1,4 +1,4 @@
-package org.sonatype.server.setup;
+package org.sonatype.server;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -6,7 +6,7 @@ import org.sonatype.rest.api.ResourceBinder;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceDefinitionProvider;
-import org.sonatype.rest.api.ServiceEntity;
+import org.sonatype.rest.api.ServiceHandlerMapper;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 
@@ -20,16 +20,20 @@ public class JaxrsModule extends AbstractModule {
 
     @Override
     protected void configure() {
-
+        final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
+        bind(ServiceHandlerMapper.class).toInstance(mapper);
+        
         bind(ResourceBinder.class).toInstance(new ResourceBinder(){
 
             @Override
             public void bind(Class<?> clazz) {
+                binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
                 binder.bind(clazz);
             }
         });
+
+        
         bind(ServiceDefinitionGenerator.class).to(JAXRSServiceDefinitionGenerator.class);
-        bind(ServiceEntity.class).to(AddressBookServiceEntity.class);
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
         bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
         

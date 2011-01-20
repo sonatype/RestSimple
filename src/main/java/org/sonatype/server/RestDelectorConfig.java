@@ -1,4 +1,4 @@
-package org.sonatype.server.setup;
+package org.sonatype.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

@@ -6,7 +6,7 @@
     <description>RestDelector</description>
     <display-name>RestDelector</display-name>
     <listener>
-        <listener-class>org.sonatype.server.setup.RestDelectorConfig</listener-class>
+        <listener-class>org.sonatype.server.RestDelectorConfig</listener-class>
     </listener>
     <filter>
         <filter-name>guiceFilter</filter-name>

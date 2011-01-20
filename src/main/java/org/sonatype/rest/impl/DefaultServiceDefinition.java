@@ -5,6 +5,7 @@ import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
+import org.sonatype.rest.api.ServiceHandlerMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,8 +16,9 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     private ServiceEntity serviceEntity;
     private final List<Media> mediaToProduce = new ArrayList<Media>();
     private final List<Media> mediaToConsume = new ArrayList<Media>();
-    private final List<ServiceHandler> serviceHandler = new ArrayList<ServiceHandler>();
+    private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
     private final ServiceDefinitionGenerator generator;
+    private final ServiceHandlerMapper serviceHandlerMapper;
 
     //
     // This allows a particular method to be selected based on a parameter in the request
@@ -29,8 +31,9 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     // @At( "/:id" ) @Delete
     // @Get("form")
 
-    protected DefaultServiceDefinition(ServiceDefinitionGenerator generator) {
+    protected DefaultServiceDefinition(ServiceDefinitionGenerator generator, ServiceHandlerMapper serviceHandlerMapper) {
         this.generator = generator;
+        this.serviceHandlerMapper = serviceHandlerMapper;
     }
 
     @Override    
@@ -40,14 +43,15 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     }
 
     @Override
-    public ServiceDefinition usingEntity(ServiceEntity delegate) {
-        this.serviceEntity = delegate;
+    public ServiceDefinition usingEntity(ServiceEntity serviceEntity) {
+        this.serviceEntity = serviceEntity;
         return this;
     }
 
     @Override
-    public ServiceDefinition withHandler(ServiceHandler mapping) {
-        serviceHandler.add(mapping);
+    public ServiceDefinition withHandler(ServiceHandler serviceHandler) {
+        serviceHandlers.add(serviceHandler);
+        serviceHandlerMapper.addServiceHandler(serviceHandler);
         return this;
     }
 
@@ -75,7 +79,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
 
     @Override
     public List<ServiceHandler> serviceHandlers() {
-        return Collections.unmodifiableList(serviceHandler);
+        return Collections.unmodifiableList(serviceHandlers);
     }
 
     @Override

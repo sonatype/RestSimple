@@ -1,4 +1,4 @@
-package org.sonatype.server.setup;
+package org.sonatype.server;
 
 import com.google.inject.Inject;
 import org.sonatype.rest.api.ServiceDefinition;
