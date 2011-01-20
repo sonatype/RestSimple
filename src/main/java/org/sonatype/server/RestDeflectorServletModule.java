@@ -34,15 +34,6 @@ public class RestDeflectorServletModule extends ServletModule {
                 .usingEntity(serviceEntity)
                 .bind();
 
-//        ServiceHandlerMapper mapper = new ServiceHandlerMapper();
-//        mapper.addServiceHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"));
-//        mapper.addServiceHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"));
-//        mapper.addServiceHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"));
-//
-//        bind(ServiceHandlerMapper.class).toInstance(mapper);
-//
-//        bind(ServiceDescriptionResource.class);
-
         // TODO: This is NOT portable
         HashMap<String,String> initParams = new HashMap<String, String>();
         initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
