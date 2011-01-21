@@ -3,7 +3,7 @@ The REST Deflector Framework allow programmatic creation of REST resource that c
         ServiceEntity serviceEntity = new AddressBookServiceEntity();
         bind(ServiceEntity.class).toInstance(serviceEntity);
 
-        serviceDefinition.withPath("/\{method\}/\{id\}")
+        serviceDefinition.withPath("/{method}/{id}")
                 .producing(ServiceDefinition.Media.JSON)
                 .producing(ServiceDefinition.Media.XML)
                 .consuming(ServiceDefinition.Media.JSON)
