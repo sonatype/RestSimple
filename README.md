@@ -23,7 +23,7 @@ will be mapped on the server side to the ServiceHandler defined as
 
     new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook")
 
-which will invoke the {@link ServiceEntity}
+which will invoke the ServiceEntity implementation
 
     serviceEntity.createAddressBook(myBook) 
 
