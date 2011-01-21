@@ -1,10 +1,10 @@
 package org.sonatype.rest.impl;
 
 import org.sonatype.rest.api.ServiceDefinition;
-import org.sonatype.rest.api.ServiceDefinitionGenerator;
+import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
-import org.sonatype.rest.api.ServiceHandlerMapper;
+import org.sonatype.rest.spi.ServiceHandlerMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +25,8 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     }
 
     @Override    
-    public ServiceDefinition withPath(String basePath) {
-        this.basePath = basePath;
+    public ServiceDefinition withPath(String path) {
+        this.basePath = path;
         return this;
     }
 
@@ -56,7 +56,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     }
 
     @Override
-    public String basePath() {
+    public String path() {
         return basePath;
     }
 

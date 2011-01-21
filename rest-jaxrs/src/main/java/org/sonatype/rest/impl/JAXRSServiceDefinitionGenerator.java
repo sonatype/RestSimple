@@ -10,9 +10,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.rest.api.ResourceBinder;
+import org.sonatype.rest.spi.ResourceBinder;
 import org.sonatype.rest.api.ServiceDefinition;
-import org.sonatype.rest.api.ServiceDefinitionGenerator;
+import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceHandler;
 
 /**
@@ -84,7 +84,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             fv.visitEnd();
         }
         {
-            fv = cw.visitField(0, "mapper", "Lorg/sonatype/rest/api/ServiceHandlerMapper;", null, null);
+            fv = cw.visitField(0, "mapper", "Lorg/sonatype/rest/spi/ServiceHandlerMapper;", null, null);
             {
                 av0 = fv.visitAnnotation("Lcom/google/inject/Inject;", true);
                 av0.visitEnd();
@@ -359,9 +359,9 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             Label l2 = new Label();
             mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Throwable");
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "mapper", "Lorg/sonatype/rest/api/ServiceHandlerMapper;");
+            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "mapper", "Lorg/sonatype/rest/spi/ServiceHandlerMapper;");
             mv.visitVarInsn(ALOAD, 2);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceHandlerMapper", "map", "(Ljava/lang/String;)Lorg/sonatype/rest/api/ServiceHandler;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/spi/ServiceHandlerMapper", "map", "(Ljava/lang/String;)Lorg/sonatype/rest/api/ServiceHandler;");
             mv.visitVarInsn(ASTORE, 5);
             mv.visitVarInsn(ALOAD, 5);
             Label l3 = new Label();

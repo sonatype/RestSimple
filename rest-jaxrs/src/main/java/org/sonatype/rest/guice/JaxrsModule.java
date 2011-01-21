@@ -2,11 +2,11 @@ package org.sonatype.rest.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
-import org.sonatype.rest.api.ResourceBinder;
+import org.sonatype.rest.spi.ResourceBinder;
 import org.sonatype.rest.api.ServiceDefinition;
-import org.sonatype.rest.api.ServiceDefinitionGenerator;
-import org.sonatype.rest.api.ServiceDefinitionProvider;
-import org.sonatype.rest.api.ServiceHandlerMapper;
+import org.sonatype.rest.spi.ServiceDefinitionGenerator;
+import org.sonatype.rest.spi.ServiceDefinitionProvider;
+import org.sonatype.rest.spi.ServiceHandlerMapper;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 
