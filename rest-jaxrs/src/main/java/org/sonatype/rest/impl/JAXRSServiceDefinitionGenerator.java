@@ -52,7 +52,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
         {
             av0 = cw.visitAnnotation("Ljavax/ws/rs/Path;", true);
-            av0.visit("value", "/{method}/{id}/");
+            av0.visit("value", serviceDefinition.path() + "/{method}/{id}/");
             av0.visitEnd();
         }
         {

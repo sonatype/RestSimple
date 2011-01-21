@@ -13,6 +13,7 @@
 package org.sonatype.rest.impl;
 
 import com.google.inject.Inject;
+import org.sonatype.rest.api.DefaultServiceDefinition;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 import org.sonatype.rest.spi.ServiceDefinitionProvider;

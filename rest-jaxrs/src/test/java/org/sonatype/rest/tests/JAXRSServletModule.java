@@ -24,7 +24,7 @@ public class JAXRSServletModule extends ServletModule {
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
-        serviceDefinition.withPath("/{method}/{id}")
+        serviceDefinition
                 .producing(ServiceDefinition.Media.JSON)
                 .producing(ServiceDefinition.Media.XML)
                 .consuming(ServiceDefinition.Media.JSON)
