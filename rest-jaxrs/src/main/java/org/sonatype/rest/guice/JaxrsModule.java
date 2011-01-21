@@ -22,6 +22,9 @@ import org.sonatype.rest.spi.ServiceHandlerMapper;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 
+/**
+ * A JAXRS module that install the appropriate object needed to generate JAXRS Resource. 
+ */
 public class JaxrsModule extends AbstractModule {
 
     private final Binder binder;
