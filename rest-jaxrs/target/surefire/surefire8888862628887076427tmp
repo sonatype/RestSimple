@@ -1,0 +1,5 @@
+#surefire
+#Fri Jan 21 08:32:56 EST 2011
+user.dir=/Users/jfarcand/workspace/REST-Deflector/rest-jaxrs
+localRepository=/Users/jfarcand/.m2/repository
+basedir=/Users/jfarcand/workspace/REST-Deflector/rest-jaxrs
