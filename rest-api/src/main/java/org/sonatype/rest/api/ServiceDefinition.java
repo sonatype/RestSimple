@@ -13,6 +13,8 @@
  */
 package org.sonatype.rest.api;
 
+import org.sonatype.rest.spi.ServiceDefinitionGenerator;
+
 import java.util.List;
 
 /**
@@ -142,4 +144,11 @@ public interface ServiceDefinition {
      * holding. The bind operation can be invoked many time and will generate a server side component on every invocation.
      */
     void bind();
+
+    /**
+     * Set the {@link org.sonatype.rest.spi.ServiceDefinitionGenerator} used to generate the REST resource.
+     * @param generator the {@link org.sonatype.rest.spi.ServiceDefinitionGenerator}
+     * @return the current {@link ServiceDefinition}
+     */
+    ServiceDefinition generateWith(ServiceDefinitionGenerator generator);
 }
