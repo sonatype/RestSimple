@@ -37,7 +37,6 @@
 package org.sonatype.rest.tests;
 
 import com.google.inject.servlet.GuiceFilter;
-import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import com.ning.http.client.SimpleAsyncHttpClient;
 import org.eclipse.jetty.server.Server;
@@ -45,7 +44,11 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.rest.client.AHCClientStub;
+import org.sonatype.rest.api.DefaultServiceDefinition;
+import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.api.ServiceHandler;
+import org.sonatype.rest.client.ServiceDefinitionClient;
+import org.sonatype.rest.client.ServiceDefinitionProxy;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -67,6 +70,8 @@ public class JAXRSModuleClientStubTest {
     public int port;
 
     public String targetUrl;
+
+    private ServiceDefinition serviceDefinition;
 
     protected int findFreePort() throws IOException {
         ServerSocket socket = null;
@@ -98,6 +103,22 @@ public class JAXRSModuleClientStubTest {
 
         server.setHandler(context);
         server.start();
+
+
+        serviceDefinition = new DefaultServiceDefinition();
+
+        serviceDefinition .withPath(targetUrl)
+                .producing(ServiceDefinition.Media.JSON)
+                .producing(ServiceDefinition.Media.XML)
+                .consuming(ServiceDefinition.Media.JSON)
+                .consuming(ServiceDefinition.Media.XML)
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
+                .usingEntity(new AddressBookServiceEntity());
+
+        
         logger.info("Local HTTP server started successfully");
     }
 
@@ -109,39 +130,33 @@ public class JAXRSModuleClientStubTest {
     @Test(timeOut = 20000)
     public void testPut() throws Throwable {
         logger.info("running test: testPut");
-        SimpleAsyncHttpClient c = new SimpleAsyncHttpClient.Builder().setUrl(targetUrl).build();
-        AHCClientStub stub = new AHCClientStub(c, targetUrl);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
         Response r = stub.doPut("myBook");
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 201);
-
-        c.close();
     }
 
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
-        SimpleAsyncHttpClient c = new SimpleAsyncHttpClient.Builder().setUrl(targetUrl).build();
-        AHCClientStub stub = new AHCClientStub(c, targetUrl);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
+        stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();
         m.put("update","foo");
-
         Response r = stub.doPost(m,"myBook");
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
 
-        c.close();
     }
 
     @Test(timeOut = 20000)
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
-        SimpleAsyncHttpClient c = new SimpleAsyncHttpClient.Builder().setUrl(targetUrl).build();
-        AHCClientStub stub = new AHCClientStub(c, targetUrl);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
         stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();
@@ -153,15 +168,12 @@ public class JAXRSModuleClientStubTest {
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
         assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
-
-        c.close();
     }
 
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
-        SimpleAsyncHttpClient c = new SimpleAsyncHttpClient.Builder().setUrl(targetUrl).build();
-        AHCClientStub stub = new AHCClientStub(c, targetUrl);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
         stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();
@@ -174,8 +186,6 @@ public class JAXRSModuleClientStubTest {
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
         assertEquals(r.getResponseBody(), "{\"entries\":\"\"}");
-
-        c.close();
     }
 
 }

@@ -21,6 +21,11 @@ public class AddressBookServiceEntity implements ServiceEntity {
 
     public String updateAddressBook(String id, String value) {
         List<String> list = book.get(id);
+
+        if (list == null) {
+            throw new IllegalStateException("No address book have been created for " + id);
+        }
+
         list.add(value);
         book.put(id, list);
         return "updated";
