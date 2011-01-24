@@ -29,10 +29,10 @@ import java.util.List;
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition.withPath("/{method}/{id}")
-                .producing(ServiceDefinition.Media.JSON)
-                .producing(ServiceDefinition.Media.XML)
-                .consuming(ServiceDefinition.Media.JSON)
-                .consuming(ServiceDefinition.Media.XML)
+                .producing(MediaType.JSON)
+                .producing(MediaType.XML)
+                .consuming(MediaType.JSON)
+                .consuming(MediaType.XML)
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
@@ -66,13 +66,6 @@ public interface ServiceDefinition {
     }
 
     /**
-     * Represent a Content-Type
-     */
-    public enum Media {
-        JSON, XML
-    }
-
-    /**
      * Set the {@link ServiceEntity} this service is fronting. All REST requests will eventually be rooted to an instance
      * of @link ServiceEntity}.
      *
@@ -96,18 +89,18 @@ public interface ServiceDefinition {
     ServiceDefinition withHandler(ServiceHandler serviceHandler);
 
     /**
-     * Add a {@link Media} this ServiceDefinition. {@link Media} are used when writing the response and maps the HTTP response's content-type header.
-     * @param media {@link Media}
+     * Add a {@link org.sonatype.rest.api.MediaType} this ServiceDefinition. {@link org.sonatype.rest.api.MediaType} are used when writing the response and maps the HTTP response's content-type header.
+     * @param mediaType {@link org.sonatype.rest.api.MediaType}
      * @return the current {@link ServiceDefinition}
      */
-    ServiceDefinition producing(Media media);
+    ServiceDefinition producing(MediaType mediaType);
 
     /**
-     * Add a {@link Media} this ServiceDefinition. {@link Media} are used when reading the request and maps the HTTP request's content-type header.
-     * @param media {@link Media}
+     * Add a {@link org.sonatype.rest.api.MediaType} this ServiceDefinition. {@link org.sonatype.rest.api.MediaType} are used when reading the request and maps the HTTP request's content-type header.
+     * @param mediaType {@link org.sonatype.rest.api.MediaType}
      * @return the current {@link ServiceDefinition}
      */
-    ServiceDefinition consuming(Media media);
+    ServiceDefinition consuming(MediaType mediaType);
 
     /**
      * Return the URL this ServiceDefinition represent.
@@ -128,16 +121,16 @@ public interface ServiceDefinition {
     List<ServiceHandler> serviceHandlers();
 
     /**
-     * Return an unmodifiable {@link List} of {@link Media}
-     * @return an unmodifiable {@link List} of {@link Media}
+     * Return an unmodifiable {@link List} of {@link org.sonatype.rest.api.MediaType}
+     * @return an unmodifiable {@link List} of {@link org.sonatype.rest.api.MediaType}
      */
-    List<Media> mediaToConsume();
+    List<MediaType> mediaToConsume();
 
     /**
-     * Return an unmodifiable {@link List} of {@link Media}
-     * @return an unmodifiable {@link List} of {@link Media}
+     * Return an unmodifiable {@link List} of {@link org.sonatype.rest.api.MediaType}
+     * @return an unmodifiable {@link List} of {@link org.sonatype.rest.api.MediaType}
      */
-    List<Media> mediaToProduce();
+    List<MediaType> mediaToProduce();
 
     /**
      * Bind the {@link ServiceDefinition}. This operation may generate a new class based on the information this class is

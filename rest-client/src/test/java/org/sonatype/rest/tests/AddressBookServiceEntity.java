@@ -8,6 +8,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AddressBookServiceEntity implements ServiceEntity {
 
+    public final static String APPLICATION = "application";
+    public final static String JSON = "org.sonatype.rest.tests.addressBook+json";
+    public final static String XML = "org.sonatype.rest.tests.addressBook+xml";
+
     private final ConcurrentHashMap<String, List<String>> book = new ConcurrentHashMap<String, List<String>>();
 
     public String createAddressBook(String id) {
@@ -36,6 +40,13 @@ public class AddressBookServiceEntity implements ServiceEntity {
         return "updated";
     }
 
-
+    @Override
+    public List<String> version() {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(APPLICATION + "/" + JSON);
+        list.add(APPLICATION + "/" + XML);
+        return list;
+    }
 }
+
     

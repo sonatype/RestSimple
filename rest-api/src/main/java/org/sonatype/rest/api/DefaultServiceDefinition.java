@@ -22,8 +22,8 @@ import java.util.List;
 public class DefaultServiceDefinition implements ServiceDefinition {
     private String basePath = "";
     private ServiceEntity serviceEntity;
-    private final List<Media> mediaToProduce = new ArrayList<Media>();
-    private final List<Media> mediaToConsume = new ArrayList<Media>();
+    private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
+    private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
     private ServiceDefinitionGenerator generator;
     private final ServiceHandlerMapper serviceHandlerMapper;
@@ -75,8 +75,8 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceDefinition producing(Media media) {
-        mediaToProduce.add(media);
+    public ServiceDefinition producing(MediaType mediaType) {
+        mediaTypeToProduce.add(mediaType);
         return this;
     }
 
@@ -84,8 +84,8 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceDefinition consuming(Media media) {
-        mediaToConsume.add(media);
+    public ServiceDefinition consuming(MediaType mediaType) {
+        mediaTypeToConsume.add(mediaType);
         return this;
     }
      /**
@@ -115,16 +115,16 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public List<Media> mediaToConsume() {
-        return Collections.unmodifiableList(mediaToConsume);
+    public List<MediaType> mediaToConsume() {
+        return Collections.unmodifiableList(mediaTypeToConsume);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Media> mediaToProduce() {
-        return Collections.unmodifiableList(mediaToProduce);
+    public List<MediaType> mediaToProduce() {
+        return Collections.unmodifiableList(mediaTypeToProduce);
     }
     
     /**

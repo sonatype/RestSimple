@@ -63,6 +63,8 @@ public class JAXRSModuleTest {
     public int port;
 
     public String targetUrl;
+    
+    public String acceptHeader;
 
     protected int findFreePort() throws IOException {
         ServerSocket socket = null;
@@ -83,6 +85,7 @@ public class JAXRSModuleTest {
     public void setUpGlobal() throws Exception {
         port = findFreePort();
         server = new Server(port);
+        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + AddressBookServiceEntity.JSON;
 
         targetUrl = "http://127.0.0.1:" + port;
 
@@ -107,7 +110,7 @@ public class JAXRSModuleTest {
         logger.info("running test: testPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").execute().get();
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 201);
@@ -120,7 +123,7 @@ public class JAXRSModuleTest {
         logger.info("running test: testPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addParameter("update","foo").execute().get();
+        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -133,7 +136,7 @@ public class JAXRSModuleTest {
         logger.info("running test: testPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addParameter("update","foo").execute().get();
+        Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 405);
@@ -146,9 +149,9 @@ public class JAXRSModuleTest {
         logger.info("running test: testGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").execute().get();
-        c.preparePost(targetUrl + "/updateAddressBook/myBook").addParameter("update","foo").execute().get();
-        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").execute().get();
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -163,7 +166,7 @@ public class JAXRSModuleTest {
         logger.info("running test: testPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.prepareGet(targetUrl + "/getAddressBook/zeBook").execute().get();
+        Response r = c.prepareGet(targetUrl + "/getAddressBook/zeBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -178,10 +181,10 @@ public class JAXRSModuleTest {
         logger.info("running test: testGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").execute().get();
-        c.preparePost(targetUrl + "/updateAddressBook/myBook").addParameter("update","foo").execute().get();
-        c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").execute().get();
-        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").execute().get();
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -191,4 +194,29 @@ public class JAXRSModuleTest {
         c.close();
     }
 
+    @Test(timeOut = 20000)
+    public void testInvalidAcceptPut() throws Throwable {
+        logger.info("running test: testPut");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", "foo").execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 406);
+
+        c.close();
+    }
+ 
+    @Test(timeOut = 20000)
+    public void testAcceptPut() throws Throwable {
+        logger.info("running test: testPut");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 201);
+
+        c.close();
+    }
 }

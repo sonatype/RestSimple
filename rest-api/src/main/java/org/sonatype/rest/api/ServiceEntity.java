@@ -12,9 +12,13 @@
  */
 package org.sonatype.rest.api;
 
+import java.util.List;
+
 /**
  * Simple marker that represent an entity used by a {@link ServiceDefinition}. 
  */
 public interface ServiceEntity {
+
+    public List<String> version();
 
 }

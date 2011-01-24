@@ -22,10 +22,11 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.rest.spi.ResourceBinder;
+import org.sonatype.rest.api.MediaType;
 import org.sonatype.rest.api.ServiceDefinition;
-import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 import org.sonatype.rest.api.ServiceHandler;
+import org.sonatype.rest.spi.ResourceBinder;
+import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
 /**
  * Generate a JAXRS resource, and bind it.
@@ -37,7 +38,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
     private final Logger logger = LoggerFactory.getLogger(JAXRSServiceDefinitionGenerator.class);
 
     @Inject
-    public JAXRSServiceDefinitionGenerator(ResourceBinder binder){
+    public JAXRSServiceDefinitionGenerator(ResourceBinder binder) {
         this.binder = binder;
     }
 
@@ -59,8 +60,8 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
             {
                 AnnotationVisitor av1 = av0.visitArray("value");
-                for (ServiceDefinition.Media m: serviceDefinition.mediaToProduce()) {
-                    av1.visit(null, "application/" + m.name());
+                for (MediaType m : serviceDefinition.mediaToProduce()) {
+                    av1.visit(null, m.toMediaType());
                 }
                 av1.visitEnd();
             }
@@ -70,8 +71,8 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
             {
                 AnnotationVisitor av1 = av0.visitArray("value");
-                for (ServiceDefinition.Media m: serviceDefinition.mediaToConsume()) {
-                    av1.visit(null, "application/" + m.name());
+                for (MediaType m : serviceDefinition.mediaToConsume()) {
+                    av1.visit(null, m.toMediaType());
                 }
                 av1.visitEnd();
             }
@@ -505,7 +506,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         try {
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader());
             Class<?> clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
-            
+
             binder.bind(clazz);
 
         } catch (Throwable e) {
@@ -527,7 +528,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             if (name.endsWith("ServiceDescriptionResource")) {
                 return defineClass(name, clazzBytes, 0, clazzBytes.length);
             } else {
-               return super.findClass(name);
+                return super.findClass(name);
             }
         }
     }

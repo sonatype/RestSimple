@@ -28,10 +28,10 @@ import java.util.Map;
         serviceDefinition = new DefaultServiceDefinition();
 
         serviceDefinition .withPath("http://....")
-                .producing(ServiceDefinition.Media.JSON)
-                .producing(ServiceDefinition.Media.XML)
-                .consuming(ServiceDefinition.Media.JSON)
-                .consuming(ServiceDefinition.Media.XML)
+                .producing(ServiceDefinition.MediaType.JSON)
+                .producing(ServiceDefinition.MediaType.XML)
+                .consuming(ServiceDefinition.MediaType.JSON)
+                .consuming(ServiceDefinition.MediaType.XML)
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))

@@ -21,6 +21,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.rest.api.MediaType;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
@@ -40,8 +41,13 @@ public final class ServiceDefinitionProxy implements Opcodes {
      * @return An implementation of {@ServiceDefinitionClient}
      */
     public final static ServiceDefinitionClient getProxy(ServiceDefinition serviceDefinition) {
-        SimpleAsyncHttpClient sahc = new SimpleAsyncHttpClient.Builder().setUrl(serviceDefinition.path()).build();
-        return generate(sahc, serviceDefinition);
+        SimpleAsyncHttpClient.Builder builder = new SimpleAsyncHttpClient.Builder().setUrl(serviceDefinition.path());
+
+        for(MediaType m: serviceDefinition.mediaToProduce()) {
+            builder.addHeader("Accept",m.toMediaType());
+        }
+
+        return generate(builder.build(), serviceDefinition);
     }
 
     private static ServiceDefinitionClient generate(SimpleAsyncHttpClient sahc, ServiceDefinition serviceDefinition) {
