@@ -127,48 +127,48 @@ public class JAXRSModuleClientStubTest {
         server.stop();
     }
 
-//    @Test(timeOut = 20000)
-//    public void testPut() throws Throwable {
-//        logger.info("running test: testPut");
-//        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-//
-//        Response r = stub.doPut("myBook");
-//
-//        assertNotNull(r);
-//        assertEquals(r.getStatusCode(), 201);
-//    }
-//
-//    @Test(timeOut = 20000)
-//    public void testPost() throws Throwable {
-//        logger.info("running test: testPost");
-//        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-//
-//        stub.doPut("myBook");
-//        Map<String,String> m = new HashMap<String,String>();
-//        m.put("update","foo");
-//        Response r = stub.doPost(m,"myBook");
-//
-//        assertNotNull(r);
-//        assertEquals(r.getStatusCode(), 200);
-//
-//    }
-//
-//    @Test(timeOut = 20000)
-//    public void testGet() throws Throwable {
-//        logger.info("running test: testGet");
-//        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-//
-//        stub.doPut("myBook");
-//        Map<String,String> m = new HashMap<String,String>();
-//        m.put("update","foo");
-//        stub.doPost(m,"myBook");
-//        Response r = stub.doGet("myBook");
-//
-//        assertNotNull(r);
-//        assertEquals(r.getStatusCode(), 200);
-//        System.out.println(r.getResponseBody());
-//        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
-//    }
+    @Test(timeOut = 20000)
+    public void testPut() throws Throwable {
+        logger.info("running test: testPut");
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+
+        Response r = stub.doPut("myBook");
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 201);
+    }
+
+    @Test(timeOut = 20000)
+    public void testPost() throws Throwable {
+        logger.info("running test: testPost");
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+
+        stub.doPut("myBook");
+        Map<String,String> m = new HashMap<String,String>();
+        m.put("update","foo");
+        Response r = stub.doPost(m,"myBook");
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+
+    }
+
+    @Test(timeOut = 20000)
+    public void testGet() throws Throwable {
+        logger.info("running test: testGet");
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+
+        stub.doPut("myBook");
+        Map<String,String> m = new HashMap<String,String>();
+        m.put("update","foo");
+        stub.doPost(m,"myBook");
+        Response r = stub.doGet("myBook");
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+    }
 
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
