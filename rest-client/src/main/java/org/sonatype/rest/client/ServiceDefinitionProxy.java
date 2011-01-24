@@ -27,15 +27,22 @@ import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
 
 import java.lang.reflect.Constructor;
 
+/**
+ * Generates an implementation of {@link ServiceDefinitionClient} from a {@link ServiceDefinition}.
+ */
 public final class ServiceDefinitionProxy implements Opcodes {
 
     private final static Logger logger = LoggerFactory.getLogger(JAXRSServiceDefinitionGenerator.class);
 
+    /**
+     * Generates a {@link ServiceDefinitionClient} from a {@link ServiceDefinition} information.
+     * @param serviceDefinition a {@link ServiceDefinition}
+     * @return An implementation of {@ServiceDefinitionClient}
+     */
     public final static ServiceDefinitionClient getProxy(ServiceDefinition serviceDefinition) {
         SimpleAsyncHttpClient sahc = new SimpleAsyncHttpClient.Builder().setUrl(serviceDefinition.path()).build();
         return generate(sahc, serviceDefinition);
     }
-
 
     private static ServiceDefinitionClient generate(SimpleAsyncHttpClient sahc, ServiceDefinition serviceDefinition) {
 
