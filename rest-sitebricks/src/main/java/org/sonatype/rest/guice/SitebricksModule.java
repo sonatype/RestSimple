@@ -17,20 +17,20 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.impl.SitebricksServiceDefinitionGenerator;
+import org.sonatype.rest.impl.SitebricksServiceDefinitionProvider;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 import org.sonatype.rest.spi.ServiceDefinitionProvider;
 import org.sonatype.rest.spi.ServiceHandlerMapper;
-import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
-import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 
 /**
  * A JAXRS module that install the appropriate object needed to generate JAXRS Resource. 
  */
-public class JaxrsModule extends AbstractModule {
+public class SitebricksModule extends AbstractModule {
 
     private final Binder binder;
 
-    public JaxrsModule(Binder binder) {
+    public SitebricksModule(Binder binder) {
         this.binder = binder;
     }
 
@@ -49,13 +49,14 @@ public class JaxrsModule extends AbstractModule {
 
             @Override
             public void install(Module module) {
+                binder.install(module);
             }
         });
 
         
-        bind(ServiceDefinitionGenerator.class).to(JAXRSServiceDefinitionGenerator.class);
+        bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
-        bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
+        bind(ServiceDefinitionProvider.class).to(SitebricksServiceDefinitionProvider.class);
         
     }
 }

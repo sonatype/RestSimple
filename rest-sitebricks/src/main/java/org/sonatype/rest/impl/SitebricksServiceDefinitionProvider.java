@@ -10,17 +10,25 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.rest.spi;
+package org.sonatype.rest.impl;
 
-/**
- * Bind a resource using the Dependency injection used (Default is Guice).
- */
-public interface ResourceBinder {
+import com.google.inject.Inject;
+import org.sonatype.rest.api.DefaultServiceDefinition;
+import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.spi.ServiceDefinitionGenerator;
+import org.sonatype.rest.spi.ServiceDefinitionProvider;
+import org.sonatype.rest.spi.ServiceHandlerMapper;
 
-    /**
-     * Bind that class. Usually that method gets invoked to bind dynamically generated classes.
-     * @param clazz A {@link Class}
-     */
-    void bind(Class<?> clazz);
+public class SitebricksServiceDefinitionProvider implements ServiceDefinitionProvider {
 
+    @Inject
+    public ServiceDefinitionGenerator generator;
+
+    @Inject
+    ServiceHandlerMapper mapper;
+
+    @Override
+    public ServiceDefinition get() {
+        return new DefaultServiceDefinition(generator, mapper);
+    }
 }

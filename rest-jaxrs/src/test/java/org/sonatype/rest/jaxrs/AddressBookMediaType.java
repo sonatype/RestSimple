@@ -1,4 +1,4 @@
-package org.sonatype.rest.tests;
+package org.sonatype.rest.jaxrs;
 
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 

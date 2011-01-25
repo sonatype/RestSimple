@@ -1,20 +1,17 @@
-package org.sonatype.rest.tests;
+package org.sonatype.rest.sitebricks;
 
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
-@XmlRootElement
-public class AddressBookMediaType implements ServiceHandlerMediaType {
+public class AddressBookMediaType implements ServiceHandlerMediaType<List<String>> {
     public String entries;
-
 
     public AddressBookMediaType(){
     }
 
     @Override
-    public AddressBookMediaType visit(Object object) {
+    public AddressBookMediaType visit(List<String> object) {
         List<String> entries = (List<String>) object;
         StringBuilder b = new StringBuilder();
 
@@ -29,4 +26,13 @@ public class AddressBookMediaType implements ServiceHandlerMediaType {
         }
         return this;
     }
+
+    public String getEntries(){
+        return entries;
+    }
+
+    public void setEntries(String entries){
+        this.entries = entries;
+    }
+
 }

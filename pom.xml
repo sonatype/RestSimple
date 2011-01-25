@@ -16,7 +16,8 @@
     <modules>
         <module>rest-api</module>
         <module>rest-jaxrs</module>
-        <module>rest-client</module>        
+        <module>rest-sitebricks</module>
+        <module>rest-client</module>
     </modules>
 
     <dependencyManagement>

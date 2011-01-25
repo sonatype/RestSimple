@@ -1,19 +1,16 @@
-package org.sonatype.rest.tests;
+package org.sonatype.rest.sitebricks;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
-import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.rest.api.MediaType;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.api.ServiceHandlerMediaType;
-import org.sonatype.rest.guice.JaxrsModule;
+import org.sonatype.rest.guice.SitebricksModule;
 
-import java.util.HashMap;
-
-public class JAXRSServletModule extends ServletModule {
+public class SitebricksServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
@@ -22,7 +19,7 @@ public class JAXRSServletModule extends ServletModule {
         bind(ServiceHandlerMediaType.class).to(AddressBookMediaType.class);
         bind(ServiceEntity.class).toInstance(serviceEntity);
         
-        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
+        Injector injector = Guice.createInjector(new SitebricksModule(binder()));
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
@@ -36,12 +33,6 @@ public class JAXRSServletModule extends ServletModule {
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
-
-        // TODO: This is NOT portable
-        HashMap<String,String> initParams = new HashMap<String, String>();
-        initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
-
-        serve("/*").with(GuiceContainer.class, initParams);
 
     }
 

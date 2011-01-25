@@ -1,4 +1,4 @@
-package org.sonatype.rest.tests;
+package org.sonatype.rest.sitebricks;
 
 import org.sonatype.rest.api.ServiceEntity;
 
@@ -20,7 +20,8 @@ public class AddressBookServiceEntity implements ServiceEntity {
     }
 
     public List getAddressBook(String id) {
-        return book.get(id);
+        List<String> list = book.get(id);
+        return list == null ? new ArrayList<String>(): list;
     }
 
     public String updateAddressBook(String id, String value) {

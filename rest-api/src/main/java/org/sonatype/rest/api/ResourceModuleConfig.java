@@ -13,17 +13,15 @@
 package org.sonatype.rest.api;
 
 /**
- * Transforms the result {@link org.sonatype.rest.api.ServiceEntity} method invocation into a format expected by the client.
- * As an ezample, a {@link org.sonatype.rest.api.ServiceEntity} may produce String, which can be transformed by that class
- * into JSON or AML representation.
+ * Bind a resource using the Dependency injection used (Default is Guice).
  */
-public interface ServiceHandlerMediaType<T> {
+public interface ResourceModuleConfig<T> {
 
     /**
-     * Transform an Object into another representation
-     * @param object an Object i
-     * @return a transformed instance of {@link ServiceHandlerMediaType}
+     * Bind that class. Usually that method gets invoked to bind dynamically generated classes.
+     * @param clazz A {@link Class}
      */
-    ServiceHandlerMediaType visit(T object);
+    void bind(Class<?> clazz);
 
+    void install(T module);
 }

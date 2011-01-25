@@ -23,9 +23,9 @@ import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.rest.api.MediaType;
+import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceHandler;
-import org.sonatype.rest.spi.ResourceBinder;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
 /**
@@ -33,13 +33,13 @@ import org.sonatype.rest.spi.ServiceDefinitionGenerator;
  */
 public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerator, Opcodes {
 
-    private final ResourceBinder binder;
+    private final ResourceModuleConfig moduleConfig;
 
     private final Logger logger = LoggerFactory.getLogger(JAXRSServiceDefinitionGenerator.class);
 
     @Inject
-    public JAXRSServiceDefinitionGenerator(ResourceBinder binder) {
-        this.binder = binder;
+    public JAXRSServiceDefinitionGenerator(ResourceModuleConfig moduleConfig) {
+        this.moduleConfig = moduleConfig;
     }
 
     @Override
@@ -507,7 +507,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader());
             Class<?> clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
 
-            binder.bind(clazz);
+            moduleConfig.bind(clazz);
 
         } catch (Throwable e) {
             logger.error("generate", e);
