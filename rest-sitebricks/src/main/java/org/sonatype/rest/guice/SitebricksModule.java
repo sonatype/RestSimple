@@ -24,7 +24,7 @@ import org.sonatype.rest.spi.ServiceDefinitionProvider;
 import org.sonatype.rest.spi.ServiceHandlerMapper;
 
 /**
- * A JAXRS module that install the appropriate object needed to generate JAXRS Resource. 
+ * A Sitebricks module that install the appropriate object needed to generate Sitebricks Resource.
  */
 public class SitebricksModule extends AbstractModule {
 

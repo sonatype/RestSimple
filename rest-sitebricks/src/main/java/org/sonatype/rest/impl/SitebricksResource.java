@@ -8,7 +8,7 @@ import com.google.sitebricks.http.Delete;
 import com.google.sitebricks.http.Get;
 import com.google.sitebricks.http.Post;
 import com.google.sitebricks.http.Put;
-import com.google.sitebricks.http.Select;
+import com.google.sitebricks.http.negotiate.Accept;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.rest.api.ServiceEntity;
@@ -18,7 +18,6 @@ import org.sonatype.rest.spi.ServiceHandlerMapper;
 
 import java.lang.reflect.Method;
 
-@Select("Accept")
 public final class SitebricksResource {
 
     private String update;
@@ -34,7 +33,7 @@ public final class SitebricksResource {
     @Inject
     ServiceHandlerMediaType producer;
 
-    @Get
+    @Get @Accept("application/org.sonatype.rest.tests.addressBook+json")
     public Reply<?> get(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("get", service, value, null);
@@ -46,7 +45,7 @@ public final class SitebricksResource {
         return Reply.with(producer.visit(response)).as(Json.class);
     }
 
-    @Put
+    @Put @Accept("application/org.sonatype.rest.tests.addressBook+json")
     public Reply<?> put(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
         //URI location = UriBuilder.fromResource(getClass()).build(new String[]{"", ""});
@@ -59,7 +58,7 @@ public final class SitebricksResource {
         return Reply.with(response.toString()).status(201);
     }
 
-    @Post
+    @Post @Accept("application/org.sonatype.rest.tests.addressBook+json")
     public Reply<?> post(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
         Object response = createResponse("post", service, value, update);
@@ -75,7 +74,7 @@ public final class SitebricksResource {
         }
     }
 
-    @Delete
+    @Delete @Accept("application/org.sonatype.rest.tests.addressBook+json")
     public Reply<?> delete(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("delete", service, value, null);
@@ -112,7 +111,7 @@ public final class SitebricksResource {
     public void setUpdate(String update) {
         this.update = update;
     }
-    
+
 }
 
 
