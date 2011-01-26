@@ -500,7 +500,6 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         }
         cw.visitEnd();
 
-
         byte[] bytes = cw.toByteArray();
 
         try {
