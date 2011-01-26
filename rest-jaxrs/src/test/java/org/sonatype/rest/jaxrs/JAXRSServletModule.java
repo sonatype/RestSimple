@@ -8,7 +8,6 @@ import org.sonatype.rest.api.MediaType;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
-import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.guice.JaxrsModule;
 
 import java.util.HashMap;
@@ -19,7 +18,6 @@ public class JAXRSServletModule extends ServletModule {
     protected void configureServlets() {
 
         ServiceEntity serviceEntity = new AddressBookServiceEntity();
-        bind(ServiceHandlerMediaType.class).to(AddressBookMediaType.class);
         bind(ServiceEntity.class).toInstance(serviceEntity);
         
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
@@ -31,7 +29,7 @@ public class JAXRSServletModule extends ServletModule {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook", AddressBookMediaType.class))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)

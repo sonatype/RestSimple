@@ -36,14 +36,22 @@ public class JaxrsModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        /**
+         * We MUST bin the mapper with both Binder to be able to share the same instance.
+         */
         final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
+        binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
         
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
 
             @Override
+            public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
+                binder.bind(clazz).to(clazz2);
+            }
+
+            @Override
             public void bind(Class<?> clazz) {
-                binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
                 binder.bind(clazz);
             }
 

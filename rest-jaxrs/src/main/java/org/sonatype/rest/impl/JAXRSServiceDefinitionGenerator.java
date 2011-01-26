@@ -13,6 +13,7 @@
 package org.sonatype.rest.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Module;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -26,6 +27,7 @@ import org.sonatype.rest.api.MediaType;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceHandler;
+import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
 /**
@@ -44,6 +46,19 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
     @Override
     public void generate(ServiceDefinition serviceDefinition) {
+
+        boolean isSet = false;
+        for(ServiceHandler serviceHandler: serviceDefinition.serviceHandlers()) {
+            if (serviceHandler.mediaType() != null) {
+                moduleConfig.bindTo(ServiceHandlerMediaType.class, serviceHandler.mediaType());
+                isSet = true;
+            }
+        }
+
+        if (!isSet) {
+            throw new IllegalStateException("No ServiceHandlerMediaType has been defined");
+        }
+                        
         ClassWriter cw = new ClassWriter(0);
         FieldVisitor fv;
         MethodVisitor mv;

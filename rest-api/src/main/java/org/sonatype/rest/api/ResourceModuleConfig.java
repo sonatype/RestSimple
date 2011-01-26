@@ -19,6 +19,11 @@ package org.sonatype.rest.api;
 public interface ResourceModuleConfig<T> {
 
     /**
+     * Bind static classes
+     */
+    <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2);
+
+    /**
      * Bind that class. Usually that method gets invoked to bind dynamically generated classes.
      * @param clazz A {@link Class}
      */
@@ -26,7 +31,7 @@ public interface ResourceModuleConfig<T> {
 
     /**
      * Install a module
-     * @param module  The typed module.
+     * @param module
      */
     void install(T module);
 }

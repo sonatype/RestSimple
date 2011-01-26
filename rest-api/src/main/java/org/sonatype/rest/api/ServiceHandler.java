@@ -22,9 +22,11 @@ public class ServiceHandler {
     private final ServiceDefinition.HttpMethod httpMethod;
     private final String path;
     private final String method;
+    private final Class<? extends ServiceHandlerMediaType> mediaType;
 
     /**
      * Create a new {@link ServiceHandler}
+     *
      * @param httpMethod an {@link ServiceDefinition.HttpMethod}
      * @param methodToInvoke a method's name used to invoke a {@link ServiceEntity}
      */
@@ -34,14 +36,28 @@ public class ServiceHandler {
 
     /**
      * Create a new {@link ServiceHandler}
+     *
      * @param httpMethod an {@link ServiceDefinition.HttpMethod}
      * @param path a uri used to map the resource to this {@link ServiceHandler}
      * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
      */
     public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, String methodToInvoke) {
+        this(httpMethod, path, methodToInvoke, null);
+    }
+
+    /**
+     * Create a new {@link ServiceHandler}
+     *
+     * @param httpMethod an {@link ServiceDefinition.HttpMethod}
+     * @param path a uri used to map the resource to this {@link ServiceHandler}
+     * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
+     * @param mediaType a {@link ServiceHandlerMediaType} that will be used when serializing the response
+     */
+    public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, String methodToInvoke, Class<? extends ServiceHandlerMediaType> mediaType) {
         this.httpMethod = httpMethod;
         this.path = path;
         this.method = methodToInvoke;
+        this.mediaType = mediaType;
     }
 
     /**
@@ -66,6 +82,14 @@ public class ServiceHandler {
      */
     public String getMethod() {
         return method;
+    }
+
+    /**
+     * Return the {@link ServiceHandlerMediaType} used to write the response's back.
+     * @return the {@link ServiceHandlerMediaType} used to write the response's back.
+     */
+    public Class<? extends ServiceHandlerMediaType> mediaType(){
+        return mediaType;
     }
 
 }

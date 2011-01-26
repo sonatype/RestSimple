@@ -38,12 +38,17 @@ public class SitebricksModule extends AbstractModule {
     protected void configure() {
         final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
-        
+        binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
+
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
 
             @Override
+            public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
+                binder.bind(clazz).to(clazz2);
+            }
+
+            @Override
             public void bind(Class<?> clazz) {
-                binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
                 binder.bind(clazz);
             }
 

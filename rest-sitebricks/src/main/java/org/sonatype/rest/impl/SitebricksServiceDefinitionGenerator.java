@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceHandler;
+import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
 /**
@@ -43,6 +44,17 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     @Override
     public void generate(final ServiceDefinition serviceDefinition) {
+        boolean isSet = false;
+        for(ServiceHandler serviceHandler: serviceDefinition.serviceHandlers()) {
+            if (serviceHandler.mediaType() != null) {
+                moduleConfig.bindTo(ServiceHandlerMediaType.class, serviceHandler.mediaType());
+                isSet = true;
+            }
+        }
+
+        if (!isSet) {
+            throw new IllegalStateException("No ServiceHandlerMediaType has been defined");
+        }
 
         ClassWriter cw = new ClassWriter(0);
         FieldVisitor fv;

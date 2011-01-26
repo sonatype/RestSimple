@@ -16,7 +16,6 @@ public class SitebricksServletModule extends ServletModule {
     protected void configureServlets() {
 
         ServiceEntity serviceEntity = new AddressBookServiceEntity();
-        bind(ServiceHandlerMediaType.class).to(AddressBookMediaType.class);
         bind(ServiceEntity.class).toInstance(serviceEntity);
         
         Injector injector = Guice.createInjector(new SitebricksModule(binder()));
@@ -28,7 +27,7 @@ public class SitebricksServletModule extends ServletModule {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook", AddressBookMediaType.class))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
                 .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
