@@ -17,14 +17,14 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 import org.sonatype.rest.spi.ServiceDefinitionProvider;
 import org.sonatype.rest.spi.ServiceHandlerMapper;
-import org.sonatype.rest.impl.JAXRSServiceDefinitionGenerator;
-import org.sonatype.rest.impl.JAXRSServiceDefinitionProvider;
 
 /**
- * A JAXRS module that install the appropriate object needed to generate JAXRS Resource. 
+ * A JAXRS module that install the appropriate object needed to generate JAXRS Resource.
  */
 public class JaxrsModule extends AbstractModule {
 
@@ -42,8 +42,13 @@ public class JaxrsModule extends AbstractModule {
         final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
-        
-        bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
+
+        bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>() {
+
+            @Override
+            public <A> void bindToInstance(Class<A> clazz, A instance) {
+                binder.bind(clazz).toInstance(instance);
+            }
 
             @Override
             public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
@@ -60,10 +65,10 @@ public class JaxrsModule extends AbstractModule {
             }
         });
 
-        
+
         bind(ServiceDefinitionGenerator.class).to(JAXRSServiceDefinitionGenerator.class);
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
         bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
-        
+
     }
 }

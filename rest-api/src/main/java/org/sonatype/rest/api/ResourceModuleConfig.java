@@ -19,7 +19,16 @@ package org.sonatype.rest.api;
 public interface ResourceModuleConfig<T> {
 
     /**
+     * Bind an instance to it's class.
+     * @param clazz A Class
+     * @param instance An instance to bind to
+     */
+    <A> void bindToInstance(Class<A> clazz, A instance);
+
+    /**
      * Bind static classes
+     * @param clazz  A class
+     * @prama clazz2 A class to bind to
      */
     <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2);
 

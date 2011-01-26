@@ -7,19 +7,15 @@ import org.sonatype.rest.api.MediaType;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
-import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.guice.SitebricksModule;
 
 public class SitebricksServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-
-        ServiceEntity serviceEntity = new AddressBookServiceEntity();
-        bind(ServiceEntity.class).toInstance(serviceEntity);
-        
         Injector injector = Guice.createInjector(new SitebricksModule(binder()));
 
+        ServiceEntity serviceEntity = new AddressBookServiceEntity();
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))

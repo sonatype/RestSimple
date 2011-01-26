@@ -43,6 +43,11 @@ public class SitebricksModule extends AbstractModule {
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
 
             @Override
+            public <A> void bindToInstance(Class<A> clazz, A instance) {
+                binder.bind(clazz).toInstance(instance);
+            }
+
+            @Override
             public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
                 binder.bind(clazz).to(clazz2);
             }

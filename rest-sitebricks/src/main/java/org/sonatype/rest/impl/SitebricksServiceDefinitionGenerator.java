@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
+import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
@@ -57,6 +58,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         if (!isSet) {
             moduleConfig.bindTo(ServiceHandlerMediaType.class, StringServiceHandlerMediaType.class);
         }
+        moduleConfig.bindToInstance(ServiceEntity.class, serviceDefinition.serviceEntity());
 
         ClassWriter cw = new ClassWriter(0);
         FieldVisitor fv;

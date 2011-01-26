@@ -16,12 +16,9 @@ public class JAXRSServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-
-        ServiceEntity serviceEntity = new AddressBookServiceEntity();
-        bind(ServiceEntity.class).toInstance(serviceEntity);
-        
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
 
+        ServiceEntity serviceEntity = new AddressBookServiceEntity();                
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
