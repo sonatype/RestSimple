@@ -120,7 +120,7 @@ public class JAXRSModuleTest {
 
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();        
@@ -134,7 +134,7 @@ public class JAXRSModuleTest {
 
     @Test(timeOut = 20000)
     public void testInvalidPost() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testInvalidPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
         Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
@@ -164,7 +164,7 @@ public class JAXRSModuleTest {
 
     @Test(timeOut = 20000)
     public void testInvalidBookGet() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testInvalidBookGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
         Response r = c.prepareGet(targetUrl + "/getAddressBook/zeBook").addHeader("Accept", acceptHeader).execute().get();
@@ -179,7 +179,7 @@ public class JAXRSModuleTest {
 
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
-        logger.info("running test: testGet");
+        logger.info("running test: testDelete");
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
@@ -197,7 +197,7 @@ public class JAXRSModuleTest {
 
     @Test(timeOut = 20000)
     public void testInvalidAcceptPut() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testInvalidAcceptPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
         Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", "foo").execute().get();
@@ -210,7 +210,7 @@ public class JAXRSModuleTest {
 
     @Test(timeOut = 20000)
     public void testAcceptPut() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testAcceptPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
         Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
