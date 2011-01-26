@@ -13,7 +13,6 @@
 package org.sonatype.rest.impl;
 
 import com.google.inject.Inject;
-import com.google.inject.Module;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -56,7 +55,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         }
 
         if (!isSet) {
-            throw new IllegalStateException("No ServiceHandlerMediaType has been defined");
+            moduleConfig.bindTo(ServiceHandlerMediaType.class, StringServiceHandlerMediaType.class);
         }
                         
         ClassWriter cw = new ClassWriter(0);
@@ -581,7 +580,24 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         }
     }
 
+    public static class StringServiceHandlerMediaType implements ServiceHandlerMediaType<String> {
+
+        private String value;
+
+        @Override
+        public ServiceHandlerMediaType visit(java.lang.String value) {
+            this.value = value;
+            return this;
+        }
+
+        public java.lang.String getValue(){
+            return value;
+        }
+    }
 }
+
+
+
 
 
 

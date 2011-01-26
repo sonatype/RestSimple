@@ -11,8 +11,7 @@ public class AddressBookMediaType implements ServiceHandlerMediaType<List<String
     }
 
     @Override
-    public AddressBookMediaType visit(List<String> object) {
-        List<String> entries = (List<String>) object;
+    public AddressBookMediaType visit(List<String> entries) {
         StringBuilder b = new StringBuilder();
 
         if (entries == null) {

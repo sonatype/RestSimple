@@ -53,7 +53,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
 
         if (!isSet) {
-            throw new IllegalStateException("No ServiceHandlerMediaType has been defined");
+            moduleConfig.bindTo(ServiceHandlerMediaType.class, StringServiceHandlerMediaType.class);
         }
 
         ClassWriter cw = new ClassWriter(0);
@@ -551,6 +551,21 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             } else {
                 return super.findClass(name);
             }
+        }
+    }
+
+    public static class StringServiceHandlerMediaType implements ServiceHandlerMediaType<String> {
+
+        private String value;
+
+        @Override
+        public ServiceHandlerMediaType visit(java.lang.String value) {
+            this.value = value;
+            return this;
+        }
+
+        public java.lang.String getValue(){
+            return value;
         }
     }
 
