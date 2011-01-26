@@ -108,9 +108,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                         av0.visitEnd();
                     }
                     {
-                        av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
-                        av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
-                        av0.visitEnd();
+                        // TODO: Sitebricks only support one media
+                        if (serviceDefinition.mediaToProduce().size() > 0) {
+                            av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
+                            av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
+                            av0.visitEnd();
+                        }
                     }
                     {
                         av0 = mv.visitParameterAnnotation(0, "Lcom/google/inject/name/Named;", true);
@@ -170,9 +173,11 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                         av0.visitEnd();
                     }
                     {
-                        av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
-                        av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
-                        av0.visitEnd();
+                        if (serviceDefinition.mediaToProduce().size() > 0) {
+                            av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
+                            av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
+                            av0.visitEnd();
+                        }
                     }
                     {
                         av0 = mv.visitParameterAnnotation(0, "Lcom/google/inject/name/Named;", true);
@@ -229,9 +234,11 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                         av0.visitEnd();
                     }
                     {
-                        av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
-                        av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
-                        av0.visitEnd();
+                        if (serviceDefinition.mediaToProduce().size() > 0) {
+                            av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
+                            av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
+                            av0.visitEnd();
+                        }
                     }
                     {
                         av0 = mv.visitParameterAnnotation(0, "Lcom/google/inject/name/Named;", true);
@@ -296,9 +303,11 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                         av0.visitEnd();
                     }
                     {
-                        av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
-                        av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
-                        av0.visitEnd();
+                        if (serviceDefinition.mediaToProduce().size() > 0) {                        
+                            av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
+                            av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
+                            av0.visitEnd();
+                        }
                     }
                     {
                         av0 = mv.visitParameterAnnotation(0, "Lcom/google/inject/name/Named;", true);
