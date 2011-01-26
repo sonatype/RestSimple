@@ -29,6 +29,8 @@ import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
+import java.util.UUID;
+
 /**
  * Generate a JAXRS resource, and bind it.
  */
@@ -63,7 +65,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         MethodVisitor mv;
         AnnotationVisitor av0;
 
-        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, "org/sonatype/rest/model/ServiceDescriptionResource", null, "java/lang/Object", null);
+        String uuid = UUID.randomUUID().toString().replace( "-", "" ).substring( 0, 4 );
+        String className = "org/sonatype/rest/model/ServiceDescriptionResource" + uuid;
+
+        cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
 
         {
             av0 = cw.visitAnnotation("Ljavax/ws/rs/Path;", true);
@@ -132,9 +137,9 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V");
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitLdcInsn(Type.getType("Lorg/sonatype/rest/model/ServiceDescriptionResource;"));
+            mv.visitLdcInsn(Type.getType("L" + className + ";"));
             mv.visitMethodInsn(INVOKESTATIC, "org/slf4j/LoggerFactory", "getLogger", "(Ljava/lang/Class;)Lorg/slf4j/Logger;");
-            mv.visitFieldInsn(PUTFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+            mv.visitFieldInsn(PUTFIELD, className, "logger", "Lorg/slf4j/Logger;");
             mv.visitInsn(RETURN);
             mv.visitMaxs(2, 1);
             mv.visitEnd();
@@ -166,7 +171,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                     }
                     mv.visitCode();
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                    mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
                     mv.visitLdcInsn("HTTP GET: Generated Resource invocation for method {} with id {}");
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitVarInsn(ALOAD, 2);
@@ -176,10 +181,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "producer", "Lorg/sonatype/rest/api/ServiceHandlerMediaType;");
+                    mv.visitFieldInsn(GETFIELD, className, "producer", "Lorg/sonatype/rest/api/ServiceHandlerMediaType;");
                     mv.visitVarInsn(ALOAD, 3);
                     mv.visitMethodInsn(INVOKEINTERFACE, "org/sonatype/rest/api/ServiceHandlerMediaType", "visit", "(Ljava/lang/Object;)Lorg/sonatype/rest/api/ServiceHandlerMediaType;");
                     mv.visitInsn(ARETURN);
@@ -214,7 +219,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         mv.visitCode();
                         mv.visitVarInsn(ALOAD, 0);
-                        mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                        mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
                         mv.visitLdcInsn("HTTP HEAD: Generated Resource invocation for method {} with id {}");
                         mv.visitVarInsn(ALOAD, 1);
                         mv.visitVarInsn(ALOAD, 2);
@@ -224,7 +229,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         mv.visitVarInsn(ALOAD, 1);
                         mv.visitVarInsn(ALOAD, 2);
                         mv.visitInsn(ACONST_NULL);
-                        mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                        mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                         mv.visitVarInsn(ASTORE, 3);
                         mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "()Ljavax/ws/rs/core/Response$ResponseBuilder;");
                         mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
@@ -261,7 +266,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         mv.visitCode();
                         mv.visitVarInsn(ALOAD, 0);
-                        mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                        mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
                         mv.visitLdcInsn("HTTP PUT: Generated Resource invocation for method {} with id {}");
                         mv.visitVarInsn(ALOAD, 1);
                         mv.visitVarInsn(ALOAD, 2);
@@ -286,7 +291,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         mv.visitVarInsn(ALOAD, 1);
                         mv.visitVarInsn(ALOAD, 2);
                         mv.visitInsn(ACONST_NULL);
-                        mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                        mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                         mv.visitVarInsn(ASTORE, 4);
                         mv.visitVarInsn(ALOAD, 3);
                         mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "created", "(Ljava/net/URI;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
@@ -333,7 +338,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             }
                             mv.visitCode();
                             mv.visitVarInsn(ALOAD, 0);
-                            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                            mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
                             mv.visitLdcInsn("HTTP POST: Generated Resource invocation for method {} with id {} and update {}");
                             mv.visitVarInsn(ALOAD, 1);
                             mv.visitVarInsn(ALOAD, 2);
@@ -343,7 +348,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             mv.visitVarInsn(ALOAD, 1);
                             mv.visitVarInsn(ALOAD, 2);
                             mv.visitVarInsn(ALOAD, 3);
-                            mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                            mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                             mv.visitVarInsn(ASTORE, 4);
                             mv.visitVarInsn(ALOAD, 4);
                             Label l0 = new Label();
@@ -389,7 +394,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             }
                             mv.visitCode();
                             mv.visitVarInsn(ALOAD, 0);
-                            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                            mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
                             mv.visitLdcInsn("HTTP DELETE: Generated Resource invocation for method {} with id {}");
                             mv.visitVarInsn(ALOAD, 1);
                             mv.visitVarInsn(ALOAD, 2);
@@ -399,7 +404,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             mv.visitVarInsn(ALOAD, 1);
                             mv.visitVarInsn(ALOAD, 2);
                             mv.visitInsn(ACONST_NULL);
-                            mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                            mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                             mv.visitVarInsn(ASTORE, 3);
                             mv.visitVarInsn(ALOAD, 3);
                             mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
@@ -420,7 +425,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             Label l2 = new Label();
             mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Throwable");
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "mapper", "Lorg/sonatype/rest/spi/ServiceHandlerMapper;");
+            mv.visitFieldInsn(GETFIELD, className, "mapper", "Lorg/sonatype/rest/spi/ServiceHandlerMapper;");
             mv.visitVarInsn(ALOAD, 2);
             mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/spi/ServiceHandlerMapper", "map", "(Ljava/lang/String;)Lorg/sonatype/rest/api/ServiceHandler;");
             mv.visitVarInsn(ASTORE, 5);
@@ -472,7 +477,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             Label l5 = new Label();
             mv.visitJumpInsn(IFNULL, l5);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
+            mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
             mv.visitVarInsn(ALOAD, 6);
             mv.visitInsn(ICONST_2);
@@ -489,7 +494,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitVarInsn(ASTORE, 7);
             mv.visitVarInsn(ALOAD, 7);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
+            mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
             mv.visitInsn(ICONST_2);
             mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
             mv.visitInsn(DUP);
@@ -508,7 +513,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitLabel(l5);
             mv.visitFrame(Opcodes.F_APPEND, 2, new Object[]{"java/lang/String", "java/lang/reflect/Method"}, 0, null);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
+            mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
             mv.visitVarInsn(ALOAD, 6);
             mv.visitInsn(ICONST_1);
@@ -521,7 +526,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitVarInsn(ASTORE, 7);
             mv.visitVarInsn(ALOAD, 7);
             mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
+            mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
             mv.visitInsn(ICONST_1);
             mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
             mv.visitInsn(DUP);
@@ -536,7 +541,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitLabel(l1);
             mv.visitInsn(ARETURN);
             mv.visitLabel(l2);
-            mv.visitFrame(Opcodes.F_FULL, 7, new Object[]{"org/sonatype/rest/model/ServiceDescriptionResource", "java/lang/String", "java/lang/String", "java/lang/String", "java/lang/String", "org/sonatype/rest/api/ServiceHandler", "java/lang/String"}, 1, new Object[]{"java/lang/Throwable"});
+            mv.visitFrame(Opcodes.F_FULL, 7, new Object[]{className, "java/lang/String", "java/lang/String", "java/lang/String", "java/lang/String", "org/sonatype/rest/api/ServiceHandler", "java/lang/String"}, 1, new Object[]{"java/lang/Throwable"});
             mv.visitVarInsn(ASTORE, 7);
             mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
             mv.visitInsn(DUP);
@@ -551,8 +556,9 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         byte[] bytes = cw.toByteArray();
 
         try {
-            ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader());
-            Class<?> clazz = cl.loadClass("org.sonatype.rest.model.ServiceDescriptionResource");
+            String classToLoad = className.replace("/",".");
+            ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader(), classToLoad);
+            Class<?> clazz = cl.loadClass(classToLoad);
 
             moduleConfig.bind(clazz);
 
@@ -564,15 +570,17 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
     private final static class ByteClassloader extends ClassLoader {
 
         private final byte[] clazzBytes;
+        private final String className;
 
-        protected ByteClassloader(byte[] clazzBytes, ClassLoader parent) {
+        protected ByteClassloader(byte[] clazzBytes, ClassLoader parent, String className) {
             super(parent);
             this.clazzBytes = clazzBytes;
+            this.className = className;
         }
 
         protected Class findClass(String name) throws ClassNotFoundException {
 
-            if (name.endsWith("ServiceDescriptionResource")) {
+            if (name.compareTo(className) == 0) {
                 return defineClass(name, clazzBytes, 0, clazzBytes.length);
             } else {
                 return super.findClass(name);
