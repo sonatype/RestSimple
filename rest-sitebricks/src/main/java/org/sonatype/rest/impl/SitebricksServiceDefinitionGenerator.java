@@ -527,7 +527,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         try {
             String classToLoad = className.replace("/",".");
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader(), classToLoad);
-            final Class<?> clazz = cl.loadClass(classToLoad);
+            final Class<?> clazz = cl.loadClass(classToLoad);                                                                                 
 
             moduleConfig.bind(clazz);
             moduleConfig.install(new com.google.sitebricks.SitebricksModule() {

@@ -220,4 +220,21 @@ public class JAXRSModuleTest {
 
         c.close();
     }
+
+    @Test(timeOut = 20000)
+    public void testSecondResourceGet() throws Throwable {
+        logger.info("running test: testSecondResourceGet");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        Response r = c.prepareGet(targetUrl + "/foo/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+
+        c.close();
+    }
 }

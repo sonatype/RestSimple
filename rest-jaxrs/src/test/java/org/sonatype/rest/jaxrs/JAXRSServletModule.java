@@ -35,6 +35,20 @@ public class JAXRSServletModule extends ServletModule {
                 .usingEntity(serviceEntity)
                 .bind();
 
+        serviceDefinition = injector.getInstance(ServiceDefinition.class);
+        serviceDefinition
+                .withPath("/foo")
+                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
+                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
+                .consuming(MediaType.JSON)
+                .consuming(MediaType.XML)
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
+                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
+                .usingEntity(serviceEntity)
+                .bind();
+
         // TODO: This is NOT portable
         HashMap<String,String> initParams = new HashMap<String, String>();
         initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
