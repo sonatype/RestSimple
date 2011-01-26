@@ -13,7 +13,8 @@
 package org.sonatype.rest.api;
 
 /**
- * Bind a resource using the Dependency injection used (Default is Guice).
+ * Bind and install a resource using dependency injection (Default is Guice). This class can also be used
+ * to manually bind or install a resource if dependency injection is not supported.
  */
 public interface ResourceModuleConfig<T> {
 
@@ -23,5 +24,9 @@ public interface ResourceModuleConfig<T> {
      */
     void bind(Class<?> clazz);
 
+    /**
+     * Install a module
+     * @param module  The typed module.
+     */
     void install(T module);
 }

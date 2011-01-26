@@ -19,6 +19,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A default {@link ServiceDefinition} which can be injected or created directly. If you aren't using injection,
+ * you must specify a {@link ServiceDefinitionGenerator} if you want your {@link ServiceDefinition} to be generated and deployed
+ *
+ */
 public class DefaultServiceDefinition implements ServiceDefinition {
     private String basePath = "";
     private ServiceEntity serviceEntity;

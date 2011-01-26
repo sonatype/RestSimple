@@ -54,7 +54,9 @@ import java.util.List;
  * which will invoke the {@link ServiceEntity}
  * <p>
  *     serviceEntity.createAddressBook(myBook)  
- *
+ * <p>
+ * Note. A {@link ServiceDefinition} gets generated only when {@link ServiceDefinition#bind} gets invoked. You can
+ * reconfigure the service at any moment and regenerate it's associated resource at any moment. 
  */
 public interface ServiceDefinition {
 

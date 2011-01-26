@@ -19,6 +19,10 @@ import java.util.List;
  */
 public interface ServiceEntity {
 
+    /**
+     * Return a {@link List} or version this entiry is supporting.
+     * @return a {@link List} or version this entiry is supporting.
+     */
     public List<String> version();
 
 }

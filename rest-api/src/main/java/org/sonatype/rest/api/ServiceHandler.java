@@ -35,7 +35,7 @@ public class ServiceHandler {
     /**
      * Create a new {@link ServiceHandler}
      * @param httpMethod an {@link ServiceDefinition.HttpMethod}
-     * @path path a uri used to map the resource to this {@link ServiceHandler}
+     * @param path a uri used to map the resource to this {@link ServiceHandler}
      * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
      */
     public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, String methodToInvoke) {
@@ -53,8 +53,8 @@ public class ServiceHandler {
     }
 
     /**
-     * Retunr the URI used to map this {@link ServiceHandler}
-     * @return
+     * Return the URI used to map this {@link ServiceHandler}
+     * @return the URI used to map this {@link ServiceHandler}
      */
     public String getPath() {
         return path;
@@ -62,7 +62,7 @@ public class ServiceHandler {
 
     /**
      * Return the HTTP method.
-     * @return
+     * @return the HTTP method.
      */
     public String getMethod() {
         return method;

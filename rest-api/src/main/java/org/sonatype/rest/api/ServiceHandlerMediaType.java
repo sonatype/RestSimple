@@ -15,7 +15,7 @@ package org.sonatype.rest.api;
 /**
  * Transforms the result {@link org.sonatype.rest.api.ServiceEntity} method invocation into a format expected by the client.
  * As an ezample, a {@link org.sonatype.rest.api.ServiceEntity} may produce String, which can be transformed by that class
- * into JSON or AML representation.
+ * into JSON or XML representation.
  */
 public interface ServiceHandlerMediaType<T> {
 
