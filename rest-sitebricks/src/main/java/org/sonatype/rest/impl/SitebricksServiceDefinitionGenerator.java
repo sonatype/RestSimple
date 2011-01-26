@@ -98,11 +98,17 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitMaxs(2, 1);
             mv.visitEnd();
         }
+        int duplicateCounter = -1;
         for (ServiceHandler serviceHandler : serviceDefinition.serviceHandlers()) {
             {
+                String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                if (duplicateCounter++ >= 0) {
+                    methodName = methodName + duplicateCounter;
+                }
+
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("get")) {
 
-                    mv = cw.visitMethod(ACC_PUBLIC, "get", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
+                    mv = cw.visitMethod(ACC_PUBLIC, methodName , "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
                     {
                         av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/Get;", true);
                         av0.visitEnd();
@@ -164,10 +170,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitEnd();
                 }
             }
+            duplicateCounter = -1;
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("put")) {
 
                 {
-                    mv = cw.visitMethod(ACC_PUBLIC, "put", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
+                    String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                    if (duplicateCounter++ >= 0) {
+                        methodName = methodName + "_" + duplicateCounter;
+                    }
+
+                    mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
                     {
                         av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/Put;", true);
                         av0.visitEnd();
@@ -226,9 +238,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitEnd();
                 }
             }
+
+            duplicateCounter = -1;                        
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("post")) {
                 {
-                    mv = cw.visitMethod(ACC_PUBLIC, "post", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
+                    String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                    if (duplicateCounter++ >= 0) {
+                        methodName = methodName + "_" + duplicateCounter;
+                    }
+
+                    mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
                     {
                         av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/Post;", true);
                         av0.visitEnd();
@@ -295,9 +314,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitEnd();
                 }
             }
+
+            duplicateCounter = -1;                                    
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("delete")) {
                 {
-                    mv = cw.visitMethod(ACC_PUBLIC, "delete", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
+                    String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                    if (duplicateCounter++ >= 0) {
+                        methodName = methodName + "_" + duplicateCounter;
+                    }
+
+                    mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
                     {
                         av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/Delete;", true);
                         av0.visitEnd();

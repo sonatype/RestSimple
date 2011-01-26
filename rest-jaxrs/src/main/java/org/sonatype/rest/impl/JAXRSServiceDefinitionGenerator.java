@@ -125,11 +125,16 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitMaxs(2, 1);
             mv.visitEnd();
         }
+        int duplicateCounter = -1;
         for (ServiceHandler serviceHandler : serviceDefinition.serviceHandlers()) {
-
             {
+                String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                if (duplicateCounter++ >= 0) {
+                    methodName = methodName + duplicateCounter;
+                }
+
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("get")) {
-                    mv = cw.visitMethod(ACC_PUBLIC, "get", "(Ljava/lang/String;Ljava/lang/String;)Lorg/sonatype/rest/api/ServiceHandlerMediaType;", null, null);
+                    mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Lorg/sonatype/rest/api/ServiceHandlerMediaType;", null, null);
                     {
                         av0 = mv.visitAnnotation("Ljavax/ws/rs/GET;", true);
                         av0.visitEnd();
@@ -168,199 +173,228 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                     mv.visitEnd();
                 }
             }
-
             {
+                duplicateCounter = -1;
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("head")) {
 
-                    mv = cw.visitMethod(ACC_PUBLIC, "head", "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
                     {
-                        av0 = mv.visitAnnotation("Ljavax/ws/rs/HEAD;", true);
-                        av0.visitEnd();
+                        String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                        if (duplicateCounter++ >= 0) {
+                            methodName = methodName + "_" + duplicateCounter;
+                        }
+
+                        mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                        {
+                            av0 = mv.visitAnnotation("Ljavax/ws/rs/HEAD;", true);
+                            av0.visitEnd();
+                        }
+                        {
+                            av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
+                            av0.visit("value", "method");
+                            av0.visitEnd();
+                        }
+                        {
+                            av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
+                            av0.visit("value", "id");
+                            av0.visitEnd();
+                        }
+                        mv.visitCode();
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                        mv.visitLdcInsn("HTTP HEAD: Generated Resource invocation for method {} with id {}");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitVarInsn(ALOAD, 2);
+                        mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitLdcInsn("head");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitVarInsn(ALOAD, 2);
+                        mv.visitInsn(ACONST_NULL);
+                        mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                        mv.visitVarInsn(ASTORE, 3);
+                        mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "()Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                        mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
+                        mv.visitInsn(ARETURN);
+                        mv.visitMaxs(5, 4);
+                        mv.visitEnd();
                     }
-                    {
-                        av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "method");
-                        av0.visitEnd();
-                    }
-                    {
-                        av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "id");
-                        av0.visitEnd();
-                    }
-                    mv.visitCode();
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
-                    mv.visitLdcInsn("HTTP HEAD: Generated Resource invocation for method {} with id {}");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn("head");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
-                    mv.visitVarInsn(ASTORE, 3);
-                    mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "()Ljavax/ws/rs/core/Response$ResponseBuilder;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-                    mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 4);
-                    mv.visitEnd();
                 }
             }
             {
+                duplicateCounter = -1;
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("put")) {
 
-                    mv = cw.visitMethod(ACC_PUBLIC, "put", "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
                     {
-                        av0 = mv.visitAnnotation("Ljavax/ws/rs/PUT;", true);
-                        av0.visitEnd();
-                    }
-                    {
-                        av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "method");
-                        av0.visitEnd();
-                    }
-                    {
-                        av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "id");
-                        av0.visitEnd();
-                    }
-                    mv.visitCode();
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
-                    mv.visitLdcInsn("HTTP PUT: Generated Resource invocation for method {} with id {}");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
-                    mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/UriBuilder", "fromResource", "(Ljava/lang/Class;)Ljavax/ws/rs/core/UriBuilder;");
-                    mv.visitInsn(ICONST_2);
-                    mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
-                    mv.visitInsn(DUP);
-                    mv.visitInsn(ICONST_0);
-                    mv.visitLdcInsn("");
-                    mv.visitInsn(AASTORE);
-                    mv.visitInsn(DUP);
-                    mv.visitInsn(ICONST_1);
-                    mv.visitLdcInsn("");
-                    mv.visitInsn(AASTORE);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/UriBuilder", "build", "([Ljava/lang/Object;)Ljava/net/URI;");
-                    mv.visitVarInsn(ASTORE, 3);
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn("put");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
-                    mv.visitVarInsn(ASTORE, 4);
-                    mv.visitVarInsn(ALOAD, 3);
-                    mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "created", "(Ljava/net/URI;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-                    mv.visitVarInsn(ALOAD, 4);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-                    mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 5);
-                    mv.visitEnd();
-                }
-            }
-            {
-                if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("post")) {
+                        String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                        if (duplicateCounter++ >= 0) {
+                            methodName = methodName + "_" + duplicateCounter;
+                        }
 
-                    mv = cw.visitMethod(ACC_PUBLIC, "post", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
-                    {
-                        av0 = mv.visitAnnotation("Ljavax/ws/rs/POST;", true);
-                        av0.visitEnd();
+                        mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                        {
+                            av0 = mv.visitAnnotation("Ljavax/ws/rs/PUT;", true);
+                            av0.visitEnd();
+                        }
+                        {
+                            av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
+                            av0.visit("value", "method");
+                            av0.visitEnd();
+                        }
+                        {
+                            av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
+                            av0.visit("value", "id");
+                            av0.visitEnd();
+                        }
+                        mv.visitCode();
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                        mv.visitLdcInsn("HTTP PUT: Generated Resource invocation for method {} with id {}");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitVarInsn(ALOAD, 2);
+                        mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+                        mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/UriBuilder", "fromResource", "(Ljava/lang/Class;)Ljavax/ws/rs/core/UriBuilder;");
+                        mv.visitInsn(ICONST_2);
+                        mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
+                        mv.visitInsn(DUP);
+                        mv.visitInsn(ICONST_0);
+                        mv.visitLdcInsn("");
+                        mv.visitInsn(AASTORE);
+                        mv.visitInsn(DUP);
+                        mv.visitInsn(ICONST_1);
+                        mv.visitLdcInsn("");
+                        mv.visitInsn(AASTORE);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/UriBuilder", "build", "([Ljava/lang/Object;)Ljava/net/URI;");
+                        mv.visitVarInsn(ASTORE, 3);
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitLdcInsn("put");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitVarInsn(ALOAD, 2);
+                        mv.visitInsn(ACONST_NULL);
+                        mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                        mv.visitVarInsn(ASTORE, 4);
+                        mv.visitVarInsn(ALOAD, 3);
+                        mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "created", "(Ljava/net/URI;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                        mv.visitVarInsn(ALOAD, 4);
+                        mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                        mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
+                        mv.visitInsn(ARETURN);
+                        mv.visitMaxs(5, 5);
+                        mv.visitEnd();
                     }
-                    {
-                        av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
-                        av0.visitEnd();
-                    }
-                    {
-                        av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "method");
-                        av0.visitEnd();
-                    }
-                    {
-                        av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "id");
-                        av0.visitEnd();
-                    }
-                    {
-                        av0 = mv.visitParameterAnnotation(2, "Ljavax/ws/rs/FormParam;", true);
-                        av0.visit("value", "update");
-                        av0.visitEnd();
-                    }
-                    mv.visitCode();
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
-                    mv.visitLdcInsn("HTTP POST: Generated Resource invocation for method {} with id {} and update {}");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn("post");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitVarInsn(ALOAD, 3);
-                    mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
-                    mv.visitVarInsn(ASTORE, 4);
-                    mv.visitVarInsn(ALOAD, 4);
-                    Label l0 = new Label();
-                    mv.visitJumpInsn(IFNONNULL, l0);
-                    mv.visitFieldInsn(GETSTATIC, "javax/ws/rs/core/Response$Status", "NO_CONTENT", "Ljavax/ws/rs/core/Response$Status;");
-                    mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "status", "(Ljavax/ws/rs/core/Response$Status;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-                    mv.visitInsn(ARETURN);
-                    mv.visitLabel(l0);
-                    mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Object"}, 0, null);
-                    mv.visitVarInsn(ALOAD, 4);
-                    mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-                    mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 5);
-                    mv.visitEnd();
                 }
-            }
-            {
-                if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("delete")) {
+                {
+                    duplicateCounter = -1;
+                    if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("post")) {
+                        {
+                            String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                            if (duplicateCounter++ >= 0) {
+                                methodName = methodName + "_" + duplicateCounter;
+                            }
 
-                    mv = cw.visitMethod(ACC_PUBLIC, "delete", "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
-                    {
-                        av0 = mv.visitAnnotation("Ljavax/ws/rs/DELETE;", true);
-                        av0.visitEnd();
+                            mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                            {
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/POST;", true);
+                                av0.visitEnd();
+                            }
+                            {
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                                av0.visitEnd();
+                            }
+                            {
+                                av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
+                                av0.visit("value", "method");
+                                av0.visitEnd();
+                            }
+                            {
+                                av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
+                                av0.visit("value", "id");
+                                av0.visitEnd();
+                            }
+                            {
+                                av0 = mv.visitParameterAnnotation(2, "Ljavax/ws/rs/FormParam;", true);
+                                av0.visit("value", "update");
+                                av0.visitEnd();
+                            }
+                            mv.visitCode();
+                            mv.visitVarInsn(ALOAD, 0);
+                            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                            mv.visitLdcInsn("HTTP POST: Generated Resource invocation for method {} with id {} and update {}");
+                            mv.visitVarInsn(ALOAD, 1);
+                            mv.visitVarInsn(ALOAD, 2);
+                            mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
+                            mv.visitVarInsn(ALOAD, 0);
+                            mv.visitLdcInsn("post");
+                            mv.visitVarInsn(ALOAD, 1);
+                            mv.visitVarInsn(ALOAD, 2);
+                            mv.visitVarInsn(ALOAD, 3);
+                            mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                            mv.visitVarInsn(ASTORE, 4);
+                            mv.visitVarInsn(ALOAD, 4);
+                            Label l0 = new Label();
+                            mv.visitJumpInsn(IFNONNULL, l0);
+                            mv.visitFieldInsn(GETSTATIC, "javax/ws/rs/core/Response$Status", "NO_CONTENT", "Ljavax/ws/rs/core/Response$Status;");
+                            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "status", "(Ljavax/ws/rs/core/Response$Status;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
+                            mv.visitInsn(ARETURN);
+                            mv.visitLabel(l0);
+                            mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Object"}, 0, null);
+                            mv.visitVarInsn(ALOAD, 4);
+                            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
+                            mv.visitInsn(ARETURN);
+                            mv.visitMaxs(5, 5);
+                            mv.visitEnd();
+                        }
                     }
-                    {
-                        av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "method");
-                        av0.visitEnd();
+                }
+                {
+                    duplicateCounter = -1;
+                    if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("delete")) {
+                        {
+                            String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
+                            if (duplicateCounter++ >= 0) {
+                                methodName = methodName + "_" + duplicateCounter;
+                            }
+
+                            mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                            {
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/DELETE;", true);
+                                av0.visitEnd();
+                            }
+                            {
+                                av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
+                                av0.visit("value", "method");
+                                av0.visitEnd();
+                            }
+                            {
+                                av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
+                                av0.visit("value", "id");
+                                av0.visitEnd();
+                            }
+                            mv.visitCode();
+                            mv.visitVarInsn(ALOAD, 0);
+                            mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
+                            mv.visitLdcInsn("HTTP DELETE: Generated Resource invocation for method {} with id {}");
+                            mv.visitVarInsn(ALOAD, 1);
+                            mv.visitVarInsn(ALOAD, 2);
+                            mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
+                            mv.visitVarInsn(ALOAD, 0);
+                            mv.visitLdcInsn("delete");
+                            mv.visitVarInsn(ALOAD, 1);
+                            mv.visitVarInsn(ALOAD, 2);
+                            mv.visitInsn(ACONST_NULL);
+                            mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                            mv.visitVarInsn(ASTORE, 3);
+                            mv.visitVarInsn(ALOAD, 3);
+                            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
+                            mv.visitInsn(ARETURN);
+                            mv.visitMaxs(5, 4);
+                            mv.visitEnd();
+                        }
                     }
-                    {
-                        av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
-                        av0.visit("value", "id");
-                        av0.visitEnd();
-                    }
-                    mv.visitCode();
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/model/ServiceDescriptionResource", "logger", "Lorg/slf4j/Logger;");
-                    mv.visitLdcInsn("HTTP DELETE: Generated Resource invocation for method {} with id {}");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn("delete");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/model/ServiceDescriptionResource", "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
-                    mv.visitVarInsn(ASTORE, 3);
-                    mv.visitVarInsn(ALOAD, 3);
-                    mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-                    mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 4);
-                    mv.visitEnd();
                 }
             }
         }
