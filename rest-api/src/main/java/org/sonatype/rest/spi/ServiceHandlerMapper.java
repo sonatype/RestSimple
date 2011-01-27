@@ -32,7 +32,7 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper addServiceHandler(ServiceHandler serviceHandler) {
-        maps.put(serviceHandler.getMethod(), serviceHandler);
+        maps.put(serviceHandler.getServiceEntityMethod(), serviceHandler);
         return this;
     }
 
@@ -42,7 +42,7 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper removeServiceHandler(ServiceHandler serviceHandler) {
-        maps.remove(serviceHandler.getMethod());
+        maps.remove(serviceHandler.getServiceEntityMethod());
         return this;
     }
 

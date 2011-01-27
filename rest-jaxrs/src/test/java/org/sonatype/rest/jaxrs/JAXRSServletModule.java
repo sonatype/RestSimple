@@ -4,7 +4,11 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import org.sonatype.rest.api.DeleteServiceHandler;
+import org.sonatype.rest.api.GetServiceHandler;
 import org.sonatype.rest.api.MediaType;
+import org.sonatype.rest.api.PostServiceHandler;
+import org.sonatype.rest.api.PutServiceHandler;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.api.ServiceHandler;
@@ -25,10 +29,10 @@ public class JAXRSServletModule extends ServletModule {
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
+                .withHandler(new PutServiceHandler("id", "createAddressBook"))
+                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
 
@@ -39,10 +43,10 @@ public class JAXRSServletModule extends ServletModule {
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
+                .withHandler(new PutServiceHandler("id", "createAddressBook"))
+                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
 

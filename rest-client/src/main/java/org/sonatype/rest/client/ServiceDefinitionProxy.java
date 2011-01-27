@@ -37,14 +37,15 @@ public final class ServiceDefinitionProxy implements Opcodes {
 
     /**
      * Generates a {@link ServiceDefinitionClient} from a {@link ServiceDefinition} information.
+     *
      * @param serviceDefinition a {@link ServiceDefinition}
      * @return An implementation of {@ServiceDefinitionClient}
      */
     public final static ServiceDefinitionClient getProxy(ServiceDefinition serviceDefinition) {
         SimpleAsyncHttpClient.Builder builder = new SimpleAsyncHttpClient.Builder().setUrl(serviceDefinition.path());
 
-        for(MediaType m: serviceDefinition.mediaToProduce()) {
-            builder.addHeader("Accept",m.toMediaType());
+        for (MediaType m : serviceDefinition.mediaToProduce()) {
+            builder.addHeader("Accept", m.toMediaType());
         }
 
         return generate(builder.build(), serviceDefinition);
@@ -60,6 +61,8 @@ public final class ServiceDefinitionProxy implements Opcodes {
         cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", null, "org/sonatype/rest/client/ServiceDefinitionClient", null);
 
         cw.visitInnerClass("java/util/Map$Entry", "java/util/Map", "Entry", ACC_PUBLIC + ACC_STATIC + ACC_ABSTRACT + ACC_INTERFACE);
+
+        cw.visitInnerClass("com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "com/ning/http/client/SimpleAsyncHttpClient", "DerivedBuilder", ACC_PUBLIC + ACC_STATIC + ACC_ABSTRACT + ACC_INTERFACE);
 
         {
             fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;", null, null);
@@ -100,13 +103,14 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getMethod());
+                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLabel(l0);
                     mv.visitVarInsn(ALOAD, 0);
                     mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "derive", "()Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
                     mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
                     mv.visitInsn(DUP);
                     mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
@@ -116,7 +120,9 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitVarInsn(ALOAD, 3);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "get", "(Ljava/lang/String;)Ljava/util/concurrent/Future;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "setUrl", "(Ljava/lang/String;)Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "build", "()Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "get", "()Ljava/util/concurrent/Future;");
                     mv.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/Future", "get", "()Ljava/lang/Object;");
                     mv.visitTypeInsn(CHECKCAST, "com/ning/http/client/Response");
                     mv.visitLabel(l1);
@@ -146,13 +152,14 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getMethod());
+                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLabel(l0);
                     mv.visitVarInsn(ALOAD, 0);
                     mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "derive", "()Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
                     mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
                     mv.visitInsn(DUP);
                     mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
@@ -162,7 +169,9 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitVarInsn(ALOAD, 3);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "head", "(Ljava/lang/String;)Ljava/util/concurrent/Future;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "setUrl", "(Ljava/lang/String;)Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "build", "()Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "head", "()Ljava/util/concurrent/Future;");
                     mv.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/Future", "get", "()Ljava/lang/Object;");
                     mv.visitTypeInsn(CHECKCAST, "com/ning/http/client/Response");
                     mv.visitLabel(l1);
@@ -192,13 +201,14 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getMethod());
+                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLabel(l0);
                     mv.visitVarInsn(ALOAD, 0);
                     mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "derive", "()Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
                     mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
                     mv.visitInsn(DUP);
                     mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
@@ -208,8 +218,10 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitVarInsn(ALOAD, 3);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "setUrl", "(Ljava/lang/String;)Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "build", "()Lcom/ning/http/client/SimpleAsyncHttpClient;");
                     mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "put", "(Ljava/lang/String;Lcom/ning/http/client/BodyGenerator;)Ljava/util/concurrent/Future;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "put", "(Lcom/ning/http/client/BodyGenerator;)Ljava/util/concurrent/Future;");
                     mv.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/Future", "get", "()Ljava/lang/Object;");
                     mv.visitTypeInsn(CHECKCAST, "com/ning/http/client/Response");
                     mv.visitLabel(l1);
@@ -275,17 +287,16 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 4);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getMethod());
+                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
                     mv.visitVarInsn(ALOAD, 4);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 5);
-                    mv.visitTypeInsn(NEW, "com/ning/http/client/RequestBuilder");
-                    mv.visitInsn(DUP);
-                    mv.visitMethodInsn(INVOKESPECIAL, "com/ning/http/client/RequestBuilder", "<init>", "()V");
-                    mv.visitLdcInsn("POST");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/RequestBuilder", "setMethod", "(Ljava/lang/String;)Lcom/ning/http/client/RequestBuilder;");
+                    mv.visitLabel(l0);
+                    mv.visitVarInsn(ALOAD, 0);
+                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "derive", "()Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
                     mv.visitVarInsn(ALOAD, 3);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/RequestBuilder", "setParameters", "(Lcom/ning/http/client/FluentStringsMap;)Lcom/ning/http/client/RequestBuilder;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "setParameters", "(Lcom/ning/http/client/FluentStringsMap;)Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
                     mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
                     mv.visitInsn(DUP);
                     mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
@@ -295,28 +306,23 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitVarInsn(ALOAD, 5);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/RequestBuilder", "setUrl", "(Ljava/lang/String;)Lcom/ning/http/client/RequestBuilder;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/RequestBuilder", "build", "()Lcom/ning/http/client/Request;");
-                    mv.visitVarInsn(ASTORE, 6);
-                    mv.visitLabel(l0);
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;");
-                    mv.visitVarInsn(ALOAD, 6);
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "setUrl", "(Ljava/lang/String;)Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "build", "()Lcom/ning/http/client/SimpleAsyncHttpClient;");
                     mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "post", "(Lcom/ning/http/client/Request;Lcom/ning/http/client/BodyGenerator;)Ljava/util/concurrent/Future;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "post", "(Lcom/ning/http/client/BodyGenerator;)Ljava/util/concurrent/Future;");
                     mv.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/Future", "get", "()Ljava/lang/Object;");
                     mv.visitTypeInsn(CHECKCAST, "com/ning/http/client/Response");
                     mv.visitLabel(l1);
                     mv.visitInsn(ARETURN);
                     mv.visitLabel(l2);
-                    mv.visitFrame(Opcodes.F_FULL, 7, new Object[]{"org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "java/util/Map", "[Ljava/lang/String;", "com/ning/http/client/FluentStringsMap", "java/util/List", "java/lang/String", "com/ning/http/client/Request"}, 1, new Object[]{"java/lang/Throwable"});
-                    mv.visitVarInsn(ASTORE, 7);
+                    mv.visitFrame(Opcodes.F_FULL, 6, new Object[]{"org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "java/util/Map", "[Ljava/lang/String;", "com/ning/http/client/FluentStringsMap", "java/util/List", "java/lang/String"}, 1, new Object[]{"java/lang/Throwable"});
+                    mv.visitVarInsn(ASTORE, 6);
                     mv.visitTypeInsn(NEW, "java/lang/RuntimeException");
                     mv.visitInsn(DUP);
-                    mv.visitVarInsn(ALOAD, 7);
+                    mv.visitVarInsn(ALOAD, 6);
                     mv.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/Throwable;)V");
                     mv.visitInsn(ATHROW);
-                    mv.visitMaxs(6, 8);
+                    mv.visitMaxs(6, 7);
                     mv.visitEnd();
                 }
             }
@@ -333,13 +339,14 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getMethod());
+                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLabel(l0);
                     mv.visitVarInsn(ALOAD, 0);
                     mv.visitFieldInsn(GETFIELD, "org/sonatype/rest/client/model/ServiceDefinitionClientImpl", "sahc", "Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "derive", "()Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
                     mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
                     mv.visitInsn(DUP);
                     mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
@@ -349,7 +356,9 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitVarInsn(ALOAD, 3);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "delete", "(Ljava/lang/String;)Ljava/util/concurrent/Future;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "setUrl", "(Ljava/lang/String;)Lcom/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder;");
+                    mv.visitMethodInsn(INVOKEINTERFACE, "com/ning/http/client/SimpleAsyncHttpClient$DerivedBuilder", "build", "()Lcom/ning/http/client/SimpleAsyncHttpClient;");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "com/ning/http/client/SimpleAsyncHttpClient", "delete", "()Ljava/util/concurrent/Future;");
                     mv.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/Future", "get", "()Ljava/lang/Object;");
                     mv.visitTypeInsn(CHECKCAST, "com/ning/http/client/Response");
                     mv.visitLabel(l1);
@@ -367,6 +376,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
                 }
             }
         }
+
         {
             mv = cw.visitMethod(ACC_PRIVATE, "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;", "(Ljava/lang/String;Ljava/util/List<Ljava/lang/String;>;)Ljava/lang/String;", null);
             mv.visitCode();
@@ -418,6 +428,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
             mv.visitMaxs(4, 6);
             mv.visitEnd();
         }
+
         cw.visitEnd();
 
         byte[] bytes = cw.toByteArray();
@@ -427,11 +438,11 @@ public final class ServiceDefinitionProxy implements Opcodes {
             Class<?> clazz = cl.loadClass("org.sonatype.rest.client.model.ServiceDefinitionClientImpl");
 
             Constructor constructor = clazz.getConstructor(new Class[]{SimpleAsyncHttpClient.class, String.class});
-
             return (ServiceDefinitionClient) constructor.newInstance(new Object[]{sahc, serviceDefinition.path()});
-        } catch (Throwable e) {
+        } catch (Throwable e ){
             logger.error("generate", e);
         }
+
         return null;
     }
 

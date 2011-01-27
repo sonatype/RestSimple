@@ -14,12 +14,10 @@ package org.sonatype.rest.api;
 
 /**
  * Represent how a REST resource handles requests. A {@link ServiceHandler} is used when mapping the request to
- * a {@link ServiceEntity}
+ * a {@link ServiceEntity}'s method
  *
- * TODO: make me a builder
  */
-public class ServiceHandler {
-    private final ServiceDefinition.HttpMethod httpMethod;
+abstract public class ServiceHandler {
     private final String path;
     private final String method;
     private final Class<? extends ServiceHandlerMediaType> mediaType;
@@ -27,34 +25,30 @@ public class ServiceHandler {
     /**
      * Create a new {@link ServiceHandler}
      *
-     * @param httpMethod an {@link ServiceDefinition.HttpMethod}
      * @param methodToInvoke a method's name used to invoke a {@link ServiceEntity}
      */
-    public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String methodToInvoke) {
-        this(httpMethod, null, methodToInvoke);
+    public ServiceHandler(String methodToInvoke) {
+        this(null, methodToInvoke);
     }
 
     /**
      * Create a new {@link ServiceHandler}
      *
-     * @param httpMethod an {@link ServiceDefinition.HttpMethod}
      * @param path a uri used to map the resource to this {@link ServiceHandler}
      * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
      */
-    public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, String methodToInvoke) {
-        this(httpMethod, path, methodToInvoke, null);
+    public ServiceHandler(String path, String methodToInvoke) {
+        this(path, methodToInvoke, null);
     }
 
     /**
      * Create a new {@link ServiceHandler}
      *
-     * @param httpMethod an {@link ServiceDefinition.HttpMethod}
      * @param path a uri used to map the resource to this {@link ServiceHandler}
      * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
      * @param mediaType a {@link ServiceHandlerMediaType} that will be used when serializing the response
      */
-    public ServiceHandler(ServiceDefinition.HttpMethod httpMethod, String path, String methodToInvoke, Class<? extends ServiceHandlerMediaType> mediaType) {
-        this.httpMethod = httpMethod;
+    public ServiceHandler(String path, String methodToInvoke, Class<? extends ServiceHandlerMediaType> mediaType) {
         this.path = path;
         this.method = methodToInvoke;
         this.mediaType = mediaType;
@@ -64,9 +58,7 @@ public class ServiceHandler {
      * Return the current {@link ServiceDefinition.HttpMethod}
      * @return {@link ServiceDefinition.HttpMethod}
      */
-    public ServiceDefinition.HttpMethod getHttpMethod() {
-        return httpMethod;
-    }
+    abstract public ServiceDefinition.HttpMethod getHttpMethod();
 
     /**
      * Return the URI used to map this {@link ServiceHandler}
@@ -77,10 +69,10 @@ public class ServiceHandler {
     }
 
     /**
-     * Return the HTTP method.
+     * Return the {@link ServiceEntity} method this service will invoke.
      * @return the HTTP method.
      */
-    public String getMethod() {
+    public String getServiceEntityMethod() {
         return method;
     }
 

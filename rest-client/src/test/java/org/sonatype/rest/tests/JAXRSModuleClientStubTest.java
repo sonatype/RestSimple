@@ -44,7 +44,11 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.rest.api.DefaultServiceDefinition;
+import org.sonatype.rest.api.DeleteServiceHandler;
+import org.sonatype.rest.api.GetServiceHandler;
 import org.sonatype.rest.api.MediaType;
+import org.sonatype.rest.api.PostServiceHandler;
+import org.sonatype.rest.api.PutServiceHandler;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.client.ServiceDefinitionClient;
@@ -90,7 +94,7 @@ public class JAXRSModuleClientStubTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = findFreePort();
+        port = 8080;
         server = new Server(port);
 
         targetUrl = "http://127.0.0.1:" + port;
@@ -112,10 +116,10 @@ public class JAXRSModuleClientStubTest {
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
+                .withHandler(new PutServiceHandler("id", "createAddressBook"))
+                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(new AddressBookServiceEntity());
 
         
