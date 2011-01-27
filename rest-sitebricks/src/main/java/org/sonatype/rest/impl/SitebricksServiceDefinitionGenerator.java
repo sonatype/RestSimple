@@ -22,6 +22,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.rest.api.PostServiceHandler;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
@@ -29,6 +30,8 @@ import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -60,6 +63,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
         moduleConfig.bindToInstance(ServiceEntity.class, serviceDefinition.serviceEntity());
 
+        List<PostServiceHandler> postServiceHandlers = lookupPostServiceHandler(serviceDefinition);
+
         ClassWriter cw = new ClassWriter(0);
         FieldVisitor fv;
         MethodVisitor mv;
@@ -72,9 +77,15 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         cw.visitInnerClass("org/sonatype/rest/api/ServiceDefinition$HttpMethod", "org/sonatype/rest/api/ServiceDefinition", "HttpMethod", ACC_PUBLIC + ACC_FINAL + ACC_STATIC + ACC_ENUM);
 
-        {
-            fv = cw.visitField(ACC_PRIVATE, "update", "Ljava/lang/String;", null, null);
-            fv.visitEnd();
+        if (postServiceHandlers.size() > 0) {
+            for (PostServiceHandler postServiceHandler: postServiceHandlers) {
+                for (String formParam: postServiceHandler.formParams()) {
+                    {
+                        fv = cw.visitField(ACC_PRIVATE, formParam, "Ljava/lang/String;", null, null);
+                        fv.visitEnd();
+                    }
+                }
+            }
         }
         {
             fv = cw.visitField(ACC_PRIVATE, "logger", "Lorg/slf4j/Logger;", null, null);
@@ -512,15 +523,21 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitMaxs(6, 9);
             mv.visitEnd();
         }
-        {
-            mv = cw.visitMethod(ACC_PUBLIC, "setUpdate", "(Ljava/lang/String;)V", null, null);
-            mv.visitCode();
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitFieldInsn(PUTFIELD, className, "update", "Ljava/lang/String;");
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(2, 2);
-            mv.visitEnd();
+        if (postServiceHandlers.size() > 0) {
+            for (PostServiceHandler postServiceHandler: postServiceHandlers) {
+                for (String formParam: postServiceHandler.formParams()) {
+                    {
+                        mv = cw.visitMethod(ACC_PUBLIC, "set" + formParam.substring(0,1).toUpperCase() + formParam.substring(1), "(Ljava/lang/String;)V", null, null);
+                        mv.visitCode();
+                        mv.visitVarInsn(ALOAD, 0);
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitFieldInsn(PUTFIELD, className, formParam, "Ljava/lang/String;");
+                        mv.visitInsn(RETURN);
+                        mv.visitMaxs(2, 2);
+                        mv.visitEnd();
+                    }
+                }
+            }
         }
         cw.visitEnd();
 
@@ -577,6 +594,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         public java.lang.String getValue(){
             return value;
         }
+    }
+
+    private List<PostServiceHandler> lookupPostServiceHandler(ServiceDefinition serviceDefinition) {
+        List<PostServiceHandler> l = new ArrayList<PostServiceHandler>();
+        for (ServiceHandler s: serviceDefinition.serviceHandlers()) {
+            if (s instanceof PostServiceHandler) {
+                l.add((PostServiceHandler) s);
+            }
+        }
+        return l;
     }
 
 }

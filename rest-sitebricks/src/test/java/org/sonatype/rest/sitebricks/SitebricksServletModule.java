@@ -18,6 +18,8 @@ public class SitebricksServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
         Injector injector = Guice.createInjector(new SitebricksModule(binder()));
+        PostServiceHandler postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
+        postServiceHandler.addFormParam("update");
 
         ServiceEntity serviceEntity = new AddressBookServiceEntity();
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
@@ -28,7 +30,7 @@ public class SitebricksServletModule extends ServletModule {
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("id", "createAddressBook"))
                 .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
