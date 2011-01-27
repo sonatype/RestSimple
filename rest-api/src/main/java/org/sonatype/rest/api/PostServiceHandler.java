@@ -12,7 +12,17 @@
  */
 package org.sonatype.rest.api;
 
+import com.sun.xml.internal.xsom.impl.scd.Iterators;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class PostServiceHandler extends ServiceHandler {
+
+    private final ArrayList<String> formParam = new ArrayList<String>();
 
     /**
      * Create a new {@link org.sonatype.rest.api.ServiceHandler}
@@ -47,5 +57,14 @@ public class PostServiceHandler extends ServiceHandler {
     @Override
     public ServiceDefinition.HttpMethod getHttpMethod() {
         return ServiceDefinition.HttpMethod.POST;
+    }
+
+    public PostServiceHandler addFormParam(String name) {
+        formParam.add(name);
+        return this;
+    }
+
+    public List<String> formParams() {
+        return Collections.unmodifiableList(formParam);
     }
 }

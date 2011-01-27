@@ -24,6 +24,10 @@ public class JAXRSServletModule extends ServletModule {
 
         ServiceEntity serviceEntity = new AddressBookServiceEntity();                
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
+
+        PostServiceHandler postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
+        postServiceHandler.addFormParam("update");
+
         serviceDefinition
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
                 .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
@@ -31,7 +35,7 @@ public class JAXRSServletModule extends ServletModule {
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("id", "createAddressBook"))
                 .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
@@ -45,7 +49,7 @@ public class JAXRSServletModule extends ServletModule {
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("id", "createAddressBook"))
                 .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();

@@ -23,6 +23,9 @@ public class JAXRSServletModule extends ServletModule {
 
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
 
+        PostServiceHandler postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
+        postServiceHandler.addFormParam("update");
+
         ServiceEntity serviceEntity = new AddressBookServiceEntity();                
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
@@ -32,7 +35,7 @@ public class JAXRSServletModule extends ServletModule {
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("id", "createAddressBook"))
                 .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
+                .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();

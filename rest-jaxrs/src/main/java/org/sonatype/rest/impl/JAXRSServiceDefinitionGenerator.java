@@ -23,6 +23,7 @@ import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.rest.api.MediaType;
+import org.sonatype.rest.api.PostServiceHandler;
 import org.sonatype.rest.api.ResourceModuleConfig;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
@@ -30,6 +31,8 @@ import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.api.ServiceHandlerMediaType;
 import org.sonatype.rest.spi.ServiceDefinitionGenerator;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -333,10 +336,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 av0.visit("value", "id");
                                 av0.visitEnd();
                             }
-                            {
-                                av0 = mv.visitParameterAnnotation(2, "Ljavax/ws/rs/FormParam;", true);
-                                av0.visit("value", "update");
-                                av0.visitEnd();
+                            for (String formParam: ((PostServiceHandler)serviceHandler).formParams()) {
+                                {
+                                    av0 = mv.visitParameterAnnotation(2, "Ljavax/ws/rs/FormParam;", true);
+                                    av0.visit("value", formParam);
+                                    av0.visitEnd();
+                                }
                             }
                             mv.visitCode();
                             mv.visitVarInsn(ALOAD, 0);
