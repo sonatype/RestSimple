@@ -12,8 +12,6 @@
  */
 package org.sonatype.rest.api;
 
-import com.sun.xml.internal.xsom.impl.scd.Iterators;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
