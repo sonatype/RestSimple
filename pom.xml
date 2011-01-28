@@ -17,7 +17,8 @@
         <module>rest-api</module>
         <module>rest-jaxrs</module>
         <module>rest-sitebricks</module>
-        <module>rest-client</module>
+        <module>rest-client</module>  
+        <module>rest-template</module>
         <module>acceptance-test</module>
     </modules>
 
