@@ -40,6 +40,11 @@ public class JAXRSServletModule extends ServletModule {
                 .usingEntity(serviceEntity)
                 .bind();
 
+
+        postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
+        postServiceHandler.addFormParam("update");
+        postServiceHandler.addFormParam("update2");
+        
         serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
                 .withPath("/foo")

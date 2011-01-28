@@ -35,6 +35,19 @@ public class AddressBookServiceEntity implements ServiceEntity {
         return "updated";
     }
 
+    public String updateAddressBook(String id, String value, String value2) {
+        List<String> list = book.get(id);
+
+        if (list == null) {
+            throw new IllegalStateException("No address book have been created for " + id);
+        }
+
+        list.add(value);
+        list.add(value2);
+        book.put(id, list);
+        return "updated";
+    }
+
     public String deleteAddressBook(String id) {
         book.remove(id);
         return "updated";

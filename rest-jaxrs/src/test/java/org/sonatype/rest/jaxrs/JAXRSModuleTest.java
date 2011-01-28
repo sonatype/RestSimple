@@ -123,7 +123,7 @@ public class JAXRSModuleTest {
         logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();        
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
         Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
 
         assertNotNull(r);
@@ -227,13 +227,13 @@ public class JAXRSModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         Response r = c.prepareGet(targetUrl + "/foo/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - bar - \"}");
 
         c.close();
     }
