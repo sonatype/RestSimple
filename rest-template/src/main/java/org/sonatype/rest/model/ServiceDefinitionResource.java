@@ -70,17 +70,17 @@ public class ServiceDefinitionResource {
         return Response.created(location).entity(response).build();
     }
 
-//    @POST
-//    @Consumes("application/x-www-form-urlencoded")
-//    public Response post(@PathParam("method") String service, @PathParam("id") String value, MultivaluedMap<String, String> formParams ) {
-//        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-//        Object response = createResponse("post", service, value, formParams);
-//        if (response == null) {
-//            return Response.status(Response.Status.NO_CONTENT).build();
-//        } else {
-//            return Response.ok(response).build();
-//        }
-//    }
+    @POST
+    @Consumes("application/x-www-form-urlencoded")
+    public Response post(@PathParam("method") String service, @PathParam("id") String value, MultivaluedMap<String, String> formParams ) {
+        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
+        Object response = createResponse("post", service, value, formParams);
+        if (response == null) {
+            return Response.status(Response.Status.NO_CONTENT).build();
+        } else {
+            return Response.ok(response).build();
+        }
+    }
     
     @POST
     public Response postJson(@PathParam("method") String service, @PathParam("id") String value, String body) {
