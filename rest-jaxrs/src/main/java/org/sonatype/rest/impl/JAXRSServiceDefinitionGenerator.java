@@ -699,7 +699,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             mv.visitVarInsn(ALOAD, 5);
             mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceHandler", "getServiceEntityMethod", "()Ljava/lang/String;");
-          mv.visitVarInsn(ASTORE, 6);
+            mv.visitVarInsn(ASTORE, 6);
             mv.visitInsn(ICONST_2);
             mv.visitTypeInsn(ANEWARRAY, "java/lang/Class");
             mv.visitVarInsn(ASTORE, 7);

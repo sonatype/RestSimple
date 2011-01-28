@@ -83,7 +83,7 @@ public class SitebricksModuleTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = findFreePort();
+        port = 8080;
         server = new Server(port);
         acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + AddressBookServiceEntity.JSON;
 
@@ -222,7 +222,7 @@ public class SitebricksModuleTest {
 
         c.close();
     }
-  
+
     @Test(timeOut = 20000, enabled = false)
     public void testSecondResourceGet() throws Throwable {
         logger.info("running test: testSecondResourceGet");
@@ -231,6 +231,23 @@ public class SitebricksModuleTest {
         c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
         c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         Response r = c.prepareGet(targetUrl + "/foo/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - bar - \"}");
+
+        c.close();
+    }
+
+    @Test(timeOut = 20000, enabled = false)
+    public void testGetWithPostBody() throws Throwable {
+        logger.info("running test: testGetWithPostBody");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
+        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
