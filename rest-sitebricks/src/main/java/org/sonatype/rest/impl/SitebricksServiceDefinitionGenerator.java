@@ -51,7 +51,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     @Override
     public void generate(final ServiceDefinition serviceDefinition) {
         boolean isSet = false;
-        for(ServiceHandler serviceHandler: serviceDefinition.serviceHandlers()) {
+        for (ServiceHandler serviceHandler : serviceDefinition.serviceHandlers()) {
             if (serviceHandler.mediaType() != null) {
                 moduleConfig.bindTo(ServiceHandlerMediaType.class, serviceHandler.mediaType());
                 isSet = true;
@@ -70,7 +70,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         MethodVisitor mv;
         AnnotationVisitor av0;
 
-        String uuid = UUID.randomUUID().toString().replace( "-", "" ).substring( 0, 4 );
+        String uuid = UUID.randomUUID().toString().replace("-", "").substring(0, 4);
         String className = "org/sonatype/rest/model/SitebricksResource" + uuid;
 
         cw.visit(V1_6, ACC_PUBLIC + ACC_FINAL + ACC_SUPER, className, null, "java/lang/Object", null);
@@ -78,8 +78,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         cw.visitInnerClass("org/sonatype/rest/api/ServiceDefinition$HttpMethod", "org/sonatype/rest/api/ServiceDefinition", "HttpMethod", ACC_PUBLIC + ACC_FINAL + ACC_STATIC + ACC_ENUM);
 
         if (postServiceHandlers.size() > 0) {
-            for (PostServiceHandler postServiceHandler: postServiceHandlers) {
-                for (String formParam: postServiceHandler.formParams()) {
+            for (PostServiceHandler postServiceHandler : postServiceHandlers) {
+                for (String formParam : postServiceHandler.formParams()) {
                     {
                         fv = cw.visitField(ACC_PRIVATE, formParam, "Ljava/lang/String;", null, null);
                         fv.visitEnd();
@@ -138,7 +138,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("get")) {
 
-                    mv = cw.visitMethod(ACC_PUBLIC, methodName , "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
+                    mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;)Lcom/google/sitebricks/headless/Reply<*>;", null);
                     {
                         av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/Get;", true);
                         av0.visitEnd();
@@ -172,8 +172,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitLdcInsn("get");
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitVarInsn(ALOAD, 2);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLdcInsn(Type.getType("Lcom/google/sitebricks/headless/Reply;"));
                     mv.visitVarInsn(ALOAD, 3);
@@ -196,8 +195,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitLdcInsn(Type.getType("Lcom/google/sitebricks/client/transport/Json;"));
                     mv.visitMethodInsn(INVOKEVIRTUAL, "com/google/sitebricks/headless/Reply", "as", "(Ljava/lang/Class;)Lcom/google/sitebricks/headless/Reply;");
                     mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 4);
+                    mv.visitMaxs(4, 4);
                     mv.visitEnd();
+
                 }
             }
             duplicateCounter = -1;
@@ -242,8 +242,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitLdcInsn("put");
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitVarInsn(ALOAD, 2);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLdcInsn(Type.getType("Lcom/google/sitebricks/headless/Reply;"));
                     mv.visitVarInsn(ALOAD, 3);
@@ -264,14 +263,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitIntInsn(SIPUSH, 201);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "com/google/sitebricks/headless/Reply", "status", "(I)Lcom/google/sitebricks/headless/Reply;");
                     mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 4);
+                    mv.visitMaxs(4, 4);
                     mv.visitEnd();
                 }
             }
 
-            duplicateCounter = -1;                        
+            duplicateCounter = -1;
+            StringBuilder builder = new StringBuilder();
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("post")) {
                 {
+
                     String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
                     if (duplicateCounter++ >= 0) {
                         methodName = methodName + "_" + duplicateCounter;
@@ -310,9 +311,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitLdcInsn("post");
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitVarInsn(ALOAD, 2);
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, className, "update", "Ljava/lang/String;");
-                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitLdcInsn(Type.getType("Lcom/google/sitebricks/headless/Reply;"));
                     mv.visitVarInsn(ALOAD, 3);
@@ -340,12 +339,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "toString", "()Ljava/lang/String;");
                     mv.visitMethodInsn(INVOKESTATIC, "com/google/sitebricks/headless/Reply", "with", "(Ljava/lang/Object;)Lcom/google/sitebricks/headless/Reply;");
                     mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 4);
+                    mv.visitMaxs(4, 4);
                     mv.visitEnd();
                 }
             }
 
-            duplicateCounter = -1;                                    
+            duplicateCounter = -1;
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("delete")) {
                 {
                     String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
@@ -359,7 +358,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                         av0.visitEnd();
                     }
                     {
-                        if (serviceDefinition.mediaToProduce().size() > 0) {                        
+                        if (serviceDefinition.mediaToProduce().size() > 0) {
                             av0 = mv.visitAnnotation("Lcom/google/sitebricks/http/negotiate/Accept;", true);
                             av0.visit("value", serviceDefinition.mediaToProduce().get(0).toMediaType());
                             av0.visitEnd();
@@ -386,20 +385,19 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitLdcInsn("delete");
                     mv.visitVarInsn(ALOAD, 1);
                     mv.visitVarInsn(ALOAD, 2);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
+                    mv.visitMethodInsn(INVOKESPECIAL, className, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;");
                     mv.visitVarInsn(ASTORE, 3);
                     mv.visitVarInsn(ALOAD, 3);
                     mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "toString", "()Ljava/lang/String;");
                     mv.visitMethodInsn(INVOKESTATIC, "com/google/sitebricks/headless/Reply", "with", "(Ljava/lang/Object;)Lcom/google/sitebricks/headless/Reply;");
                     mv.visitInsn(ARETURN);
-                    mv.visitMaxs(5, 4);
+                    mv.visitMaxs(4, 4);
                     mv.visitEnd();
                 }
             }
         }
         {
-            mv = cw.visitMethod(ACC_PRIVATE, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", null, null);
+            mv = cw.visitMethod(ACC_PRIVATE, "createResponse", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/Object;", null, null);
             mv.visitCode();
             Label l0 = new Label();
             Label l1 = new Label();
@@ -409,8 +407,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitFieldInsn(GETFIELD, className, "mapper", "Lorg/sonatype/rest/spi/ServiceHandlerMapper;");
             mv.visitVarInsn(ALOAD, 2);
             mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/spi/ServiceHandlerMapper", "map", "(Ljava/lang/String;)Lorg/sonatype/rest/api/ServiceHandler;");
-            mv.visitVarInsn(ASTORE, 5);
-            mv.visitVarInsn(ALOAD, 5);
+            mv.visitVarInsn(ASTORE, 4);
+            mv.visitVarInsn(ALOAD, 4);
             Label l3 = new Label();
             mv.visitJumpInsn(IFNONNULL, l3);
             mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
@@ -426,7 +424,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitInsn(ARETURN);
             mv.visitLabel(l3);
             mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"org/sonatype/rest/api/ServiceHandler"}, 0, null);
-            mv.visitVarInsn(ALOAD, 5);
+            mv.visitVarInsn(ALOAD, 4);
             mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceHandler", "getHttpMethod", "()Lorg/sonatype/rest/api/ServiceDefinition$HttpMethod;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceDefinition$HttpMethod", "name", "()Ljava/lang/String;");
             mv.visitVarInsn(ALOAD, 1);
@@ -440,94 +438,126 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitInsn(ARETURN);
             mv.visitLabel(l4);
             mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            mv.visitVarInsn(ALOAD, 5);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceHandler", "getServiceEntityMethod", "()Ljava/lang/String;");
-            mv.visitVarInsn(ASTORE, 6);
-            mv.visitLabel(l0);
-            mv.visitInsn(ACONST_NULL);
-            mv.visitVarInsn(ASTORE, 7);
             mv.visitVarInsn(ALOAD, 4);
-            Label l5 = new Label();
-            mv.visitJumpInsn(IFNULL, l5);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
-            mv.visitVarInsn(ALOAD, 6);
-            mv.visitInsn(ICONST_2);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/ServiceHandler", "getServiceEntityMethod", "()Ljava/lang/String;");
+            mv.visitVarInsn(ASTORE, 5);
+            mv.visitInsn(ICONST_1);
             mv.visitTypeInsn(ANEWARRAY, "java/lang/Class");
-            mv.visitInsn(DUP);
+            mv.visitVarInsn(ASTORE, 6);
+            mv.visitVarInsn(ALOAD, 6);
             mv.visitInsn(ICONST_0);
             mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
             mv.visitInsn(AASTORE);
-            mv.visitInsn(DUP);
             mv.visitInsn(ICONST_1);
-            mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
-            mv.visitInsn(AASTORE);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
+            mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
             mv.visitVarInsn(ASTORE, 7);
             mv.visitVarInsn(ALOAD, 7);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
-            mv.visitInsn(ICONST_2);
-            mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
-            mv.visitInsn(DUP);
             mv.visitInsn(ICONST_0);
             mv.visitVarInsn(ALOAD, 3);
             mv.visitInsn(AASTORE);
-            mv.visitInsn(DUP);
-            mv.visitInsn(ICONST_1);
+            mv.visitLabel(l0);
+            mv.visitLdcInsn(Type.getType("Lorg/sonatype/rest/api/PostServiceHandler;"));
             mv.visitVarInsn(ALOAD, 4);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z");
+            Label l5 = new Label();
+            mv.visitJumpInsn(IFEQ, l5);
+            mv.visitLdcInsn(Type.getType("Lorg/sonatype/rest/api/PostServiceHandler;"));
+            mv.visitVarInsn(ALOAD, 4);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            mv.visitTypeInsn(CHECKCAST, "org/sonatype/rest/api/PostServiceHandler");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/rest/api/PostServiceHandler", "formParams", "()Ljava/util/List;");
+            mv.visitVarInsn(ASTORE, 9);
+            mv.visitVarInsn(ALOAD, 9);
+            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/List", "size", "()I");
+            mv.visitInsn(ICONST_1);
+            mv.visitInsn(IADD);
+            mv.visitTypeInsn(ANEWARRAY, "java/lang/Class");
+            mv.visitVarInsn(ASTORE, 6);
+            mv.visitVarInsn(ALOAD, 9);
+            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/List", "size", "()I");
+            mv.visitInsn(ICONST_1);
+            mv.visitInsn(IADD);
+            mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
+            mv.visitVarInsn(ASTORE, 7);
+            mv.visitVarInsn(ALOAD, 6);
+            mv.visitInsn(ICONST_0);
+            mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
             mv.visitInsn(AASTORE);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;");
-            mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-            mv.visitVarInsn(ASTORE, 8);
+            mv.visitVarInsn(ALOAD, 7);
+            mv.visitInsn(ICONST_0);
+            mv.visitVarInsn(ALOAD, 3);
+            mv.visitInsn(AASTORE);
+            mv.visitInsn(ICONST_1);
+            mv.visitVarInsn(ISTORE, 10);
+            mv.visitVarInsn(ALOAD, 9);
+            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/List", "iterator", "()Ljava/util/Iterator;");
+            mv.visitVarInsn(ASTORE, 11);
             Label l6 = new Label();
+            mv.visitLabel(l6);
+            mv.visitFrame(Opcodes.F_FULL, 12, new Object[]{className, "java/lang/String", "java/lang/String", "java/lang/String", "org/sonatype/rest/api/ServiceHandler", "java/lang/String", "[Ljava/lang/Class;", "[Ljava/lang/Object;", Opcodes.TOP, "java/util/List", Opcodes.INTEGER, "java/util/Iterator"}, 0, new Object[]{});
+            mv.visitVarInsn(ALOAD, 11);
+            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z");
+            mv.visitJumpInsn(IFEQ, l5);
+            mv.visitVarInsn(ALOAD, 11);
+            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;");
+            mv.visitTypeInsn(CHECKCAST, "java/lang/String");
+            mv.visitVarInsn(ASTORE, 12);
+            mv.visitVarInsn(ALOAD, 6);
+            mv.visitVarInsn(ILOAD, 10);
+            mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
+            mv.visitInsn(AASTORE);
+            mv.visitVarInsn(ALOAD, 7);
+            mv.visitVarInsn(ILOAD, 10);
+            mv.visitIincInsn(10, 1);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            mv.visitVarInsn(ALOAD, 12);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;");
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            mv.visitTypeInsn(CHECKCAST, "java/lang/String");
+            mv.visitInsn(AASTORE);
             mv.visitJumpInsn(GOTO, l6);
             mv.visitLabel(l5);
-            mv.visitFrame(Opcodes.F_APPEND, 2, new Object[]{"java/lang/String", "java/lang/reflect/Method"}, 0, null);
+            mv.visitFrame(Opcodes.F_FULL, 8, new Object[]{className, "java/lang/String", "java/lang/String", "java/lang/String", "org/sonatype/rest/api/ServiceHandler", "java/lang/String", "[Ljava/lang/Class;", "[Ljava/lang/Object;"}, 0, new Object[]{});
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            mv.visitVarInsn(ALOAD, 5);
             mv.visitVarInsn(ALOAD, 6);
-            mv.visitInsn(ICONST_1);
-            mv.visitTypeInsn(ANEWARRAY, "java/lang/Class");
-            mv.visitInsn(DUP);
-            mv.visitInsn(ICONST_0);
-            mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
-            mv.visitInsn(AASTORE);
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;");
-            mv.visitVarInsn(ASTORE, 7);
-            mv.visitVarInsn(ALOAD, 7);
+            mv.visitVarInsn(ASTORE, 9);
+            mv.visitVarInsn(ALOAD, 9);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, className, "serviceEntity", "Lorg/sonatype/rest/api/ServiceEntity;");
-            mv.visitInsn(ICONST_1);
-            mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
-            mv.visitInsn(DUP);
-            mv.visitInsn(ICONST_0);
-            mv.visitVarInsn(ALOAD, 3);
-            mv.visitInsn(AASTORE);
+            mv.visitVarInsn(ALOAD, 7);
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;");
             mv.visitVarInsn(ASTORE, 8);
-            mv.visitLabel(l6);
-            mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Object"}, 0, null);
             mv.visitVarInsn(ALOAD, 8);
             mv.visitLabel(l1);
             mv.visitInsn(ARETURN);
             mv.visitLabel(l2);
-            mv.visitFrame(Opcodes.F_FULL, 7, new Object[]{className, "java/lang/String", "java/lang/String", "java/lang/String", "java/lang/String", "org/sonatype/rest/api/ServiceHandler", "java/lang/String"}, 1, new Object[]{"java/lang/Throwable"});
-            mv.visitVarInsn(ASTORE, 7);
-            mv.visitVarInsn(ALOAD, 7);
+            mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"java/lang/Throwable"});
+            mv.visitVarInsn(ASTORE, 8);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
+            mv.visitLdcInsn("createResponse");
+            mv.visitVarInsn(ALOAD, 8);
+            mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "error", "(Ljava/lang/String;Ljava/lang/Throwable;)V");
+            mv.visitVarInsn(ALOAD, 8);
             mv.visitMethodInsn(INVOKESTATIC, "com/google/sitebricks/headless/Reply", "with", "(Ljava/lang/Object;)Lcom/google/sitebricks/headless/Reply;");
             mv.visitMethodInsn(INVOKEVIRTUAL, "com/google/sitebricks/headless/Reply", "error", "()Lcom/google/sitebricks/headless/Reply;");
             mv.visitInsn(ARETURN);
-            mv.visitMaxs(6, 9);
+            mv.visitMaxs(4, 13);
             mv.visitEnd();
         }
+
         if (postServiceHandlers.size() > 0) {
-            for (PostServiceHandler postServiceHandler: postServiceHandlers) {
-                for (String formParam: postServiceHandler.formParams()) {
+            for (PostServiceHandler postServiceHandler : postServiceHandlers) {
+                for (String formParam : postServiceHandler.formParams()) {
                     {
-                        mv = cw.visitMethod(ACC_PUBLIC, "set" + formParam.substring(0,1).toUpperCase() + formParam.substring(1), "(Ljava/lang/String;)V", null, null);
+                        mv = cw.visitMethod(ACC_PUBLIC, "set" + formParam.substring(0, 1).toUpperCase() + formParam.substring(1), "(Ljava/lang/String;)V", null, null);
                         mv.visitCode();
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitVarInsn(ALOAD, 1);
@@ -544,9 +574,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         byte[] bytes = cw.toByteArray();
 
         try {
-            String classToLoad = className.replace("/",".");
+            String classToLoad = className.replace("/", ".");
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader(), classToLoad);
-            final Class<?> clazz = cl.loadClass(classToLoad);                                                                                 
+            final Class<?> clazz = cl.loadClass(classToLoad);
 
             moduleConfig.bind(clazz);
             moduleConfig.install(new com.google.sitebricks.SitebricksModule() {
@@ -591,14 +621,14 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             return this;
         }
 
-        public java.lang.String getValue(){
+        public java.lang.String getValue() {
             return value;
         }
     }
 
     private List<PostServiceHandler> lookupPostServiceHandler(ServiceDefinition serviceDefinition) {
         List<PostServiceHandler> l = new ArrayList<PostServiceHandler>();
-        for (ServiceHandler s: serviceDefinition.serviceHandlers()) {
+        for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
             if (s instanceof PostServiceHandler) {
                 l.add((PostServiceHandler) s);
             }
