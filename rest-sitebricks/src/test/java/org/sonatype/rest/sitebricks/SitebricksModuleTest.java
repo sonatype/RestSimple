@@ -124,7 +124,7 @@ public class SitebricksModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -137,7 +137,7 @@ public class SitebricksModuleTest {
         logger.info("running test: testInvalidPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 405);
@@ -151,13 +151,13 @@ public class SitebricksModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - bar - \"}");
 
         c.close();
     }
@@ -183,7 +183,7 @@ public class SitebricksModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
         Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
@@ -222,21 +222,20 @@ public class SitebricksModuleTest {
 
         c.close();
     }
-
-    
+  
     @Test(timeOut = 20000, enabled = false)
     public void testSecondResourceGet() throws Throwable {
         logger.info("running test: testSecondResourceGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         Response r = c.prepareGet(targetUrl + "/foo/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - bar - \"}");
 
         c.close();
     }

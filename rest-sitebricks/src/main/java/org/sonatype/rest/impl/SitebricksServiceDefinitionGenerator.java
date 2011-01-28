@@ -518,6 +518,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
             mv.visitTypeInsn(CHECKCAST, "java/lang/String");
             mv.visitInsn(AASTORE);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
+            mv.visitLdcInsn("Getting generated value {}");
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            mv.visitVarInsn(ALOAD, 12);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getDeclaredField", "(Ljava/lang/String;)Ljava/lang/reflect/Field;");
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Field", "get", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "info", "(Ljava/lang/String;Ljava/lang/Object;)V");
             mv.visitJumpInsn(GOTO, l6);
             mv.visitLabel(l5);
             mv.visitFrame(Opcodes.F_FULL, 8, new Object[]{className, "java/lang/String", "java/lang/String", "java/lang/String", "org/sonatype/rest/api/ServiceHandler", "java/lang/String", "[Ljava/lang/Class;", "[Ljava/lang/Object;"}, 0, new Object[]{});

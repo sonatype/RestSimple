@@ -20,6 +20,7 @@ public class SitebricksServletModule extends ServletModule {
         Injector injector = Guice.createInjector(new SitebricksModule(binder()));
         PostServiceHandler postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
         postServiceHandler.addFormParam("update");
+        postServiceHandler.addFormParam("update2");
 
         ServiceEntity serviceEntity = new AddressBookServiceEntity();
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
