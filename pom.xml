@@ -18,6 +18,7 @@
         <module>rest-jaxrs</module>
         <module>rest-sitebricks</module>
         <module>rest-client</module>
+        <module>acceptance-test</module>
     </modules>
 
     <dependencyManagement>
@@ -43,6 +44,16 @@
             <dependency>
                 <groupId>org.sonatype.deflector</groupId>
                 <artifactId>rest-jaxrs</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sonatype.deflector</groupId>
+                <artifactId>rest-sitebricks</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sonatype.deflector</groupId>
+                <artifactId>rest-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

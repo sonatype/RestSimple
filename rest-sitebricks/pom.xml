@@ -18,7 +18,6 @@
         <dependency>
             <groupId>org.sonatype.deflector</groupId>
             <artifactId>rest-api</artifactId>
-            <version>0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- guice -->

@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.rest.tests;
+package org.sonatype.rest.acceptance;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.Response;
@@ -52,6 +52,9 @@ import org.sonatype.rest.api.PutServiceHandler;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.client.ServiceDefinitionClient;
 import org.sonatype.rest.client.ServiceDefinitionProxy;
+import org.sonatype.rest.example.addressBook.AddressBookMediaType;
+import org.sonatype.rest.example.addressBook.AddressBookServiceEntity;
+import org.sonatype.rest.example.addressBook.AddressBookModuleConfig;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -64,9 +67,9 @@ import java.util.Map;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class JAXRSModuleClientStubTest {
+public class AddressBookTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(JAXRSModuleClientStubTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AddressBookTest.class);
 
     protected Server server;
 
@@ -101,7 +104,7 @@ public class JAXRSModuleClientStubTest {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new JAXRSModuleConfig());
+        context.addEventListener(new AddressBookModuleConfig());
         context.addServlet(DefaultServlet.class, "/");
 
         server.setHandler(context);

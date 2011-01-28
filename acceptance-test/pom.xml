@@ -8,10 +8,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.deflector</groupId>
-    <artifactId>rest-jaxrs</artifactId>
+    <artifactId>acceptance-test</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>rest-jaxrs</name>
+    <name>acceptance-test</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
 
@@ -19,6 +19,18 @@
             <groupId>org.sonatype.deflector</groupId>
             <artifactId>rest-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.sonatype.deflector</groupId>
+            <artifactId>rest-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.deflector</groupId>
+            <artifactId>rest-client</artifactId>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.sonatype.deflector</groupId>-->
+            <!--<artifactId>rest-sitebricks</artifactId>-->
+        <!--</dependency>-->
 
         <!-- guice -->
         <dependency>
