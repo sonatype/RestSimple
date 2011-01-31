@@ -85,7 +85,7 @@ public class ServiceDefinitionResource {
     @POST
     public Response postJson(@PathParam("method") String service, @PathParam("id") String value, String body) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = delegate("post", service, value, body);
+        Object response = createResource("post", service, value, body);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
@@ -147,7 +147,7 @@ public class ServiceDefinitionResource {
         }
     }
 
-    private Object delegate(String methodName, String service, String value, String body) {
+    private Object createResource(String methodName, String service, String value, String body) {
         ServiceHandler serviceHandler = mapper.map(service);
         if (serviceHandler == null) {
             throw new WebApplicationException(new IllegalStateException("No ServiceHandler defined for service " + service));

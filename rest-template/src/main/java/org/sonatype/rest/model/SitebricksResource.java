@@ -66,28 +66,28 @@ public final class SitebricksResource {
         return Reply.with(response.toString()).status(201);
     }
 
-//    @Post @Accept("application/vnd.org.sonatype.rest+json")
-//    public Reply<?> post(@Named("method") String service, @Named("id") String value) {
-//        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-//        Object response = createResponse("post", service, value);
-//
-//        if (Reply.class.isAssignableFrom(response.getClass())) {
-//            return Reply.class.cast(response);
-//        }
-//
-//        if (response == null) {
-//            return Reply.with("").noContent();
-//        } else {
-//            return Reply.with(response.toString());
-//        }
-//    }
+    @Post @Accept("application/vnd.org.sonatype.rest+json")
+    public Reply<?> post0(@Named("method") String service, @Named("id") String value) {
+        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
+        Object response = createResponse("post", service, value);
+
+        if (Reply.class.isAssignableFrom(response.getClass())) {
+            return Reply.class.cast(response);
+        }
+
+        if (response == null) {
+            return Reply.with("").noContent();
+        } else {
+            return Reply.with(response.toString());
+        }
+    }
 
     @Post
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> post(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
         String body = request.read(String.class).as(Text.class);
-        Object response = delegate("post", service, value, body);
+        Object response = createResponse("post", service, value, body);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
@@ -154,7 +154,7 @@ public final class SitebricksResource {
         this.update = update;
     }
 
-    private Object delegate(String methodName, String service, String value, String body) {
+    private Object createResponse(String methodName, String service, String value, String body) {
         ServiceHandler serviceHandler = mapper.map(service);
         if (serviceHandler == null) {
             return Reply.with("No ServiceHandler defined for service " + service).error();
