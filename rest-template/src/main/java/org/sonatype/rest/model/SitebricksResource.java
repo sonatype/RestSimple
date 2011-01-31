@@ -23,7 +23,11 @@ import org.sonatype.rest.spi.ServiceHandlerMapper;
 import java.lang.reflect.Method;
 import java.util.List;
 
-
+/**
+ * This is what we want to generate automatically using ASM.
+ * <p/>
+ * NOTE: This class is not used, but we do instead generate some form ot it based on {@link org.sonatype.rest.api.ServiceDefinition}
+ */
 @At("/:method/:id")
 public final class SitebricksResource {
 
