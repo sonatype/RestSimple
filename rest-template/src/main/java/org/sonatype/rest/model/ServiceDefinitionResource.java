@@ -33,8 +33,8 @@ import java.util.Map;
  * NOTE: This class is not used, but we do instead generate some form ot it based on {@link org.sonatype.rest.api.ServiceDefinition}
  */
 @Path("/bar/{method}/{id}/")
-@Produces("application/org.sonatype.rest.tests.addressBook+json")
-@Consumes("application/org.sonatype.rest.tests.addressBook+json")
+@Produces("application/vnd.org.sonatype.rest+json")
+@Consumes("application/vnd.org.sonatype.rest+json")
 public class ServiceDefinitionResource {
 
     private Logger logger = LoggerFactory.getLogger(ServiceDefinitionResource.class);

@@ -45,8 +45,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AddressBookServiceEntity implements ServiceEntity {
 
     public final static String APPLICATION = "application";
-    public final static String JSON = "org.sonatype.rest.tests.addressBook+json";
-    public final static String XML = "org.sonatype.rest.tests.addressBook+xml";
+    public final static String JSON = "vnd.org.sonatype.rest+json";
+    public final static String XML = "vnd.org.sonatype.rest+xml";
 
     private final ConcurrentHashMap<String, List<String>> book = new ConcurrentHashMap<String, List<String>>();
 

@@ -41,7 +41,7 @@ public final class SitebricksResource {
     ServiceHandlerMediaType producer;
 
     @Get
-    @Accept("application/org.sonatype.rest.tests.addressBook+json")
+    @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> get(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("get", service, value);
@@ -54,7 +54,7 @@ public final class SitebricksResource {
     }
 
     @Put
-    @Accept("application/org.sonatype.rest.tests.addressBook+json")
+    @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> put(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("put", service, value);
@@ -66,7 +66,7 @@ public final class SitebricksResource {
         return Reply.with(response.toString()).status(201);
     }
 
-//    @Post @Accept("application/org.sonatype.rest.tests.addressBook+json")
+//    @Post @Accept("application/vnd.org.sonatype.rest+json")
 //    public Reply<?> post(@Named("method") String service, @Named("id") String value) {
 //        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
 //        Object response = createResponse("post", service, value);
@@ -83,7 +83,7 @@ public final class SitebricksResource {
 //    }
 
     @Post
-    @Accept("application/org.sonatype.rest.tests.addressBook+json")
+    @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> post(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
         String body = request.read(String.class).as(Text.class);
@@ -101,7 +101,7 @@ public final class SitebricksResource {
     }
 
     @Delete
-    @Accept("application/org.sonatype.rest.tests.addressBook+json")
+    @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> delete(@Named("method") String service, @Named("id") String value) {
         logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("delete", service, value);
