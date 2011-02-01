@@ -13,6 +13,7 @@
 package org.sonatype.rest.impl;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
@@ -37,11 +38,14 @@ import java.util.UUID;
 /**
  * Generate a Sitebricks resource, and bind it.
  */
+@Singleton
 public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGenerator, Opcodes {
 
     private final ResourceModuleConfig moduleConfig;
 
     private final Logger logger = LoggerFactory.getLogger(SitebricksServiceDefinitionGenerator.class);
+
+    private com.google.sitebricks.SitebricksModule module;
 
     @Inject
     public SitebricksServiceDefinitionGenerator(ResourceModuleConfig moduleConfig) {
@@ -766,12 +770,18 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             final Class<?> clazz = cl.loadClass(classToLoad);
 
             moduleConfig.bind(clazz);
-            moduleConfig.install(new com.google.sitebricks.SitebricksModule() {
-                @Override
-                protected void configureSitebricks() {
-                    at(serviceDefinition.path() + "/:method/:id").serve(clazz);
-                }
-            });
+            if (module == null) {
+                module = new com.google.sitebricks.SitebricksModule() {
+                    @Override
+                    protected void configureSitebricks() {
+                        at(serviceDefinition.path() + "/:method/:id").serve(clazz);
+                    }
+                };
+                moduleConfig.install(module);
+            } else {
+                module.at(serviceDefinition.path() + "/:method/:id").serve(clazz);
+            }
+
         }
 
         catch (Throwable e){

@@ -223,7 +223,7 @@ public class SitebricksModuleTest {
         c.close();
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000, enabled = true)
     public void testSecondResourceGet() throws Throwable {
         logger.info("running test: testSecondResourceGet");
         AsyncHttpClient c = new AsyncHttpClient();
@@ -240,7 +240,7 @@ public class SitebricksModuleTest {
         c.close();
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000, enabled = true)
     public void testGetWithPostBody() throws Throwable {
         logger.info("running test: testGetWithPostBody");
         AsyncHttpClient c = new AsyncHttpClient();
