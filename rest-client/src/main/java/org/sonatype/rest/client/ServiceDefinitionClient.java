@@ -27,15 +27,17 @@ import java.util.Map;
  *
         serviceDefinition = new DefaultServiceDefinition();
 
-        serviceDefinition .withPath("http://....")
-                .producing(ServiceDefinition.MediaType.JSON)
-                .producing(ServiceDefinition.MediaType.XML)
-                .consuming(ServiceDefinition.MediaType.JSON)
-                .consuming(ServiceDefinition.MediaType.XML)
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
+        serviceDefinition
+                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
+                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
+                .consuming(MediaType.JSON)
+                .consuming(MediaType.XML)
+                .withHandler(new PutServiceHandler("id", "createAddressBook"))
+                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(postServiceHandler)
+                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
+                .usingEntity(serviceEntity)
+                .bind();
                 .usingEntity(new AddressBookServiceEntity());
  *
  *  will translate to
