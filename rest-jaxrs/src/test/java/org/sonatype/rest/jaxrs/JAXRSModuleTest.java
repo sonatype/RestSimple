@@ -183,9 +183,11 @@ public class JAXRSModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
+        assertEquals(r.getStatusCode(), 200);
+        
         c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);

@@ -183,9 +183,10 @@ public class SitebricksModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
+        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
+        assertEquals(r.getStatusCode(), 200);
         c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -229,8 +230,10 @@ public class SitebricksModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
-        Response r = c.prepareGet(targetUrl + "/foo/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
+        assertEquals(r.getStatusCode(), 200);
+
+        r = c.prepareGet(targetUrl + "/foo/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);

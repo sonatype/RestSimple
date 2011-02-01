@@ -184,9 +184,11 @@ public class AddressBookTest {
         stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();
         m.put("update","foo");
-        stub.doPost(m,"myBook");
+        Response r = stub.doPost(m,"myBook");
+        assertEquals(r.getStatusCode(), 200);
+
         stub.doDelete("myBook");
-        Response r = stub.doGet("myBook");
+        r = stub.doGet("myBook");
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
