@@ -72,7 +72,7 @@ public abstract class ServiceDefinitionClient {
     abstract public  Response doHead(String... paths);
 
     /**
-     * Execute a remote POST operation. The POST operation is generated using a {@link org.sonatype.rest.api.ServiceHandler}
+     * Execute a remote PUT operation. The POST operation is generated using a {@link org.sonatype.rest.api.ServiceHandler}
      * and the default URI is from {@link org.sonatype.rest.api.ServiceHandler#getServiceEntityMethod()}. The paths values
      * is defined from {@link org.sonatype.rest.api.ServiceHandler#getPath()} instance.
      *

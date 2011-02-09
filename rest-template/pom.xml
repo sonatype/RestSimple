@@ -8,10 +8,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.deflector</groupId>
-    <artifactId>rest-template</artifactId>
+    <artifactId>restsimple-template</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>rest-template</name>
+    <name>restsimple-template</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
 

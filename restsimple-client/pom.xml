@@ -8,16 +8,21 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.deflector</groupId>
-    <artifactId>rest-jaxrs</artifactId>
+    <artifactId>restsimple-client</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>rest-jaxrs</name>
+    <name>restsimple-client</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
 
         <dependency>
             <groupId>org.sonatype.deflector</groupId>
             <artifactId>rest-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.sonatype.deflector</groupId>
+            <artifactId>rest-jaxrs</artifactId>
         </dependency>
 
         <!-- guice -->
@@ -85,7 +90,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
+            <classifier>jdk15</classifier>            
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

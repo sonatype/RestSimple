@@ -8,10 +8,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.deflector</groupId>
-    <artifactId>rest-api</artifactId>
+    <artifactId>restsimple-api</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>rest-api</name>
+    <name>restsimple-api</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
         <!-- guice -->

@@ -8,21 +8,16 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.deflector</groupId>
-    <artifactId>rest-client</artifactId>
+    <artifactId>restsimple-sitebricks</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>rest-client</name>
+    <name>restsimple-sitebricks</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
 
         <dependency>
             <groupId>org.sonatype.deflector</groupId>
             <artifactId>rest-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.sonatype.deflector</groupId>
-            <artifactId>rest-jaxrs</artifactId>
         </dependency>
 
         <!-- guice -->
@@ -62,21 +57,11 @@
             <version>1.0</version>
         </dependency>
 
-        <!-- Jersey -->
+        <!-- Sitebricks -->
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-guice</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>1.5</version>
+            <groupId>com.google.sitebricks</groupId>
+            <artifactId>sitebricks</artifactId>
+            <version>0.8.3-SNAPSHOT</version>
         </dependency>
 
         <!-- logging -->
@@ -90,7 +75,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>            
+            <classifier>jdk15</classifier>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

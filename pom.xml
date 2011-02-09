@@ -14,10 +14,10 @@
     <name>rest-parent</name>
     <url>http://www.sonatype.com</url>
     <modules>
-        <module>rest-api</module>
-        <module>rest-jaxrs</module>
-        <module>rest-sitebricks</module>
-        <module>rest-client</module>  
+        <module>restsimple-api</module>
+        <module>restsimple-jaxrs</module>
+        <module>restsimple-sitebricks</module>
+        <module>restsimple-client</module>  
         <module>rest-template</module>
         <module>acceptance-test</module>
     </modules>
