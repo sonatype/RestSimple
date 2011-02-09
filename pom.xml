@@ -18,7 +18,7 @@
         <module>restsimple-jaxrs</module>
         <module>restsimple-sitebricks</module>
         <module>restsimple-client</module>  
-        <module>rest-template</module>
+        <module>restsimple-template</module>
         <module>acceptance-test</module>
     </modules>
 
