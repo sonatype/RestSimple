@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.sitebricks.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 
 import java.lang.reflect.Constructor;
 
