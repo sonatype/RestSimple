@@ -110,11 +110,7 @@ public class JAXRSServletModule extends ServletModule {
                 .usingEntity(serviceEntity)
                 .bind();
 
-        // TODO: This is NOT portable
-        HashMap<String,String> initParams = new HashMap<String, String>();
-        initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
-
-        serve("/*").with(GuiceContainer.class, initParams);
+        serve("/*").with(GuiceContainer.class);
 
     }
 

@@ -72,12 +72,8 @@ public class AddressBookServletModule extends com.google.inject.servlet.ServletM
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
-
-        // TODO: This is NOT portable
-        HashMap<String,String> initParams = new HashMap<String, String>();
-        initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
-
-        serve("/*").with(GuiceContainer.class, initParams);
+        
+        serve("/*").with(GuiceContainer.class);
 
     }
 
