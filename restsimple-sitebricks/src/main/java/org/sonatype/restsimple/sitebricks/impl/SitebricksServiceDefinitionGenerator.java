@@ -201,10 +201,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitInsn(ARETURN);
                     mv.visitMaxs(4, 4);
                     mv.visitEnd();
-
+                    continue;
                 }
             }
-            duplicateCounter = -1;
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("put")) {
 
                 {
@@ -269,11 +268,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mv.visitInsn(ARETURN);
                     mv.visitMaxs(4, 4);
                     mv.visitEnd();
+                    continue;
                 }
             }
 
-            duplicateCounter = -1;
-            StringBuilder builder = new StringBuilder();
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("post")) {
                 {
 
@@ -347,6 +345,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                         mv.visitInsn(ARETURN);
                         mv.visitMaxs(4, 4);
                         mv.visitEnd();
+                        continue;
                     } else {
                         {
                             mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;Lcom/google/sitebricks/headless/Request;)Lcom/google/sitebricks/headless/Reply;", "(Ljava/lang/String;Ljava/lang/String;Lcom/google/sitebricks/headless/Request;)Lcom/google/sitebricks/headless/Reply<*>;", null);
@@ -420,12 +419,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                             mv.visitInsn(ARETURN);
                             mv.visitMaxs(5, 6);
                             mv.visitEnd();
+                            continue;
                         }
                     }
                 }
             }
 
-            duplicateCounter = -1;
             if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("delete")) {
                 {
                     String methodName = serviceHandler.getHttpMethod().name().toLowerCase();

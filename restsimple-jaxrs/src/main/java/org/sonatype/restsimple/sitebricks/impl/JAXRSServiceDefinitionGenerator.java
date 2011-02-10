@@ -194,10 +194,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                     mv.visitInsn(ARETURN);
                     mv.visitMaxs(5, 4);
                     mv.visitEnd();
+                    continue;
                 }
             }
             {
-                duplicateCounter = -1;
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("head")) {
 
                     {
@@ -240,11 +240,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         mv.visitInsn(ARETURN);
                         mv.visitMaxs(5, 4);
                         mv.visitEnd();
+                        continue;
                     }
                 }
             }
             {
-                duplicateCounter = -1;
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("put")) {
 
                     {
@@ -305,10 +305,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         mv.visitInsn(ARETURN);
                         mv.visitMaxs(5, 5);
                         mv.visitEnd();
+                        continue;                        
                     }
                 }
                 {
-                    duplicateCounter = -1;
                     if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("post")) {
 
                         String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
@@ -372,6 +372,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 mv.visitInsn(ARETURN);
                                 mv.visitMaxs(5, 5);
                                 mv.visitEnd();
+                                continue;                                
                             }
                         } else {
                             mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
@@ -418,11 +419,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             mv.visitInsn(ARETURN);
                             mv.visitMaxs(5, 5);
                             mv.visitEnd();
+                            continue;
                         }
                     }
                 }
                 {
-                    duplicateCounter = -1;
                     if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("delete")) {
                         {
                             String methodName = serviceHandler.getHttpMethod().name().toLowerCase();
@@ -465,6 +466,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             mv.visitInsn(ARETURN);
                             mv.visitMaxs(5, 4);
                             mv.visitEnd();
+                            continue;                            
                         }
                     }
                 }
