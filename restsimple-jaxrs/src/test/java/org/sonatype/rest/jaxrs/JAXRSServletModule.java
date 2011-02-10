@@ -48,8 +48,8 @@ import org.sonatype.rest.api.PutServiceHandler;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
 import org.sonatype.rest.guice.JaxrsModule;
-
-import java.util.HashMap;
+import org.sonatype.rest.tests.AddressBookMediaType;
+import org.sonatype.rest.tests.AddressBookServiceEntity;
 
 public class JAXRSServletModule extends ServletModule {
 

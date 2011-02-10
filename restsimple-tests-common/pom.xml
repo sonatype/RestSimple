@@ -8,30 +8,22 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.restsimple</groupId>
-    <artifactId>restsimple-api</artifactId>
+    <artifactId>restsimple-tests-common</artifactId>
     <packaging>jar</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>restsimple-api</name>
+    <name>restsimple-tests-common</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
-        <!-- guice -->
+
         <dependency>
-            <groupId>org.sonatype.sisu</groupId>
-            <artifactId>sisu-guice</artifactId>
+            <groupId>org.sonatype.restsimple</groupId>
+            <artifactId>restsimple-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>1.5</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <defaultGoal>install</defaultGoal>
-        <plugins>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
 

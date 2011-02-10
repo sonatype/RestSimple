@@ -7,14 +7,15 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.sonatype.deflector</groupId>
-    <artifactId>rest-parent</artifactId>
+    <groupId>org.sonatype.restsimple</groupId>
+    <artifactId>restsimple-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>rest-parent</name>
+    <name>restsimple-parent</name>
     <url>http://www.sonatype.com</url>
     <modules>
         <module>restsimple-api</module>
+        <module>restsimple-tests-common</module>
         <module>restsimple-jaxrs</module>
         <module>restsimple-sitebricks</module>
         <module>restsimple-client</module>  
@@ -38,23 +39,28 @@
             </dependency>
 
             <dependency>
-                <groupId>org.sonatype.deflector</groupId>
-                <artifactId>rest-api</artifactId>
+                <groupId>org.sonatype.restsimple</groupId>
+                <artifactId>restsimple-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.sonatype.deflector</groupId>
-                <artifactId>rest-jaxrs</artifactId>
+                <groupId>org.sonatype.restsimple</groupId>
+                <artifactId>restsimple-jaxrs</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.sonatype.deflector</groupId>
-                <artifactId>rest-sitebricks</artifactId>
+                <groupId>org.sonatype.restsimple</groupId>
+                <artifactId>restsimple-tests-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>            
+            <dependency>
+                <groupId>org.sonatype.restsimple</groupId>
+                <artifactId>restsimple-sitebricks</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.sonatype.deflector</groupId>
-                <artifactId>rest-client</artifactId>
+                <groupId>org.sonatype.restsimple</groupId>
+                <artifactId>restsimple-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

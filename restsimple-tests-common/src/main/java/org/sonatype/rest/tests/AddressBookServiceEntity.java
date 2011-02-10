@@ -34,36 +34,68 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.rest.example.addressBook;
+package org.sonatype.rest.tests;
 
-import org.sonatype.rest.api.ServiceHandlerMediaType;
+import org.sonatype.rest.api.ServiceEntity;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * A bean used by JaxRs when serializing JSON.
- */
-@XmlRootElement
-public class AddressBookMediaType implements ServiceHandlerMediaType<List<String>> {
-    public String entries;
+public class AddressBookServiceEntity implements ServiceEntity {
 
-    public AddressBookMediaType(){
+    public final static String APPLICATION = "application";
+    public final static String JSON = "vnd.org.sonatype.rest+json";
+    public final static String XML = "vnd.org.sonatype.rest+xml";
+
+    private final ConcurrentHashMap<String, List<String>> book = new ConcurrentHashMap<String, List<String>>();
+
+    public String createAddressBook(String id) {
+        book.put(id, new ArrayList<String>());
+        return "created";
+    }
+
+    public List getAddressBook(String id) {
+        List<String> list = book.get(id);
+        return list == null ? new ArrayList<String>() : list;
+    }
+
+    public String updateAddressBook(String id, String value) {
+        List<String> list = book.get(id);
+
+        if (list == null) {
+            throw new IllegalStateException("No address book have been created for " + id);
+        }
+
+        list.add(value);
+        book.put(id, list);
+        return "updated";
+    }
+
+    public String updateAddressBook(String id, String value, String value2) {
+        List<String> list = book.get(id);
+
+        if (list == null) {
+            throw new IllegalStateException("No address book have been created for " + id);
+        }
+
+        list.add(value);
+        list.add(value2);
+        book.put(id, list);
+        return "updated";
+    }
+
+    public String deleteAddressBook(String id) {
+        book.remove(id);
+        return "updated";
     }
 
     @Override
-    public AddressBookMediaType visit(List<String> entries) {
-        StringBuilder b = new StringBuilder();
-
-        if (entries == null) {
-            this.entries = "";
-        } else {
-            for(String s: entries) {
-                b.append(s);
-                b.append(" - ");
-            }
-            this.entries = b.toString();
-        }
-        return this;
+    public List<String> version() {
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(APPLICATION + "/" + JSON);
+        list.add(APPLICATION + "/" + XML);
+        return list;
     }
 }
+    

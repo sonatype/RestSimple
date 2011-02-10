@@ -46,8 +46,9 @@ import org.sonatype.rest.api.PostServiceHandler;
 import org.sonatype.rest.api.PutServiceHandler;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
-import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.guice.SitebricksModule;
+import org.sonatype.rest.tests.AddressBookMediaType;
+import org.sonatype.rest.tests.AddressBookServiceEntity;
 
 public class SitebricksServletModule extends ServletModule {
 

@@ -47,10 +47,7 @@ import org.sonatype.rest.api.PostServiceHandler;
 import org.sonatype.rest.api.PutServiceHandler;
 import org.sonatype.rest.api.ServiceDefinition;
 import org.sonatype.rest.api.ServiceEntity;
-import org.sonatype.rest.api.ServiceHandler;
 import org.sonatype.rest.guice.JaxrsModule;
-
-import java.util.HashMap;
 
 public class JAXRSServletModule extends ServletModule {
 

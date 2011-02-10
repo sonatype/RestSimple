@@ -40,7 +40,7 @@ import java.util.List;
                 .usingEntity(serviceEntity)
                 .bind();
  * }
- * can easily be translated into a JAXRS resources by using the rest-jaxrs extension.
+ * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension.
  *
  * Request will be delegated to the {@link ServiceEntity}'s method using the information contained within passed
  * {@link ServiceHandler}. Using the example above, a request to:
