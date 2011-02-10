@@ -179,7 +179,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                     }
                     if (serviceHandler.mediaToProduce().size() > 0) {
                         {
-                            av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
+                            av0 = mv.visitAnnotation("Ljavax/ws/rs/Produces;", true);
                             {
                                 AnnotationVisitor av1 = av0.visitArray("value");
                                 for (MediaType m : serviceHandler.mediaToProduce()) {
@@ -192,7 +192,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                     }
                     if (serviceHandler.mediaToConsume().size() > 0) {
                         {
-                            av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                            av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                             {
                                 AnnotationVisitor av1 = av0.visitArray("value");
                                 for (MediaType m : serviceHandler.mediaToConsume()) {
@@ -253,7 +253,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         if (serviceHandler.mediaToProduce().size() > 0) {
                             {
-                                av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Produces;", true);
                                 {
                                     AnnotationVisitor av1 = av0.visitArray("value");
                                     for (MediaType m : serviceHandler.mediaToProduce()) {
@@ -266,7 +266,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         if (serviceHandler.mediaToConsume().size() > 0) {
                             {
-                                av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                 {
                                     AnnotationVisitor av1 = av0.visitArray("value");
                                     for (MediaType m : serviceHandler.mediaToConsume()) {
@@ -327,7 +327,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         if (serviceHandler.mediaToProduce().size() > 0) {
                             {
-                                av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Produces;", true);
                                 {
                                     AnnotationVisitor av1 = av0.visitArray("value");
                                     for (MediaType m : serviceHandler.mediaToProduce()) {
@@ -340,7 +340,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         if (serviceHandler.mediaToConsume().size() > 0) {
                             {
-                                av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                 {
                                     AnnotationVisitor av1 = av0.visitArray("value");
                                     for (MediaType m : serviceHandler.mediaToConsume()) {
@@ -428,7 +428,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 }
                                 if (serviceHandler.mediaToProduce().size() > 0) {
                                     {
-                                        av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
+                                        av0 = mv.visitAnnotation("Ljavax/ws/rs/Produces;", true);
                                         {
                                             AnnotationVisitor av1 = av0.visitArray("value");
                                             for (MediaType m : serviceHandler.mediaToProduce()) {
@@ -441,7 +441,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 }
                                 if (serviceHandler.mediaToConsume().size() > 0) {
                                     {
-                                        av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                                        av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                         {
                                             AnnotationVisitor av1 = av0.visitArray("value");
                                             for (MediaType m : serviceHandler.mediaToConsume()) {
@@ -501,7 +501,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             }
                             if (serviceHandler.mediaToProduce().size() > 0) {
                                 {
-                                    av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
+                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Produces;", true);
                                     {
                                         AnnotationVisitor av1 = av0.visitArray("value");
                                         for (MediaType m : serviceHandler.mediaToProduce()) {
@@ -514,7 +514,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             }
                             if (serviceHandler.mediaToConsume().size() > 0) {
                                 {
-                                    av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                     {
                                         AnnotationVisitor av1 = av0.visitArray("value");
                                         for (MediaType m : serviceHandler.mediaToConsume()) {
@@ -583,7 +583,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             }
                             if (serviceHandler.mediaToProduce().size() > 0) {
                                 {
-                                    av0 = cw.visitAnnotation("Ljavax/ws/rs/Produces;", true);
+                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Produces;", true);
                                     {
                                         AnnotationVisitor av1 = av0.visitArray("value");
                                         for (MediaType m : serviceHandler.mediaToProduce()) {
@@ -596,7 +596,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             }
                             if (serviceHandler.mediaToConsume().size() > 0) {
                                 {
-                                    av0 = cw.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
+                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                     {
                                         AnnotationVisitor av1 = av0.visitArray("value");
                                         for (MediaType m : serviceHandler.mediaToConsume()) {
