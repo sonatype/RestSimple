@@ -12,6 +12,10 @@
  */
 package org.sonatype.restsimple.api;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Represent how a REST resource handles requests. A {@link ServiceHandler} is used when mapping the request to
  * a {@link ServiceEntity}'s method
@@ -21,7 +25,9 @@ abstract public class ServiceHandler {
     private final String path;
     private final String method;
     private final Class<? extends ServiceHandlerMediaType> mediaType;
-
+    private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
+    private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
+    
     /**
      * Create a new {@link ServiceHandler}
      *
@@ -83,5 +89,38 @@ abstract public class ServiceHandler {
     public Class<? extends ServiceHandlerMediaType> mediaType(){
         return mediaType;
     }
+    
+    /**
+     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} are used when writing the response and maps the HTTP response's content-type header.
+     * @param mediaType {@link org.sonatype.restsimple.api.MediaType}
+     * @return the current {@link ServiceDefinition}
+     */
+    public ServiceHandler producing(MediaType mediaType) {
+        mediaTypeToProduce.add(mediaType);
+        return this;
+    }
 
+    /**
+     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} are used when reading the request and maps the HTTP request's content-type header.
+     * @param mediaType {@link org.sonatype.restsimple.api.MediaType}
+     * @return the current {@link ServiceDefinition}
+     */
+    public ServiceHandler consuming(MediaType mediaType) {
+        mediaTypeToConsume.add(mediaType);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<MediaType> mediaToConsume() {
+        return Collections.unmodifiableList(mediaTypeToConsume);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public List<MediaType> mediaToProduce() {
+        return Collections.unmodifiableList(mediaTypeToProduce);
+    }
 }
