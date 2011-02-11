@@ -133,7 +133,7 @@ public class AddressBookTest {
         server.stop();
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testPut() throws Throwable {
         logger.info("running test: testPut");
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
@@ -144,7 +144,7 @@ public class AddressBookTest {
         assertEquals(r.getStatusCode(), 201);
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
@@ -159,7 +159,7 @@ public class AddressBookTest {
 
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
@@ -176,7 +176,7 @@ public class AddressBookTest {
         assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
