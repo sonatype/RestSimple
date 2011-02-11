@@ -171,4 +171,17 @@ public class HelloWorldModuleTest {
 
         c.close();
     }
+
+    @Test(timeOut = 20000)
+    public void testContentNegociation() throws Throwable {
+        logger.info("running test: testContentNegociation");
+        AsyncHttpClient c = new AsyncHttpClient();
+        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + "vnd.org.sonatype.rest-v2+json";
+
+        Response r = c.prepareGet(targetUrl + "/sayPlainJsonHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 406);
+        c.close();
+    }
 }
