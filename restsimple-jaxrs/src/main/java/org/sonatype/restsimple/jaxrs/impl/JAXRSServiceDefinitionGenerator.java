@@ -926,7 +926,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             Class<?> clazz = cl.loadClass(classToLoad);
 
             moduleConfig.bind(clazz);
-
+            moduleConfig.bind(GenericMessageBodyWriter.class);
         } catch (Throwable e) {
             logger.error("generate", e);
         }

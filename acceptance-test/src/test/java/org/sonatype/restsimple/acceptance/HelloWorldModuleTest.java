@@ -88,7 +88,7 @@ public class HelloWorldModuleTest {
     public void setUpGlobal() throws Exception {
         port = findFreePort();
         server = new Server(port);
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.TXT;
+
 
         targetUrl = "http://127.0.0.1:" + port;
 
@@ -108,21 +108,67 @@ public class HelloWorldModuleTest {
         server.stop();
     }
 
-    @Test(timeOut = 20000, enabled = false)
-    public void testGet() throws Throwable {
-        logger.info("running test: testGet");
+    @Test(timeOut = 20000)
+    public void testGetPlainText() throws Throwable {
+        logger.info("running test: testGetPlainText");
         AsyncHttpClient c = new AsyncHttpClient();
-
+        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.TXT;
         Response r = c.prepareGet(targetUrl + "/sayPlainTextHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+        assertEquals(r.getResponseBody(), "Hello RestSimple sonatype");
 
         c.close();
     }
 
+    @Test(timeOut = 20000)
+    public void testGetHTML() throws Throwable {
+        logger.info("running test: testGetHTML");
+        AsyncHttpClient c = new AsyncHttpClient();
+        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.HTML;
 
+        Response r = c.prepareGet(targetUrl + "/sayPlainHtmlHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "<html> " + "<title>" + "Hello RestSimple sonatype</title>"
+                + "<body><h1>" + "Hello Jersey" + "</body></h1>" + "</html> ");
+
+        c.close();
+    }
+
+    @Test(timeOut = 20000)
+    public void testGetXML() throws Throwable {
+        logger.info("running test: testGetXML");
+        AsyncHttpClient c = new AsyncHttpClient();
+        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.XML;
+
+        Response r = c.prepareGet(targetUrl + "/sayPlainXmlHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><helloWorldMediaType><helloWorld>sonatype</helloWorld></helloWorldMediaType>");
+
+        c.close();
+    }
+
+    @Test(timeOut = 20000)
+    public void testGetJSON() throws Throwable {
+        logger.info("running test: testGetJSON");
+        AsyncHttpClient c = new AsyncHttpClient();
+        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.JSON;
+
+        Response r = c.prepareGet(targetUrl + "/sayPlainJsonHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "{\"helloWorld\":\"sonatype\"}");
+
+        c.close();
+    }
 }

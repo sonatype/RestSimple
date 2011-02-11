@@ -10,7 +10,7 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceEntity;
-import org.sonatype.restsimple.sitebricks.guice.JaxrsModule;
+import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 import org.sonatype.restsimple.tests.AddressBookMediaType;
 import org.sonatype.restsimple.tests.AddressBookServiceEntity;
 

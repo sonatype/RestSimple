@@ -34,44 +34,41 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.example.hello;
+package org.sonatype.restsimple.jaxrs.impl;
 
-import org.sonatype.restsimple.api.ServiceEntity;
+import com.sun.jersey.spi.resource.Singleton;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 
-public class HelloWorldServiceEntity implements ServiceEntity {
-    public final static String APPLICATION = "application";
-    public final static String TXT = "vnd.org.sonatype.rest+txt";
-    public final static String XML = "vnd.org.sonatype.rest+xml";
-    public final static String JSON = "vnd.org.sonatype.rest+json";
-    public final static String HTML = "vnd.org.sonatype.rest+html";
-
-    public String sayPlainTextHello(String name) {
-        return "Hello RestSimple " + name;
-    }
-    
-    public String sayPlainXmlHello(String name) {
-        return name;
-    }
-
-    public String sayPlainJsonHello(String name) {
-        return name;
+@Provider
+@Singleton
+public class GenericMessageBodyWriter implements MessageBodyWriter<Object> {
+    public long getSize(final Object t, final Class<?> type, final Type genericType,
+                        final Annotation[] annotations, final MediaType mediaType) {
+        return -1;
     }
 
-    public String sayPlainHtmlHello(String name) {
-        return "<html> " + "<title>" + "Hello RestSimple " + name + "</title>"
-                + "<body><h1>" + "Hello Jersey" + "</body></h1>" + "</html> ";
+    public boolean isWriteable(final Class<?> type, final Type genericType,
+                               final Annotation[] annotations, final MediaType mediaType) {
+        return mediaType.isCompatible(MediaType.TEXT_PLAIN_TYPE) ||
+                mediaType.isCompatible(new MediaType("application", "vnd.org.sonatype.rest+txt")) ||
+                mediaType.isCompatible(MediaType.TEXT_HTML_TYPE) ||
+                mediaType.isCompatible(new MediaType("application", "vnd.org.sonatype.rest+html"));
     }
 
-    @Override
-    public List<String> version() {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add(APPLICATION + "/" + TXT);
-        list.add(APPLICATION + "/" + XML);
-        list.add(APPLICATION + "/" + HTML);
-        list.add(APPLICATION + "/" + JSON);        
-        return list;
+    public void writeTo(final Object t, final Class<?> type, final Type genericType,
+                        final Annotation[] annotations, final MediaType mediaType,
+                        final MultivaluedMap<String, Object> httpHeaders,
+                        final OutputStream entityStream) throws IOException, WebApplicationException {
+        entityStream.write(t.toString().getBytes("UTF-8"));
     }
 }
+

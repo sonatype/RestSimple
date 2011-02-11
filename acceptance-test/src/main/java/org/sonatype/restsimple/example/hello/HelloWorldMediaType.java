@@ -49,6 +49,12 @@ public class HelloWorldMediaType implements ServiceHandlerMediaType<String> {
 
     @Override
     public HelloWorldMediaType visit(String helloWorld) {
+        this.helloWorld = helloWorld;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return helloWorld;
     }
 }

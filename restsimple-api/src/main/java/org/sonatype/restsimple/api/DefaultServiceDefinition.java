@@ -131,7 +131,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     public List<MediaType> mediaToProduce() {
         return Collections.unmodifiableList(mediaTypeToProduce);
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -58,14 +58,13 @@ public class JaxrsModule extends AbstractModule {
 
             @Override
             public void bind(Class<?> clazz) {
-                binder.bind(clazz);
+                binder.bind(clazz).asEagerSingleton();
             }
 
             @Override
             public void install(Module module) {
             }
         });
-
 
         bind(ServiceDefinitionGenerator.class).to(JAXRSServiceDefinitionGenerator.class);
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
