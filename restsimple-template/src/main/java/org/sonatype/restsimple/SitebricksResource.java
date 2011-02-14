@@ -5,6 +5,7 @@ import com.google.inject.name.Named;
 import com.google.sitebricks.At;
 import com.google.sitebricks.client.transport.Json;
 import com.google.sitebricks.client.transport.Text;
+import com.google.sitebricks.client.transport.Xml;
 import com.google.sitebricks.headless.Reply;
 import com.google.sitebricks.headless.Request;
 import com.google.sitebricks.http.Delete;
@@ -21,6 +22,7 @@ import org.sonatype.restsimple.api.ServiceHandlerMediaType;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,8 +32,6 @@ import java.util.List;
  */
 @At("/:method/:id")
 public final class SitebricksResource {
-
-    private String update;
 
     private Logger logger = LoggerFactory.getLogger(SitebricksResource.class);
 
@@ -46,7 +46,7 @@ public final class SitebricksResource {
 
     @Get
     @Accept("application/vnd.org.sonatype.rest+json")
-    public Reply<?> get(@Named("method") String service, @Named("id") String value) {
+    public Reply<?> get(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("get", service, value);
 
@@ -54,12 +54,12 @@ public final class SitebricksResource {
             return Reply.class.cast(response);
         }
 
-        return Reply.with(producer.visit(response)).as(Json.class);
+        return serializeResponse(request, response);
     }
 
     @Put
     @Accept("application/vnd.org.sonatype.rest+json")
-    public Reply<?> put(@Named("method") String service, @Named("id") String value) {
+    public Reply<?> put(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("put", service, value);
 
@@ -67,11 +67,12 @@ public final class SitebricksResource {
             return Reply.class.cast(response);
         }
 
-        return Reply.with(response.toString()).status(201);
+        return serializeResponse(request, response).status(201);
     }
 
-    @Post @Accept("application/vnd.org.sonatype.rest+json")
-    public Reply<?> post0(@Named("method") String service, @Named("id") String value) {
+    @Post
+    @Accept("application/vnd.org.sonatype.rest+json")
+    public Reply<?> post0(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
         Object response = createResponse("post", service, value);
 
@@ -79,37 +80,29 @@ public final class SitebricksResource {
             return Reply.class.cast(response);
         }
 
-        if (response == null) {
-            return Reply.with("").noContent();
-        } else {
-            return Reply.with(response.toString());
-        }
+        return serializeResponse(request, response);
     }
 
     @Post
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> post(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
+
         String body = request.read(String.class).as(Text.class);
         Object response = createResponse("post", service, value, body);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
         }
-
-        if (response == null) {
-            return Reply.with("").noContent();
-        } else {
-            return Reply.with(response.toString());
-        }
+        return serializeResponse(request, response);
     }
 
     @Delete
     @Accept("application/vnd.org.sonatype.rest+json")
-    public Reply<?> delete(@Named("method") String service, @Named("id") String value) {
+    public Reply<?> delete(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
         Object response = createResponse("delete", service, value);
-        return Reply.with(response.toString());
+        return serializeResponse(request, response);
     }
 
     private Object createResponse(String methodName, String service, String value) {
@@ -154,8 +147,21 @@ public final class SitebricksResource {
         }
     }
 
-    public void setUpdate(String update) {
-        this.update = update;
+    private Reply<?> serializeResponse(Request request, Object response) {
+        Collection<String> c = request.headers().get("Accept");
+
+        String contentType = c.size() > 0 ? c.iterator().next() : null;
+        if (response == null) {
+            return Reply.with("").noContent();
+        } else if (contentType != null) {
+            if (contentType.endsWith("json")) {
+                return Reply.with(response).as(Json.class);
+            } else if (contentType.endsWith("xml")) {
+                return Reply.with(response).as(Xml.class);
+            }
+            
+        }
+        return Reply.with(response.toString());
     }
 
     private Object createResponse(String methodName, String service, String value, String body) {
