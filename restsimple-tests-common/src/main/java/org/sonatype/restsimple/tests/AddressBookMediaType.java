@@ -64,11 +64,4 @@ public class AddressBookMediaType implements ServiceHandlerMediaType<List<String
         return this;
     }
 
-    public String getEntries(){
-        return entries;
-    }
-
-    public void setEntries(String entries){
-        this.entries = entries;
-    }
 }
