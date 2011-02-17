@@ -76,14 +76,12 @@ public class SitebricksServletModule extends ServletModule {
         serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
                 .withPath("/foo")
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new PutServiceHandler("id", "createAddressBook"))
-                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(postServiceHandler)
-                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
+                .withHandler(new PutServiceHandler("id", "createAddressBook").producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
+                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class).producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
+                .withHandler(postServiceHandler.producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
+                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook").producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
                 .usingEntity(serviceEntity)
                 .bind();
     }

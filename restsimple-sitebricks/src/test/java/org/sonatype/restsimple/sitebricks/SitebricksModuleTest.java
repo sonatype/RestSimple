@@ -84,7 +84,7 @@ public class SitebricksModuleTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = 8080;
+        port = findFreePort();
         server = new Server(port);
         acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + AddressBookServiceEntity.JSON;
 
