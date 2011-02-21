@@ -44,7 +44,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.tests.AddressBookServiceEntity;
+import org.sonatype.restsimple.tests.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -86,7 +86,7 @@ public class JAXRSModuleTest {
     public void setUpGlobal() throws Exception {
         port = findFreePort();
         server = new Server(port);
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + AddressBookServiceEntity.JSON;
+        acceptHeader = AddressBookAction.APPLICATION + "/" + AddressBookAction.JSON;
 
         targetUrl = "http://127.0.0.1:" + port;
 
@@ -171,9 +171,7 @@ public class JAXRSModuleTest {
         Response r = c.prepareGet(targetUrl + "/getAddressBook/zeBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
-        assertEquals(r.getStatusCode(), 200);
-        System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"\"}");
+        assertEquals(r.getStatusCode(), 500);
 
         c.close();
     }
@@ -186,15 +184,12 @@ public class JAXRSModuleTest {
         c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
         Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").execute().get();
         assertEquals(r.getStatusCode(), 200);
-        
+
         c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
         r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
-        assertEquals(r.getStatusCode(), 200);
-        System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"\"}");
-
+        assertEquals(r.getStatusCode(), 500);
         c.close();
     }
 
@@ -240,10 +235,10 @@ public class JAXRSModuleTest {
 
         c.close();
     }
-    
+
     @Test(timeOut = 20000)
-    public void testThirdResourceGet() throws Throwable {
-        logger.info("running test: testSecondResourceGet");
+    public void testThirdResourceWithBodyGet() throws Throwable {
+        logger.info("running test: testThirdResourceGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/bar/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();

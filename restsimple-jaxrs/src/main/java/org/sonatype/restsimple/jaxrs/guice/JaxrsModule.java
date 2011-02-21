@@ -17,7 +17,6 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import org.sonatype.restsimple.api.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
-
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionProvider;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;

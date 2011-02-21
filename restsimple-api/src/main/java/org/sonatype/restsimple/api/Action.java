@@ -12,17 +12,11 @@
  */
 package org.sonatype.restsimple.api;
 
-import java.util.List;
-
 /**
- * Simple marker that represent an entity used by a {@link ServiceDefinition}. 
+ * Simple marker that represent an action to execute with {@link ServiceHandler}.
  */
-public interface ServiceEntity {
+public interface Action<T> {
 
-    /**
-     * Return a {@link List} or version this entiry is supporting.
-     * @return a {@link List} or version this entiry is supporting.
-     */
-    public List<String> version();
+    public T action(ActionContext actionContext);
 
 }

@@ -28,8 +28,8 @@ import java.util.Map;
         serviceDefinition = new DefaultServiceDefinition();
 
         serviceDefinition
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("id", "createAddressBook"))
@@ -38,14 +38,14 @@ import java.util.Map;
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
                 .usingEntity(serviceEntity)
                 .bind();
-                .usingEntity(new AddressBookServiceEntity());
+                .usingEntity(new AddressBookAction());
  *
  *  will translate to
  *
  *       ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
  *       stub.doGet("myBook");
  *
- *  will remotely invokes the AddressBookServiceEntity#getAddressBook("myBook");
+ *  will remotely invokes the AddressBookAction#getAddressBook("myBook");
  * }
  * }
  */

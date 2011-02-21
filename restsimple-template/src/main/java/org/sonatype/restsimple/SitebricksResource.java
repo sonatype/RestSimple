@@ -1,5 +1,6 @@
 package org.sonatype.restsimple;
 
+import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.sitebricks.At;
@@ -15,28 +16,32 @@ import com.google.sitebricks.http.Put;
 import com.google.sitebricks.http.negotiate.Accept;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.api.PostServiceHandler;
-import org.sonatype.restsimple.api.ServiceEntity;
+import org.sonatype.restsimple.api.Action;
+import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.api.ServiceHandlerMediaType;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
-import java.lang.reflect.Method;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is what we want to generate automatically using ASM.
  * <p/>
  * NOTE: This class is not used, but we do instead generate some form ot it based on {@link org.sonatype.restsimple.api.ServiceDefinition}
  */
-@At("/:method/:id")
+@At("/:path/:method/:id")
 public final class SitebricksResource {
 
     private Logger logger = LoggerFactory.getLogger(SitebricksResource.class);
 
     @Inject
-    ServiceEntity serviceEntity;
+    Action action;
 
     @Inject
     ServiceHandlerMapper mapper;
@@ -48,7 +53,7 @@ public final class SitebricksResource {
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> get(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = createResponse("get", service, value);
+        Object response = producer.visit(createResponse("get", service, value, null, request));
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
@@ -61,7 +66,7 @@ public final class SitebricksResource {
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> put(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = createResponse("put", service, value);
+        Object response = createResponse("put", service, value, null, request);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
@@ -74,7 +79,7 @@ public final class SitebricksResource {
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> post0(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = createResponse("post", service, value);
+        Object response = createResponse("post", service, value, null, request);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
@@ -89,7 +94,7 @@ public final class SitebricksResource {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
 
         String body = request.read(String.class).as(Text.class);
-        Object response = createResponse("post", service, value, body);
+        Object response = createResponse("post", service, value, body, request);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
@@ -101,50 +106,8 @@ public final class SitebricksResource {
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> delete(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = createResponse("delete", service, value);
+        Object response = createResponse("delete", service, value, null, request);
         return serializeResponse(request, response);
-    }
-
-    private Object createResponse(String methodName, String service, String value) {
-        ServiceHandler serviceHandler = mapper.map(service);
-        if (serviceHandler == null) {
-            return Reply.with("No ServiceHandler defined for service " + service).error();
-        }
-
-        if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
-            return Reply.with("Method not allowed").status(405);
-        }
-
-        String methodString = serviceHandler.getServiceEntityMethod();
-        Class[] classes = new Class[1];
-        classes[0] = String.class;
-        Object[] objects = new Object[1];
-        objects[0] = value;
-        try {
-            Object response;
-            if (PostServiceHandler.class.isAssignableFrom(serviceHandler.getClass())) {
-                List<String> formParams = PostServiceHandler.class.cast(serviceHandler).formParams();
-                classes = new Class[formParams.size() + 1];
-                objects = new Object[formParams.size() + 1];
-
-                classes[0] = String.class;
-                objects[0] = value;
-
-                int i = 1;
-                for (String formParam : formParams) {
-                    classes[i] = String.class;
-                    objects[i++] = (String) this.getClass().getDeclaredField(formParam).get(this);
-                    logger.info("Getting generated value for form param {} : {}", formParam, this.getClass().getDeclaredField(formParam).get(this));
-                }
-            }
-            Method method = serviceEntity.getClass().getMethod(methodString, classes);
-            response = method.invoke(serviceEntity, objects);
-
-            return response;
-        } catch (Throwable e) {
-            logger.error("createResponse", e);
-            return Reply.with(e).error();
-        }
     }
 
     private Reply<?> serializeResponse(Request request, Object response) {
@@ -159,35 +122,80 @@ public final class SitebricksResource {
             } else if (contentType.endsWith("xml")) {
                 return Reply.with(response).as(Xml.class);
             }
-            
+
         }
         return Reply.with(response.toString());
     }
 
-    private Object createResponse(String methodName, String service, String value, String body) {
-        ServiceHandler serviceHandler = mapper.map(service);
+    private Object createResponse(String methodName, String pathName, String pathValue, String body, Request request) {
+        ServiceHandler serviceHandler = mapper.map(pathName);
         if (serviceHandler == null) {
-            return Reply.with("No ServiceHandler defined for service " + service).error();
+            return Reply.with("No ServiceHandler defined for service " + pathName).error();
         }
 
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
             return Reply.with("Method not allowed").status(405);
         }
 
-        String methodString = serviceHandler.getServiceEntityMethod();
-        Class[] classes = new Class[2];
-        classes[0] = String.class;
-        classes[1] = String.class;
-        Object[] objects = new Object[2];
-        objects[0] = value;
-        objects[1] = body;
+        if (body == null) {
+            body = "";
+        }
+
+        Object response = null;
+        Action action = serviceHandler.getAction();
         try {
-            Method method = serviceEntity.getClass().getMethod(methodString, classes);
-            return method.invoke(serviceEntity, objects);
-        } catch (Throwable e) {
+            ActionContext actionContext = new ActionContext(mapMethod(methodName), mapHeaders(request.headers()),
+                    mapFormParams(request.params()), new ByteArrayInputStream(body.getBytes()), pathName, pathValue);
+            response = action.action(actionContext);
+        }  catch (Throwable e) {
             logger.error("delegate", e);
             return Reply.with(e).error();
         }
+        return response;
+    }
+
+
+    private Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {
+        Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
+        if (formParams != null) {
+            for( Map.Entry<String,String> e: formParams.entries()) {
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(e.getValue());
+                map.put(e.getKey(),list);
+            }
+            return Collections.unmodifiableMap(map);
+        }
+        return map;
+    }
+
+    private ServiceDefinition.METHOD mapMethod(String method) {
+        if (method.equalsIgnoreCase("GET")) {
+            return ServiceDefinition.METHOD.GET;
+        } else if (method.equalsIgnoreCase("PUT")) {
+            return ServiceDefinition.METHOD.PUT;
+        } else if (method.equalsIgnoreCase("POST")) {
+            return ServiceDefinition.METHOD.POST;
+        } else if (method.equalsIgnoreCase("DELETE")) {
+            return ServiceDefinition.METHOD.DELETE;
+        } else if (method.equalsIgnoreCase("HEAD")) {
+            return ServiceDefinition.METHOD.HEAD;
+        } else {
+            throw new IllegalStateException("Invalid Method");
+        }
+    }
+
+    private Map<String, Collection<String>> mapHeaders(Multimap<String, String> gMap) {
+        Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
+        for( Map.Entry<String,String> e: gMap.entries()) {
+            if (map.get(e.getKey()) != null) {
+                map.get(e.getKey()).add(e.getValue());
+            } else {
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(e.getValue());
+                map.put(e.getKey(), list);
+            }
+        }
+        return Collections.unmodifiableMap(map);
     }
 }
 

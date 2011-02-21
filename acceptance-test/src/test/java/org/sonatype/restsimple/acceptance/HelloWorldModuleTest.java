@@ -45,8 +45,8 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.example.hello.HelloWorldModuleConfig;
-import org.sonatype.restsimple.example.hello.HelloWorldServiceEntity;
-import org.sonatype.restsimple.tests.AddressBookServiceEntity;
+import org.sonatype.restsimple.example.hello.HelloWorldAction;
+import org.sonatype.restsimple.tests.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -112,7 +112,7 @@ public class HelloWorldModuleTest {
     public void testGetPlainText() throws Throwable {
         logger.info("running test: testGetPlainText");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.TXT;
+        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.TXT;
         Response r = c.prepareGet(targetUrl + "/sayPlainTextHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
@@ -127,7 +127,7 @@ public class HelloWorldModuleTest {
     public void testGetHTML() throws Throwable {
         logger.info("running test: testGetHTML");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.HTML;
+        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.HTML;
 
         Response r = c.prepareGet(targetUrl + "/sayPlainHtmlHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
@@ -144,7 +144,7 @@ public class HelloWorldModuleTest {
     public void testGetXML() throws Throwable {
         logger.info("running test: testGetXML");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.XML;
+        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.XML;
 
         Response r = c.prepareGet(targetUrl + "/sayPlainXmlHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
@@ -160,7 +160,7 @@ public class HelloWorldModuleTest {
     public void testGetJSON() throws Throwable {
         logger.info("running test: testGetJSON");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + HelloWorldServiceEntity.JSON;
+        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.JSON;
 
         Response r = c.prepareGet(targetUrl + "/sayPlainJsonHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
@@ -176,7 +176,7 @@ public class HelloWorldModuleTest {
     public void testContentNegociation() throws Throwable {
         logger.info("running test: testContentNegociation");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookServiceEntity.APPLICATION + "/" + "vnd.org.sonatype.rest-v2+json";
+        acceptHeader = AddressBookAction.APPLICATION + "/" + "vnd.org.sonatype.rest-v2+json";
 
         Response r = c.prepareGet(targetUrl + "/sayPlainJsonHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 

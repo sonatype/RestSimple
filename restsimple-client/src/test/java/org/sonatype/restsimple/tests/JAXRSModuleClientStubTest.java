@@ -43,6 +43,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
@@ -107,20 +108,18 @@ public class JAXRSModuleClientStubTest {
         server.setHandler(context);
         server.start();
 
-
+        Action action = new AddressBookAction();
         serviceDefinition = new DefaultServiceDefinition();
 
         serviceDefinition .withPath(targetUrl)
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new PutServiceHandler("id", "createAddressBook"))
-                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
-                .withHandler(new PostServiceHandler("id", "updateAddressBook"))
-                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
-                .usingEntity(new AddressBookServiceEntity());
-
+                .withHandler(new PutServiceHandler("createAddressBook", action))
+                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new PostServiceHandler("updateAddressBook", action))
+                .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
         
         logger.info("Local HTTP server started successfully");
     }
@@ -188,9 +187,7 @@ public class JAXRSModuleClientStubTest {
         r = stub.doGet("myBook");
 
         assertNotNull(r);
-        assertEquals(r.getStatusCode(), 200);
-        System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"\"}");
+        assertEquals(r.getStatusCode(), 500);
     }
 
 }

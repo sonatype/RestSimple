@@ -36,12 +36,10 @@
  */
 package org.sonatype.restsimple.example.hello;
 
-import org.sonatype.restsimple.api.ServiceEntity;
+import org.sonatype.restsimple.api.Action;
+import org.sonatype.restsimple.api.ActionContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class HelloWorldServiceEntity implements ServiceEntity {
+public class HelloWorldAction implements Action {
     public final static String APPLICATION = "application";
     public final static String TXT = "vnd.org.sonatype.rest+txt";
     public final static String XML = "vnd.org.sonatype.rest+xml";
@@ -51,7 +49,7 @@ public class HelloWorldServiceEntity implements ServiceEntity {
     public String sayPlainTextHello(String name) {
         return "Hello RestSimple " + name;
     }
-    
+
     public String sayPlainXmlHello(String name) {
         return name;
     }
@@ -66,12 +64,16 @@ public class HelloWorldServiceEntity implements ServiceEntity {
     }
 
     @Override
-    public List<String> version() {
-        ArrayList<String> list = new ArrayList<String>();
-        list.add(APPLICATION + "/" + TXT);
-        list.add(APPLICATION + "/" + XML);
-        list.add(APPLICATION + "/" + HTML);
-        list.add(APPLICATION + "/" + JSON);        
-        return list;
+    public Object action(ActionContext actionContext) {
+
+        if (actionContext.pathName().equalsIgnoreCase("sayPlainTextHello")) {
+            return sayPlainTextHello(actionContext.pathValue());
+        } else if (actionContext.pathName().equalsIgnoreCase("sayPlainHtmlHello")) {
+            return sayPlainHtmlHello(actionContext.pathValue());
+        } else if (actionContext.pathName().equalsIgnoreCase("sayPlainXmlHello")) {
+            return sayPlainXmlHello(actionContext.pathValue());
+        } else {
+            return sayPlainJsonHello(actionContext.pathValue());
+        }
     }
 }

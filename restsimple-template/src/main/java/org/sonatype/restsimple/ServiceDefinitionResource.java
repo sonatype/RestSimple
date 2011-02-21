@@ -1,14 +1,17 @@
 package org.sonatype.restsimple;
 
+
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.api.PostServiceHandler;
-import org.sonatype.restsimple.api.ServiceEntity;
+import org.sonatype.restsimple.api.Action;
+import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.api.ServiceHandlerMediaType;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,11 +22,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,15 +40,15 @@ import java.util.Map;
  * <p/>
  * NOTE: This class is not used, but we do instead generate some form ot it based on {@link org.sonatype.restsimple.api.ServiceDefinition}
  */
-@Path("/bar/{method}/{id}/")
+@Path("/{path}/{method}/{id}/")
 @Produces("application/vnd.org.sonatype.rest+json")
 @Consumes("application/vnd.org.sonatype.rest+json")
 public class ServiceDefinitionResource {
 
     private Logger logger = LoggerFactory.getLogger(ServiceDefinitionResource.class);
 
-    @Inject
-    ServiceEntity serviceEntity;
+    @Context
+    HttpServletRequest request;
 
     @Inject
     ServiceHandlerMapper mapper;
@@ -51,41 +59,43 @@ public class ServiceDefinitionResource {
     @GET
     public ServiceHandlerMediaType get(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = createResponse("get", service, value, null);
+        Object response = invokeAction("get", service, value, null);
         return producer.visit(response);
     }
 
     @HEAD
     public Response head(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP HEAD: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = createResponse("head", service, value, null);
+        Object response = invokeAction("head", service, value, null);
         return Response.ok().build();
     }
 
     @PUT
     public Response put(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
-        URI location = UriBuilder.fromResource(getClass()).build(new String[]{"", ""});
-        Object response = createResponse("put", service, value, null);
+        URI location = UriBuilder.fromResource(getClass()).build(new String[]{"", "", ""});
+        Object response = invokeAction("put", service, value, null);
         return Response.created(location).entity(response).build();
     }
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response post(@PathParam("method") String service, @PathParam("id") String value, MultivaluedMap<String, String> formParams ) {
+    public Response post(@PathParam("method") String service, @PathParam("id") String value, MultivaluedMap<String, String> formParams) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = createResponse("post", service, value, formParams);
+        Object response = invokeAction("post", service, value, formParams);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
             return Response.ok(response).build();
         }
     }
-    
+
     @POST
-    public Response postJson(@PathParam("method") String service, @PathParam("id") String value, String body) {
+    @Consumes("application/vnd.org.sonatype.rest+json")
+    @Produces("application/vnd.org.sonatype.rest+json")
+    public Response postWithBody(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = createResource("post", service, value, body);
+        Object response = invokeAction("post", service, value, null);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
@@ -96,80 +106,80 @@ public class ServiceDefinitionResource {
     @DELETE
     public Response delete(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = createResponse("delete", service, value, null);
+        Object response = invokeAction("delete", service, value, null);
         return Response.ok(response).build();
     }
 
-    private Object createResponse(String methodName, String service, String value, MultivaluedMap<String, String> formParams) {
-        ServiceHandler serviceHandler = mapper.map(service);
+    private Object invokeAction(String methodName, String pathName, String pathValue, MultivaluedMap<String, String> formParams) {
+        ServiceHandler serviceHandler = mapper.map(pathName);
         if (serviceHandler == null) {
-            throw new WebApplicationException(new IllegalStateException("No ServiceHandler defined for service " + service));
+            throw new WebApplicationException(new IllegalStateException("No ServiceHandler defined for service " + pathName));
         }
 
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
             throw new WebApplicationException(Response.status(405).entity("Method not allowed").build());
         }
 
-        String methodString = serviceHandler.getServiceEntityMethod();
-        Class[] classes = new Class[1];
-        classes[0] = String.class;
-        Object[] objects = new Object[1];
-        objects[0] = value;
+        Object response = null;
+        Action action = serviceHandler.getAction();
         try {
-            Object response;
-            if (PostServiceHandler.class.isAssignableFrom(serviceHandler.getClass())) {
+            ActionContext actionContext = new ActionContext(mapMethod(request.getMethod()), mapHeaders(), mapFormParams(formParams), request.getInputStream(), pathName, pathValue);
+            response = action.action(actionContext);
+        } catch (Throwable e) {
+            logger.error("invokeAction", e);
+            throw new WebApplicationException(e);
+        }
+        return response;
+    }
 
-                if (formParams == null) {
-                    throw new WebApplicationException(Response.status(500).entity("No form params").build());
-                }
-                                
-                classes = new Class[formParams.size() + 1];
-                objects = new Object[formParams.size() + 1];
-
-                classes[0] = String.class;
-                objects[0] = value;
-
-                int i = 1;
-                List<String> values = null;
-                for(Map.Entry<String, List<String>> entry: formParams.entrySet()) {
-                    values = entry.getValue();
-                    classes[i] = String.class;
-                    objects[i++] = values.get(0);
+    private Map<String, Collection<String>> mapFormParams(MultivaluedMap<String, String> formParams) {
+        Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
+        if (formParams != null) {
+            for(String hn : formParams.keySet()) {
+                List<String> l;
+                if (map.get(hn) != null) {
+                    map.get(hn).addAll(formParams.get(hn));
+                } else {
+                    l = new ArrayList<String>();
+                    l.addAll(formParams.get(hn));
+                    map.put(hn, l);
                 }
             }
-            Method method = serviceEntity.getClass().getMethod(methodString, classes);
-            response = method.invoke(serviceEntity, objects);
+        }
+        return map;
+    }
 
-            return response;
-        } catch (Throwable e) {
-            logger.error("createResponse", e);
-            throw new WebApplicationException(e);
+    private ServiceDefinition.METHOD mapMethod(String method) {
+        if (method.equalsIgnoreCase("GET")) {
+            return ServiceDefinition.METHOD.GET;
+        } else if (method.equalsIgnoreCase("PUT")) {
+            return ServiceDefinition.METHOD.PUT;
+        } else if (method.equalsIgnoreCase("POST")) {
+            return ServiceDefinition.METHOD.POST;
+        } else if (method.equalsIgnoreCase("DELETE")) {
+            return ServiceDefinition.METHOD.DELETE;
+        } else if (method.equalsIgnoreCase("HEAD")) {
+            return ServiceDefinition.METHOD.HEAD;
+        } else {
+            throw new IllegalStateException("Invalid Method");
         }
     }
 
-    private Object createResource(String methodName, String service, String value, String body) {
-        ServiceHandler serviceHandler = mapper.map(service);
-        if (serviceHandler == null) {
-            throw new WebApplicationException(new IllegalStateException("No ServiceHandler defined for service " + service));
+    private Map<String, Collection<String>> mapHeaders() {
+        Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
+        Enumeration<String> e = request.getHeaderNames();
+        String hn;
+        List<String> l;
+        while (e.hasMoreElements()) {
+            hn = e.nextElement();
+            if (map.get(hn) != null) {
+                map.get(hn).add(request.getHeader(hn));
+            } else {
+                l = new ArrayList<String>();
+                l.add(request.getHeader(hn));
+                map.put(hn, l);
+            }
         }
-
-        if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
-            throw new WebApplicationException(Response.status(405).entity("Method not allowed").build());
-        }
-
-        String methodString = serviceHandler.getServiceEntityMethod();
-        Class[] classes = new Class[2];
-        classes[0] = String.class;
-        classes[1] = String.class;
-        Object[] objects = new Object[2];
-        objects[0] = value;
-        objects[1] = body;        
-        try {
-            Method method = serviceEntity.getClass().getMethod(methodString, classes);
-            return method.invoke(serviceEntity, objects);
-        } catch (Throwable e) {
-            logger.error("createResponse", e);
-            throw new WebApplicationException(e);
-        }
+        return Collections.unmodifiableMap(map);
     }
 }

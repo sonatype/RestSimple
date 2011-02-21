@@ -26,7 +26,6 @@ import java.util.List;
  */
 public class DefaultServiceDefinition implements ServiceDefinition {
     private String basePath = "";
-    private ServiceEntity serviceEntity;
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
     private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
@@ -54,15 +53,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     @Override    
     public ServiceDefinition withPath(String path) {
         this.basePath = path;
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ServiceDefinition usingEntity(ServiceEntity serviceEntity) {
-        this.serviceEntity = serviceEntity;
         return this;
     }
 
@@ -105,13 +95,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceEntity serviceEntity() {
-        return serviceEntity;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public List<ServiceHandler> serviceHandlers() {
         return Collections.unmodifiableList(serviceHandlers);
     }
@@ -139,10 +122,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     public void bind() {
         if (basePath == null) {
             throw new NullPointerException("withPath must be invoked with a non null value");
-        }
-
-        if (serviceEntity == null) {
-            throw new NullPointerException("usingEntity must be invoked with a non null value");
         }
 
         if (generator == null) {

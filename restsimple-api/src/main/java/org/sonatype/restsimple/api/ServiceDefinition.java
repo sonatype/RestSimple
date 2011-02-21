@@ -25,7 +25,7 @@ import java.util.List;
  * {@code
  *
  *      ServiceEntity serviceEntity = new AddressBookServiceEntity();
-        bind(ServiceEntity.class).toInstance(serviceEntity);
+        bind(Action.class).toInstance(serviceEntity);
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition.withPath("/{method}/{id}")
@@ -42,7 +42,7 @@ import java.util.List;
  * }
  * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension.
  *
- * Request will be delegated to the {@link ServiceEntity}'s method using the information contained within passed
+ * Request will be delegated to the {@link Action}'s method using the information contained within passed
  * {@link ServiceHandler}. Using the example above, a request to:
  * <p>
  *   PUT /createAddressBook/myBook
@@ -51,7 +51,7 @@ import java.util.List;
  * <p>
  * new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook")
  * <p>
- * which will invoke the {@link ServiceEntity}
+ * which will invoke the {@link Action}
  * <p>
  *     serviceEntity.createAddressBook(myBook)  
  * <p>
@@ -63,18 +63,9 @@ public interface ServiceDefinition {
     /**
      * Represent an HTTP Method
      */
-    public enum HttpMethod {
+    public enum METHOD {
         POST, GET, PUT, DELETE, HEAD
     }
-
-    /**
-     * Set the {@link ServiceEntity} this service is fronting. All REST requests will eventually be rooted to an instance
-     * of @link ServiceEntity}.
-     *
-     * @param serviceEntity a {@link ServiceEntity}
-     * @return the current {@link ServiceDefinition}
-     */
-    ServiceDefinition usingEntity(ServiceEntity serviceEntity);
 
     /**
      * Set the url path this {@link ServiceDefinition} is representing.
@@ -84,7 +75,7 @@ public interface ServiceDefinition {
     ServiceDefinition withPath(String path);
 
     /**
-     * Add a {@link ServiceHandler} used when mapping request to a {@link ServiceEntity}. This method can be invoked many times.
+     * Add a {@link ServiceHandler} used when mapping request to a {@link Action}. This method can be invoked many times.
      * @param serviceHandler a {@link ServiceHandler}
      * @return the current {@link ServiceDefinition}
      */
@@ -109,12 +100,6 @@ public interface ServiceDefinition {
      * @return the URL this ServiceDefinition represent.
      */
     String path();
-
-    /**
-     * Return the {@link ServiceEntity} this ServiceDefinition represent.
-     * @return the {@link ServiceEntity} this ServiceDefinition represent.
-     */
-    ServiceEntity serviceEntity();
 
     /**
      * Return an unmodifiable {@link List} of {@link ServiceHandler}

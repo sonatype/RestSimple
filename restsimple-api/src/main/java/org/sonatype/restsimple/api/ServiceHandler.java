@@ -18,12 +18,12 @@ import java.util.List;
 
 /**
  * Represent how a REST resource handles requests. A {@link ServiceHandler} is used when mapping the request to
- * a {@link ServiceEntity}'s method
+ * a {@link Action}'s method
  *
  */
 abstract public class ServiceHandler {
     private final String path;
-    private final String method;
+    private final Action action;
     private final Class<? extends ServiceHandlerMediaType> mediaType;
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
     private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
@@ -31,40 +31,40 @@ abstract public class ServiceHandler {
     /**
      * Create a new {@link ServiceHandler}
      *
-     * @param methodToInvoke a method's name used to invoke a {@link ServiceEntity}
+     * @param action an {@link Action} implementation
      */
-    public ServiceHandler(String methodToInvoke) {
-        this(null, methodToInvoke);
+    public ServiceHandler(Action action) {
+        this(null, action);
     }
 
     /**
      * Create a new {@link ServiceHandler}
      *
      * @param path a uri used to map the resource to this {@link ServiceHandler}
-     * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
+     * @param action an {@link Action} implementation
      */
-    public ServiceHandler(String path, String methodToInvoke) {
-        this(path, methodToInvoke, null);
+    public ServiceHandler(String path, Action action) {
+        this(path, action, null);
     }
 
     /**
      * Create a new {@link ServiceHandler}
      *
      * @param path a uri used to map the resource to this {@link ServiceHandler}
-     * @param methodToInvoke a methodToInvoke's name used to invoke a {@link ServiceEntity}
+     * @param action an {@link Action} implementation
      * @param mediaType a {@link ServiceHandlerMediaType} that will be used when serializing the response
      */
-    public ServiceHandler(String path, String methodToInvoke, Class<? extends ServiceHandlerMediaType> mediaType) {
+    public ServiceHandler(String path, Action action, Class<? extends ServiceHandlerMediaType> mediaType) {
         this.path = path;
-        this.method = methodToInvoke;
+        this.action = action;
         this.mediaType = mediaType;
     }
 
     /**
-     * Return the current {@link ServiceDefinition.HttpMethod}
-     * @return {@link ServiceDefinition.HttpMethod}
+     * Return the current {@link ServiceDefinition.METHOD}
+     * @return {@link ServiceDefinition.METHOD}
      */
-    abstract public ServiceDefinition.HttpMethod getHttpMethod();
+    abstract public ServiceDefinition.METHOD getHttpMethod();
 
     /**
      * Return the URI used to map this {@link ServiceHandler}
@@ -75,11 +75,11 @@ abstract public class ServiceHandler {
     }
 
     /**
-     * Return the {@link ServiceEntity} method this service will invoke.
-     * @return the HTTP method.
+     * Return the {@link Action} method this service will invoke.
+     * @return the {@link Action} method this service will invoke.
      */
-    public String getServiceEntityMethod() {
-        return method;
+    public Action getAction() {
+        return action;
     }
 
     /**

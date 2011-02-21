@@ -103,7 +103,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
+                    mv.visitLdcInsn(serviceHandler.getPath());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/restsimple/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
@@ -152,7 +152,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
+                    mv.visitLdcInsn(serviceHandler.getPath());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/restsimple/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
@@ -201,7 +201,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
+                    mv.visitLdcInsn(serviceHandler.getPath());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/restsimple/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);
@@ -287,7 +287,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 4);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
+                    mv.visitLdcInsn(serviceHandler.getPath());
                     mv.visitVarInsn(ALOAD, 4);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/restsimple/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 5);
@@ -339,7 +339,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
                     mv.visitMethodInsn(INVOKESTATIC, "java/util/Arrays", "asList", "([Ljava/lang/Object;)Ljava/util/List;");
                     mv.visitVarInsn(ASTORE, 2);
                     mv.visitVarInsn(ALOAD, 0);
-                    mv.visitLdcInsn(serviceHandler.getServiceEntityMethod());
+                    mv.visitLdcInsn(serviceHandler.getPath());
                     mv.visitVarInsn(ALOAD, 2);
                     mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/restsimple/client/model/ServiceDefinitionClientImpl", "createUri", "(Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;");
                     mv.visitVarInsn(ASTORE, 3);

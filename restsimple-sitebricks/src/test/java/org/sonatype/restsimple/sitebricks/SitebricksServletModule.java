@@ -39,38 +39,37 @@ package org.sonatype.restsimple.sitebricks;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
+import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.api.ServiceEntity;
 import org.sonatype.restsimple.sitebricks.guice.SitebricksModule;
+import org.sonatype.restsimple.tests.AddressBookAction;
 import org.sonatype.restsimple.tests.AddressBookMediaType;
-import org.sonatype.restsimple.tests.AddressBookServiceEntity;
 
 public class SitebricksServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
         Injector injector = Guice.createInjector(new SitebricksModule(binder()));
-        PostServiceHandler postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
+        Action action = new AddressBookAction();
+        PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler.addFormParam("update");
         postServiceHandler.addFormParam("update2");
 
-        ServiceEntity serviceEntity = new AddressBookServiceEntity();
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new PutServiceHandler("id", "createAddressBook"))
-                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(new PutServiceHandler("createAddressBook", action))
+                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
                 .withHandler(postServiceHandler)
-                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
-                .usingEntity(serviceEntity)
+                .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
 
         serviceDefinition = injector.getInstance(ServiceDefinition.class);
@@ -78,11 +77,10 @@ public class SitebricksServletModule extends ServletModule {
                 .withPath("/foo")
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new PutServiceHandler("id", "createAddressBook").producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
-                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class).producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
-                .withHandler(postServiceHandler.producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
-                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook").producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON)))
-                .usingEntity(serviceEntity)
+                .withHandler(new PutServiceHandler("createAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
+                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
+                .withHandler(postServiceHandler.producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
+                .withHandler(new DeleteServiceHandler("deleteAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
                 .bind();
     }
 

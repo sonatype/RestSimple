@@ -15,37 +15,37 @@ package org.sonatype.restsimple.api;
 public class PutServiceHandler extends ServiceHandler {
 
     /**
-     * Create a new {@link org.sonatype.restsimple.api.ServiceHandler}
+     * Create a new {@link ServiceHandler}
      *
-     * @param methodToInvoke a method's name used to invoke a {@link org.sonatype.restsimple.api.ServiceEntity}
+     * @param action an {@link Action} implementation
      */
-    public PutServiceHandler(String methodToInvoke) {
-        this(null, methodToInvoke);
+    public PutServiceHandler(Action action) {
+        this(null, action);
     }
 
     /**
-     * Create a new {@link org.sonatype.restsimple.api.ServiceHandler}
+     * Create a new {@link ServiceHandler}
      *
-     * @param path           a uri used to map the resource to this {@link org.sonatype.restsimple.api.ServiceHandler}
-     * @param methodToInvoke a methodToInvoke's name used to invoke a {@link org.sonatype.restsimple.api.ServiceEntity}
+     * @param path           a uri used to map the resource to this {@link ServiceHandler}
+     * @param action an {@link Action} implementation
      */
-    public PutServiceHandler(String path, String methodToInvoke) {
-        this(path, methodToInvoke, null);
+    public PutServiceHandler(String path, Action action) {
+        this(path, action, null);
     }
 
     /**
-     * Create a new {@link org.sonatype.restsimple.api.ServiceHandler}
+     * Create a new {@link ServiceHandler}
      *
-     * @param path           a uri used to map the resource to this {@link org.sonatype.restsimple.api.ServiceHandler}
-     * @param methodToInvoke a methodToInvoke's name used to invoke a {@link org.sonatype.restsimple.api.ServiceEntity}
-     * @param mediaType      a {@link org.sonatype.restsimple.api.ServiceHandlerMediaType} that will be used when serializing the response
+     * @param path           a uri used to map the resource to this {@link ServiceHandler}
+     * @param action an {@link Action} implementation
+     * @param mediaType      a {@link ServiceHandlerMediaType} that will be used when serializing the response
      */
-    public PutServiceHandler(String path, String methodToInvoke, Class<? extends ServiceHandlerMediaType> mediaType) {
-        super(path, methodToInvoke, mediaType);
+    public PutServiceHandler(String path, Action action, Class<? extends ServiceHandlerMediaType> mediaType) {
+        super(path, action, mediaType);
     }
 
     @Override
-    public ServiceDefinition.HttpMethod getHttpMethod() {
-        return ServiceDefinition.HttpMethod.PUT;
+    public ServiceDefinition.METHOD getHttpMethod() {
+        return ServiceDefinition.METHOD.PUT;
     }
 }

@@ -13,8 +13,8 @@
 package org.sonatype.restsimple.api;
 
 /**
- * Transforms the result {@link org.sonatype.restsimple.api.ServiceEntity} method invocation into a format expected by the client.
- * As an ezample, a {@link org.sonatype.restsimple.api.ServiceEntity} may produce String, which can be transformed by that class
+ * Transforms the result {@link Action} method invocation into a format expected by the client.
+ * As an ezample, a {@link Action} may produce String, which can be transformed by that class
  * into JSON or XML representation.
  */
 public interface ServiceHandlerMediaType<T> {

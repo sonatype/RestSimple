@@ -40,13 +40,13 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.api.ServiceEntity;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 
 public class JAXRSServletModule extends ServletModule {
@@ -55,22 +55,21 @@ public class JAXRSServletModule extends ServletModule {
     protected void configureServlets() {
 
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
+        Action action = new AddressBookAction();
 
-        PostServiceHandler postServiceHandler = new PostServiceHandler("id", "updateAddressBook");
+        PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler.addFormParam("update");
 
-        ServiceEntity serviceEntity = new AddressBookServiceEntity();                
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.JSON))
-                .producing(new MediaType(AddressBookServiceEntity.APPLICATION, AddressBookServiceEntity.XML))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
-                .withHandler(new PutServiceHandler("id", "createAddressBook"))
-                .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
+                .withHandler(new PutServiceHandler("createAddressBook", action))
+                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
                 .withHandler(postServiceHandler)
-                .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
-                .usingEntity(serviceEntity)
+                .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
         
         serve("/*").with(GuiceContainer.class);
