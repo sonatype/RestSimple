@@ -12,16 +12,29 @@
  */
 package org.sonatype.restsimple.api;
 
-/**
- * Simple API that represent an action to execute with {@link ServiceHandler}.
- */
-public interface Action<T> {
+public class ActionException extends Exception {
 
-    /**
-     * Execute an action. An action can be anything.
-     * @param actionContext an {@link ActionContext}
-     * @return T a response to be serialized
-     */
-    public T action(ActionContext actionContext) throws ActionException;
+    private final int statusCode;
+    private final String statusText;
+
+    public ActionException(int statusCode) {
+        super();
+        this.statusCode = statusCode;
+        this.statusText = "";
+    }
+
+    public ActionException(int statusCode, String statusText) {
+        super(statusText + " status code: " + statusCode);
+        this.statusCode = statusCode;
+        this.statusText = statusText;
+    }
+
+    public String getStatusText(){
+        return statusText;
+    }
+
+    public int getStatusCode(){
+        return statusCode;
+    }
 
 }

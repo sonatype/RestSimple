@@ -38,6 +38,7 @@ package org.sonatype.restsimple.tests;
 
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,7 +59,7 @@ public class AddressBookAction implements Action<String> {
     }
 
     @Override
-    public String action(ActionContext actionContext) {// Throw ActionException(errorCode){
+    public String action(ActionContext actionContext) throws ActionException {
 
         String response = "";
         String addressBookName = actionContext.pathValue();

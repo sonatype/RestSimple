@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.api.ServiceHandlerMediaType;
@@ -147,7 +148,11 @@ public final class SitebricksResource {
             ActionContext actionContext = new ActionContext(mapMethod(methodName), mapHeaders(request.headers()),
                     mapFormParams(request.params()), new ByteArrayInputStream(body.getBytes()), pathName, pathValue);
             response = action.action(actionContext);
-        }  catch (Throwable e) {
+        } catch (Throwable e) {
+            if (ActionException.class.isAssignableFrom(e.getClass())) {
+                ActionException actionException = ActionException.class.cast(e);
+                return Reply.with(actionException.getStatusText()).status(actionException.getStatusCode()).error();
+            }
             logger.error("delegate", e);
             return Reply.with(e).error();
         }
@@ -158,10 +163,10 @@ public final class SitebricksResource {
     private Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {
         Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
         if (formParams != null) {
-            for( Map.Entry<String,String> e: formParams.entries()) {
+            for (Map.Entry<String, String> e : formParams.entries()) {
                 ArrayList<String> list = new ArrayList<String>();
                 list.add(e.getValue());
-                map.put(e.getKey(),list);
+                map.put(e.getKey(), list);
             }
             return Collections.unmodifiableMap(map);
         }
@@ -186,7 +191,7 @@ public final class SitebricksResource {
 
     private Map<String, Collection<String>> mapHeaders(Multimap<String, String> gMap) {
         Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
-        for( Map.Entry<String,String> e: gMap.entries()) {
+        for (Map.Entry<String, String> e : gMap.entries()) {
             if (map.get(e.getKey()) != null) {
                 map.get(e.getKey()).add(e.getValue());
             } else {

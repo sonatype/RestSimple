@@ -38,6 +38,7 @@ package org.sonatype.restsimple.example.hello;
 
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 
 public class HelloWorldAction implements Action {
     public final static String APPLICATION = "application";
@@ -64,7 +65,7 @@ public class HelloWorldAction implements Action {
     }
 
     @Override
-    public Object action(ActionContext actionContext) {
+    public Object action(ActionContext actionContext) throws ActionException {
 
         if (actionContext.pathName().equalsIgnoreCase("sayPlainTextHello")) {
             return sayPlainTextHello(actionContext.pathValue());

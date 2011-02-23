@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.api.ServiceHandlerMediaType;
@@ -126,7 +127,11 @@ public class ServiceDefinitionResource {
             ActionContext actionContext = new ActionContext(mapMethod(request.getMethod()), mapHeaders(), mapFormParams(formParams), request.getInputStream(), pathName, pathValue);
             response = action.action(actionContext);
         } catch (Throwable e) {
-            logger.error("invokeAction", e);
+            logger.error("invokeAction", e);            
+            if (ActionException.class.isAssignableFrom(e.getClass())) {
+                ActionException actionException = ActionException.class.cast(e);
+                throw new WebApplicationException(Response.Status.fromStatusCode(actionException.getStatusCode()));
+            }
             throw new WebApplicationException(e);
         }
         return response;
