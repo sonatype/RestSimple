@@ -623,6 +623,27 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitLabel(l2);
             mv.visitFrame(Opcodes.F_FULL, 9, new Object[]{className, "java/lang/String", "java/lang/String", "java/lang/String", "java/lang/String", "com/google/sitebricks/headless/Request", "org/sonatype/restsimple/api/ServiceHandler", "java/lang/Object", "org/sonatype/restsimple/api/Action"}, 1, new Object[]{"java/lang/Throwable"});
             mv.visitVarInsn(ASTORE, 9);
+            mv.visitLdcInsn(Type.getType("Lorg/sonatype/restsimple/api/ActionException;"));
+            mv.visitVarInsn(ALOAD, 9);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z");
+            Label l7 = new Label();
+            mv.visitJumpInsn(IFEQ, l7);
+            mv.visitLdcInsn(Type.getType("Lorg/sonatype/restsimple/api/ActionException;"));
+            mv.visitVarInsn(ALOAD, 9);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            mv.visitTypeInsn(CHECKCAST, "org/sonatype/restsimple/api/ActionException");
+            mv.visitVarInsn(ASTORE, 10);
+            mv.visitVarInsn(ALOAD, 10);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionException", "getStatusText", "()Ljava/lang/String;");
+            mv.visitMethodInsn(INVOKESTATIC, "com/google/sitebricks/headless/Reply", "with", "(Ljava/lang/Object;)Lcom/google/sitebricks/headless/Reply;");
+            mv.visitVarInsn(ALOAD, 10);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionException", "getStatusCode", "()I");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "com/google/sitebricks/headless/Reply", "status", "(I)Lcom/google/sitebricks/headless/Reply;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "com/google/sitebricks/headless/Reply", "error", "()Lcom/google/sitebricks/headless/Reply;");
+            mv.visitInsn(ARETURN);
+            mv.visitLabel(l7);
+            mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Throwable"}, 0, null);
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
             mv.visitLdcInsn("delegate");
@@ -633,10 +654,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             mv.visitMethodInsn(INVOKEVIRTUAL, "com/google/sitebricks/headless/Reply", "error", "()Lcom/google/sitebricks/headless/Reply;");
             mv.visitInsn(ARETURN);
             mv.visitLabel(l6);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            mv.visitFrame(Opcodes.F_CHOP, 1, null, 0, null);
             mv.visitVarInsn(ALOAD, 7);
             mv.visitInsn(ARETURN);
-            mv.visitMaxs(8, 10);
+            mv.visitMaxs(8, 11);
             mv.visitEnd();
         }
         {

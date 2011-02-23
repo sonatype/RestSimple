@@ -734,16 +734,36 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitLdcInsn("invokeAction");
             mv.visitVarInsn(ALOAD, 8);
             mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "error", "(Ljava/lang/String;Ljava/lang/Throwable;)V");
+            mv.visitLdcInsn(Type.getType("Lorg/sonatype/restsimple/api/ActionException;"));
+            mv.visitVarInsn(ALOAD, 8);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z");
+            Label l6 = new Label();
+            mv.visitJumpInsn(IFEQ, l6);
+            mv.visitLdcInsn(Type.getType("Lorg/sonatype/restsimple/api/ActionException;"));
+            mv.visitVarInsn(ALOAD, 8);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;");
+            mv.visitTypeInsn(CHECKCAST, "org/sonatype/restsimple/api/ActionException");
+            mv.visitVarInsn(ASTORE, 9);
+            mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
+            mv.visitInsn(DUP);
+            mv.visitVarInsn(ALOAD, 9);
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionException", "getStatusCode", "()I");
+            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response$Status", "fromStatusCode", "(I)Ljavax/ws/rs/core/Response$Status;");
+            mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljavax/ws/rs/core/Response$Status;)V");
+            mv.visitInsn(ATHROW);
+            mv.visitLabel(l6);
+            mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Throwable"}, 0, null);
             mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
             mv.visitInsn(DUP);
             mv.visitVarInsn(ALOAD, 8);
             mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljava/lang/Throwable;)V");
             mv.visitInsn(ATHROW);
             mv.visitLabel(l5);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            mv.visitFrame(Opcodes.F_CHOP, 1, null, 0, null);
             mv.visitVarInsn(ALOAD, 6);
             mv.visitInsn(ARETURN);
-            mv.visitMaxs(8, 9);
+            mv.visitMaxs(8, 10);
             mv.visitEnd();
         }
         {
