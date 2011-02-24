@@ -53,8 +53,8 @@ import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.ServiceDefinitionClient;
 import org.sonatype.restsimple.client.ServiceDefinitionProxy;
+import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.sonatype.restsimple.example.addressBook.AddressBookModuleConfig;
-import org.sonatype.restsimple.tests.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -112,7 +112,7 @@ public class AddressBookTest {
 
         Action action = new AddressBookAction();
         serviceDefinition = new DefaultServiceDefinition();
-        serviceDefinition .withPath(targetUrl)
+        serviceDefinition.withPath(targetUrl)
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
@@ -122,7 +122,7 @@ public class AddressBookTest {
                 .withHandler(new PostServiceHandler("updateAddressBook", action))
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
 
-        
+
         logger.info("Local HTTP server started successfully");
     }
 
@@ -148,9 +148,9 @@ public class AddressBookTest {
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
         stub.doPut("myBook");
-        Map<String,String> m = new HashMap<String,String>();
-        m.put("update","foo");
-        Response r = stub.doPost(m,"myBook");
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("update", "foo");
+        Response r = stub.doPost(m, "myBook");
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
@@ -163,9 +163,9 @@ public class AddressBookTest {
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
         stub.doPut("myBook");
-        Map<String,String> m = new HashMap<String,String>();
-        m.put("update","foo");
-        stub.doPost(m,"myBook");
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("update", "foo");
+        stub.doPost(m, "myBook");
         Response r = stub.doGet("myBook");
 
         assertNotNull(r);
@@ -180,9 +180,9 @@ public class AddressBookTest {
         ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
 
         stub.doPut("myBook");
-        Map<String,String> m = new HashMap<String,String>();
-        m.put("update","foo");
-        Response r = stub.doPost(m,"myBook");
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("update", "foo");
+        Response r = stub.doPost(m, "myBook");
         assertEquals(r.getStatusCode(), 200);
 
         stub.doDelete("myBook");

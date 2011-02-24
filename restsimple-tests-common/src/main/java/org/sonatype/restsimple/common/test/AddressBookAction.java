@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.tests;
+package org.sonatype.restsimple.common.test;
 
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
@@ -60,7 +60,6 @@ public class AddressBookAction implements Action<AddressBookMediaType, String> {
 
     @Override
     public AddressBookMediaType action(ActionContext<String> actionContext) throws ActionException {
-        String response = "";
         String addressBookName = actionContext.pathValue();
         switch (actionContext.method()) {
             case GET:

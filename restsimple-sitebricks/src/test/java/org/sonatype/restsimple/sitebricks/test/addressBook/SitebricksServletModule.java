@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.sitebricks;
+package org.sonatype.restsimple.sitebricks.test.addressBook;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -46,9 +46,8 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.sonatype.restsimple.sitebricks.guice.SitebricksModule;
-import org.sonatype.restsimple.tests.AddressBookAction;
-import org.sonatype.restsimple.tests.AddressBookMediaType;
 
 public class SitebricksServletModule extends ServletModule {
 
@@ -64,8 +63,6 @@ public class SitebricksServletModule extends ServletModule {
         serviceDefinition
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
-                .consuming(MediaType.JSON)
-                .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
                 .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
@@ -75,8 +72,6 @@ public class SitebricksServletModule extends ServletModule {
         serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
                 .withPath("/foo")
-                .consuming(MediaType.JSON)
-                .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
                 .withHandler(new GetServiceHandler("getAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
                 .withHandler(postServiceHandler.producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))

@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.jaxrs;
+package org.sonatype.restsimple.jaxrs.test.addressBook;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
@@ -44,7 +44,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.tests.AddressBookAction;
+import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

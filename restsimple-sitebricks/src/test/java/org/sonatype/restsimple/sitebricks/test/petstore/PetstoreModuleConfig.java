@@ -34,16 +34,16 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.tests;
+package org.sonatype.restsimple.sitebricks.test.petstore;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 
-public class JAXRSModuleConfig extends GuiceServletContextListener {
+public class PetstoreModuleConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new JAXRSServletModule());
+        return Guice.createInjector(new PetstoreServletModule());
     }
 }

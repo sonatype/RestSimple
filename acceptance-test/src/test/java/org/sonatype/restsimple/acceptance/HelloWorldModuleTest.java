@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.example.hello.HelloWorldModuleConfig;
 import org.sonatype.restsimple.example.hello.HelloWorldAction;
-import org.sonatype.restsimple.tests.AddressBookAction;
+import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

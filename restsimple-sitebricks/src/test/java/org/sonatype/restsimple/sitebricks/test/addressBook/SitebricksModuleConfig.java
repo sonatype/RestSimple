@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.sitebricks;
+package org.sonatype.restsimple.sitebricks.test.addressBook;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;

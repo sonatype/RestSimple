@@ -34,19 +34,16 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.tests;
+package org.sonatype.restsimple.jaxrs.test.addressBook;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.servlet.GuiceServletContextListener;
 
-@XmlRootElement
-public class AddressBookMediaType{
-    public String entries = "invalid";
+public class JAXRSModuleConfig extends GuiceServletContextListener {
 
-    public AddressBookMediaType(){
+    @Override
+    protected Injector getInjector() {
+        return Guice.createInjector(new JAXRSServletModule());
     }
-
-    public AddressBookMediaType(String entries) {
-        this.entries = entries;
-    }
-
 }

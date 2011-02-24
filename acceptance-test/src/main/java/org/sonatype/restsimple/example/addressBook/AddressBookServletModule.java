@@ -10,9 +10,8 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
-import org.sonatype.restsimple.tests.AddressBookAction;
-import org.sonatype.restsimple.tests.AddressBookMediaType;
 
 public class AddressBookServletModule extends com.google.inject.servlet.ServletModule {
 

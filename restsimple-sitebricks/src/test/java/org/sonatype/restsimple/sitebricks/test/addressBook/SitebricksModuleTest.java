@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.sitebricks;
+package org.sonatype.restsimple.sitebricks.test.addressBook;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
@@ -44,7 +44,7 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.tests.AddressBookAction;
+import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -106,46 +106,46 @@ public class SitebricksModuleTest {
         server.stop();
     }
 
-//    @Test(timeOut = 20000)
-//    public void testPut() throws Throwable {
-//        logger.info("running test: testPut");
-//        AsyncHttpClient c = new AsyncHttpClient();
-//
-//        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-//
-//        assertNotNull(r);
-//        assertEquals(r.getStatusCode(), 201);
-//
-//        c.close();
-//    }
-//
-//    @Test(timeOut = 20000)
-//    public void testPost() throws Throwable {
-//        logger.info("running test: testPost");
-//        AsyncHttpClient c = new AsyncHttpClient();
-//
-//        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-//        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
-//
-//        assertNotNull(r);
-//        assertEquals(r.getStatusCode(), 200);
-//
-//        c.close();
-//    }
-//
-//    @Test(timeOut = 20000)
-//    public void testInvalidPost() throws Throwable {
-//        logger.info("running test: testInvalidPost");
-//        AsyncHttpClient c = new AsyncHttpClient();
-//
-//        Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
-//
-//        assertNotNull(r);
-//        assertEquals(r.getStatusCode(), 405);
-//
-//        c.close();
-//    }
-//
+    @Test(timeOut = 20000)
+    public void testPut() throws Throwable {
+        logger.info("running test: testPut");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 201);
+
+        c.close();
+    }
+
+    @Test(timeOut = 20000)
+    public void testPost() throws Throwable {
+        logger.info("running test: testPost");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+
+        c.close();
+    }
+
+    @Test(timeOut = 20000)
+    public void testInvalidPost() throws Throwable {
+        logger.info("running test: testInvalidPost");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        Response r = c.preparePost(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 405);
+
+        c.close();
+    }
+
     @Test(timeOut = 20000)
     public void testGet() throws Throwable {
         logger.info("running test: testGet");

@@ -41,9 +41,6 @@ public final class SitebricksResource {
     private Logger logger = LoggerFactory.getLogger(SitebricksResource.class);
 
     @Inject
-    Action action;
-
-    @Inject
     ServiceHandlerMapper mapper;
 
     @Get
@@ -92,13 +89,18 @@ public final class SitebricksResource {
 
         ServiceHandler serviceHandler = mapper.map(service);
         Class<? extends Transport> transport = Text.class;
-        if (serviceHandler.consumeMediaType().subType().endsWith("json")) {
+        String subType = serviceHandler.consumeMediaType() == null ? null : serviceHandler.consumeMediaType().subType();
+        if (subType != null && subType.endsWith("json")) {
             transport = Json.class;
-        } else if (serviceHandler.consumeMediaType().subType().endsWith("xml")) {
+        } else if (subType != null && subType.endsWith("xml")) {
             transport = Xml.class;
         }
         
-        Object body = request.read(serviceHandler.consumeClass()).as(transport);
+        Object body = null;
+
+        if (serviceHandler.consumeClass() != null) {
+            body = request.read(serviceHandler.consumeClass()).as(transport);
+        }
         Object response = createResponse("post", service, value, body, request);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
