@@ -36,22 +36,17 @@
  */
 package org.sonatype.restsimple.tests;
 
-import org.sonatype.restsimple.api.ServiceHandlerMediaType;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class AddressBookMediaType implements ServiceHandlerMediaType<String> {
-    public String entries;
+public class AddressBookMediaType{
+    public String entries = "invalid";
 
     public AddressBookMediaType(){
     }
 
-    @Override
-    public AddressBookMediaType visit(String entries) {
+    public AddressBookMediaType(String entries) {
         this.entries = entries;
-        return this;
     }
 
-    
 }

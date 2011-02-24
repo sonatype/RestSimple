@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.google.sitebricks.At;
+import com.google.sitebricks.client.Transport;
 import com.google.sitebricks.client.transport.Json;
 import com.google.sitebricks.client.transport.Text;
 import com.google.sitebricks.client.transport.Xml;
@@ -18,10 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
-import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.api.ServiceHandlerMediaType;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.io.ByteArrayInputStream;
@@ -47,14 +46,11 @@ public final class SitebricksResource {
     @Inject
     ServiceHandlerMapper mapper;
 
-    @Inject
-    ServiceHandlerMediaType producer;
-
     @Get
     @Accept("application/vnd.org.sonatype.rest+json")
     public Reply<?> get(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = producer.visit(createResponse("get", service, value, null, request));
+        Object response = createResponse("get", service, value, null, request);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
             return Reply.class.cast(response);
@@ -94,7 +90,15 @@ public final class SitebricksResource {
     public Reply<?> post(@Named("method") String service, @Named("id") String value, Request request) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
 
-        String body = request.read(String.class).as(Text.class);
+        ServiceHandler serviceHandler = mapper.map(service);
+        Class<? extends Transport> transport = Text.class;
+        if (serviceHandler.consumeMediaType().subType().endsWith("json")) {
+            transport = Json.class;
+        } else if (serviceHandler.consumeMediaType().subType().endsWith("xml")) {
+            transport = Xml.class;
+        }
+        
+        Object body = request.read(serviceHandler.consumeClass()).as(transport);
         Object response = createResponse("post", service, value, body, request);
 
         if (Reply.class.isAssignableFrom(response.getClass())) {
@@ -123,12 +127,11 @@ public final class SitebricksResource {
             } else if (contentType.endsWith("xml")) {
                 return Reply.with(response).as(Xml.class);
             }
-
         }
-        return Reply.with(response.toString());
+        return Reply.with(response.toString()).as(Text.class);
     }
 
-    private Object createResponse(String methodName, String pathName, String pathValue, String body, Request request) {
+    private <T> Object createResponse(String methodName, String pathName, String pathValue, T body, Request request) {
         ServiceHandler serviceHandler = mapper.map(pathName);
         if (serviceHandler == null) {
             return Reply.with("No ServiceHandler defined for service " + pathName).error();
@@ -139,20 +142,16 @@ public final class SitebricksResource {
         }
 
         if (body == null) {
-            body = "";
+            body = (T) "";
         }
 
         Object response = null;
         Action action = serviceHandler.getAction();
         try {
-            ActionContext actionContext = new ActionContext(mapMethod(methodName), mapHeaders(request.headers()),
-                    mapFormParams(request.params()), new ByteArrayInputStream(body.getBytes()), pathName, pathValue);
+            ActionContext<T> actionContext = new ActionContext<T>(mapMethod(methodName), mapHeaders(request.headers()),
+                    mapFormParams(request.params()), new ByteArrayInputStream(body.toString().getBytes()), pathName, pathValue, body);
             response = action.action(actionContext);
-        } catch (Throwable e) {
-            if (ActionException.class.isAssignableFrom(e.getClass())) {
-                ActionException actionException = ActionException.class.cast(e);
-                return Reply.with(actionException.getStatusText()).status(actionException.getStatusCode()).error();
-            }
+        }  catch (Throwable e) {
             logger.error("delegate", e);
             return Reply.with(e).error();
         }
@@ -163,10 +162,10 @@ public final class SitebricksResource {
     private Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {
         Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
         if (formParams != null) {
-            for (Map.Entry<String, String> e : formParams.entries()) {
+            for( Map.Entry<String,String> e: formParams.entries()) {
                 ArrayList<String> list = new ArrayList<String>();
                 list.add(e.getValue());
-                map.put(e.getKey(), list);
+                map.put(e.getKey(),list);
             }
             return Collections.unmodifiableMap(map);
         }
@@ -191,7 +190,7 @@ public final class SitebricksResource {
 
     private Map<String, Collection<String>> mapHeaders(Multimap<String, String> gMap) {
         Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
-        for (Map.Entry<String, String> e : gMap.entries()) {
+        for( Map.Entry<String,String> e: gMap.entries()) {
             if (map.get(e.getKey()) != null) {
                 map.get(e.getKey()).add(e.getValue());
             } else {

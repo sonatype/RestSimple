@@ -55,7 +55,6 @@ import org.sonatype.restsimple.client.ServiceDefinitionClient;
 import org.sonatype.restsimple.client.ServiceDefinitionProxy;
 import org.sonatype.restsimple.example.addressBook.AddressBookModuleConfig;
 import org.sonatype.restsimple.tests.AddressBookAction;
-import org.sonatype.restsimple.tests.AddressBookMediaType;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -119,7 +118,7 @@ public class AddressBookTest {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(new PostServiceHandler("updateAddressBook", action))
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
 

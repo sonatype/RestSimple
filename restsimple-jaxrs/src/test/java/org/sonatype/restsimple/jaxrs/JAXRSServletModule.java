@@ -69,7 +69,7 @@ public class JAXRSServletModule extends ServletModule {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
@@ -87,21 +87,20 @@ public class JAXRSServletModule extends ServletModule {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
 
         postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler
-                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
-                .consuming(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON));
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON));
 
         serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
                 .withPath("/bar")
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();

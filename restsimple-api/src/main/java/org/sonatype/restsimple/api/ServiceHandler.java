@@ -19,14 +19,14 @@ import java.util.List;
 /**
  * Represent how a REST resource handles requests. A {@link ServiceHandler} is used when mapping the request to
  * a {@link Action}'s method
- *
  */
 abstract public class ServiceHandler {
     private final String path;
     private final Action action;
-    private final Class<? extends ServiceHandlerMediaType> mediaType;
+    private Class producerClass;
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
-    private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
+    private Class consumerClazz;
+    private MediaType consumerMediaType;
     
     /**
      * Create a new {@link ServiceHandler}
@@ -44,20 +44,8 @@ abstract public class ServiceHandler {
      * @param action an {@link Action} implementation
      */
     public ServiceHandler(String path, Action action) {
-        this(path, action, null);
-    }
-
-    /**
-     * Create a new {@link ServiceHandler}
-     *
-     * @param path a uri used to map the resource to this {@link ServiceHandler}
-     * @param action an {@link Action} implementation
-     * @param mediaType a {@link ServiceHandlerMediaType} that will be used when serializing the response
-     */
-    public ServiceHandler(String path, Action action, Class<? extends ServiceHandlerMediaType> mediaType) {
         this.path = path;
         this.action = action;
-        this.mediaType = mediaType;
     }
 
     /**
@@ -83,15 +71,16 @@ abstract public class ServiceHandler {
     }
 
     /**
-     * Return the {@link ServiceHandlerMediaType} used to write the response's back.
-     * @return the {@link ServiceHandlerMediaType} used to write the response's back.
+     * Return the {@link Class} to be used when serializing the response's body
+     * @return the {@link Class} to be used when serializing the response's body.
      */
-    public Class<? extends ServiceHandlerMediaType> mediaType(){
-        return mediaType;
+    public Class producerClass(){
+        return producerClass;
     }
     
     /**
-     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} are used when writing the response and maps the HTTP response's content-type header.
+     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType}
+     * are used when writing the response and maps the HTTP response's content-type header.
      * @param mediaType {@link org.sonatype.restsimple.api.MediaType}
      * @return the current {@link ServiceDefinition}
      */
@@ -101,24 +90,33 @@ abstract public class ServiceHandler {
     }
 
     /**
-     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} are used when reading the request and maps the HTTP request's content-type header.
-     * @param mediaType {@link org.sonatype.restsimple.api.MediaType}
-     * @return the current {@link ServiceDefinition}
+     *  Unmarshall the request's body into an Object of type T.
      */
-    public ServiceHandler consuming(MediaType mediaType) {
-        mediaTypeToConsume.add(mediaType);
+    public <T> ServiceHandler consumeWith(MediaType mediaType, Class<T> object) {
+        consumerMediaType = mediaType;
+        consumerClazz = object;
         return this;
     }
 
     /**
-     * {@inheritDoc}
+     * Return the {@link MediaType} used to unmarshall the request's body.
+     * @return the {@link MediaType} used to unmarshall the request's body.
      */
-    public List<MediaType> mediaToConsume() {
-        return Collections.unmodifiableList(mediaTypeToConsume);
+    public MediaType consumeMediaType() {
+        return consumerMediaType;
     }
 
     /**
-     * {@inheritDoc}
+     * Return the class that will be used to unmarshall the request's body.
+     * @return the class that will be used to unmarshall the request's body.
+     */
+    public Class consumeClass(){
+       return consumerClazz;
+    }
+
+    /**
+     * Return an unmodifiable {@link List} of {@link org.sonatype.restsimple.api.MediaType}
+     * @return an unmodifiable {@link List} of {@link org.sonatype.restsimple.api.MediaType}
      */
     public List<MediaType> mediaToProduce() {
         return Collections.unmodifiableList(mediaTypeToProduce);

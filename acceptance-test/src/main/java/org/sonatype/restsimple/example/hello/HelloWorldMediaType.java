@@ -36,21 +36,17 @@
  */
 package org.sonatype.restsimple.example.hello;
 
-import org.sonatype.restsimple.api.ServiceHandlerMediaType;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class HelloWorldMediaType implements ServiceHandlerMediaType<String> {
+public class HelloWorldMediaType {
     public String helloWorld;
 
     public HelloWorldMediaType(){
     }
 
-    @Override
-    public HelloWorldMediaType visit(String helloWorld) {
+    public HelloWorldMediaType(String helloWorld) {
         this.helloWorld = helloWorld;
-        return this;
     }
 
     @Override

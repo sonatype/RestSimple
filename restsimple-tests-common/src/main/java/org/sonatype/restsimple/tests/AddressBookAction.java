@@ -47,7 +47,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AddressBookAction implements Action<String> {
+public class AddressBookAction implements Action<AddressBookMediaType, String> {
 
     public final static String APPLICATION = "application";
     public final static String JSON = "vnd.org.sonatype.rest+json";
@@ -59,8 +59,7 @@ public class AddressBookAction implements Action<String> {
     }
 
     @Override
-    public String action(ActionContext actionContext) throws ActionException {
-
+    public AddressBookMediaType action(ActionContext<String> actionContext) throws ActionException {
         String response = "";
         String addressBookName = actionContext.pathValue();
         switch (actionContext.method()) {
@@ -73,7 +72,7 @@ public class AddressBookAction implements Action<String> {
                         b.append(s);
                         b.append(" - ");
                     }
-                    return b.toString();
+                    return new AddressBookMediaType(b.toString());
                 } else {
                     throw new IllegalStateException("No address book have been created for " + addressBookName);
                 }
@@ -107,20 +106,20 @@ public class AddressBookAction implements Action<String> {
                 }
                                 
                 book.put(addressBookName, list);
-                return "updated";
+                return new AddressBookMediaType("posted");
             case PUT:
                 book.put(addressBookName, new ArrayList<String>());
-                return "updated";
+                return new AddressBookMediaType("updated");
             case DELETE:
                 book.remove(addressBookName);
-                return "updated";
+                return new AddressBookMediaType("deleted");
             case HEAD:
                 break;
 
             default:
                 ;;
         }
-        return response;
+        return new AddressBookMediaType("invalid-state");
     }
 }
     

@@ -117,7 +117,7 @@ public class JAXRSModuleClientStubTest {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(new PostServiceHandler("updateAddressBook", action))
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
         

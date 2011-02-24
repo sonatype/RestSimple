@@ -15,13 +15,13 @@ package org.sonatype.restsimple.api;
 /**
  * Simple API that represent an action to execute with {@link ServiceHandler}.
  */
-public interface Action<T> {
+public interface Action<T, U> {
 
     /**
      * Execute an action. An action can be anything.
      * @param actionContext an {@link ActionContext}
      * @return T a response to be serialized
      */
-    public T action(ActionContext actionContext) throws ActionException;
+    public T action(ActionContext<U> actionContext) throws ActionException;
 
 }

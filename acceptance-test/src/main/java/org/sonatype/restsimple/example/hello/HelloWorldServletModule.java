@@ -54,13 +54,13 @@ public class HelloWorldServletModule extends com.google.inject.servlet.ServletMo
         Action action = new HelloWorldAction();
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
-                .withHandler(new GetServiceHandler("sayPlainTextHello", action, HelloWorldMediaType.class).producing(
+                .withHandler(new GetServiceHandler("sayPlainTextHello", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.TXT)))
-                .withHandler(new GetServiceHandler("sayPlainXmlHello", action, HelloWorldMediaType.class).producing(
+                .withHandler(new GetServiceHandler("sayPlainXmlHello", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.XML)))
-                .withHandler(new GetServiceHandler("sayPlainHtmlHello", action, HelloWorldMediaType.class).producing(
+                .withHandler(new GetServiceHandler("sayPlainHtmlHello", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.HTML)))
-                .withHandler(new GetServiceHandler("sayPlainJsonHello", action, HelloWorldMediaType.class).producing(
+                .withHandler(new GetServiceHandler("sayPlainJsonHello", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.JSON)))
                 .bind();
 

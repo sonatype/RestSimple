@@ -32,7 +32,7 @@ public class AddressBookServletModule extends com.google.inject.servlet.ServletM
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
@@ -50,7 +50,7 @@ public class AddressBookServletModule extends com.google.inject.servlet.ServletM
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
@@ -65,7 +65,7 @@ public class AddressBookServletModule extends com.google.inject.servlet.ServletM
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();

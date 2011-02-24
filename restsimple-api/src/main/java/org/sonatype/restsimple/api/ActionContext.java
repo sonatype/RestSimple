@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * This class encapsulates the REST request, e.g the headers, the form parameters, the path and it's value.
  */
-public class ActionContext {
+public class ActionContext<T> {
 
     private final Map<String, Collection<String>> formParam;
     private final Map<String, Collection<String>> headers;
@@ -27,14 +27,16 @@ public class ActionContext {
     private final ServiceDefinition.METHOD methodName;
     private final String pathName;
     private final String pathValue;
+    private final T object;
 
-    public ActionContext(ServiceDefinition.METHOD methodName, Map<String, Collection<String>> headers, Map<String, Collection<String>> formParam, InputStream inputStream, String pathName, String pathValue) {
+    public ActionContext(ServiceDefinition.METHOD methodName, Map<String, Collection<String>> headers, Map<String, Collection<String>> formParam, InputStream inputStream, String pathName, String pathValue, T object) {
         this.formParam = formParam;
         this.methodName = methodName;
         this.inputStream = inputStream;
         this.headers = headers;
         this.pathName = pathName;
         this.pathValue = pathValue;
+        this.object = object;
     }
 
     /**
@@ -86,4 +88,11 @@ public class ActionContext {
         return pathName;
     }
 
+    /**
+     * Return the T defined by the {@link org.sonatype.restsimple.api.ServiceHandler#mediaType()};
+     * @return the T defined by the {@link org.sonatype.restsimple.api.ServiceHandler#mediaType()};
+     */
+    public T get() {
+        return object;
+    }
 }

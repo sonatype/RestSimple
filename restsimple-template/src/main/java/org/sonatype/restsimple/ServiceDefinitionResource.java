@@ -6,10 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
-import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.api.ServiceHandlerMediaType;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,20 +52,17 @@ public class ServiceDefinitionResource {
     @Inject
     ServiceHandlerMapper mapper;
 
-    @Inject
-    ServiceHandlerMediaType producer;
-
     @GET
-    public ServiceHandlerMediaType get(@PathParam("method") String service, @PathParam("id") String value) {
+    public Object get(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = invokeAction("get", service, value, null);
-        return producer.visit(response);
+        Object response = invokeAction("get", service, value, null, null);
+        return response;
     }
 
     @HEAD
     public Response head(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP HEAD: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = invokeAction("head", service, value, null);
+        Object response = invokeAction("head", service, value, null, null);
         return Response.ok().build();
     }
 
@@ -75,7 +70,7 @@ public class ServiceDefinitionResource {
     public Response put(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
         URI location = UriBuilder.fromResource(getClass()).build(new String[]{"", "", ""});
-        Object response = invokeAction("put", service, value, null);
+        Object response = invokeAction("put", service, value, null, null);
         return Response.created(location).entity(response).build();
     }
 
@@ -83,7 +78,7 @@ public class ServiceDefinitionResource {
     @Consumes("application/x-www-form-urlencoded")
     public Response post(@PathParam("method") String service, @PathParam("id") String value, MultivaluedMap<String, String> formParams) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = invokeAction("post", service, value, formParams);
+        Object response = invokeAction("post", service, value, formParams, null);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
@@ -96,7 +91,7 @@ public class ServiceDefinitionResource {
     @Produces("application/vnd.org.sonatype.rest+json")
     public Response postWithBody(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = invokeAction("post", service, value, null);
+        Object response = invokeAction("post", service, value, null, null);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
@@ -107,11 +102,11 @@ public class ServiceDefinitionResource {
     @DELETE
     public Response delete(@PathParam("method") String service, @PathParam("id") String value) {
         logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = invokeAction("delete", service, value, null);
+        Object response = invokeAction("delete", service, value, null, null);
         return Response.ok(response).build();
     }
 
-    private Object invokeAction(String methodName, String pathName, String pathValue, MultivaluedMap<String, String> formParams) {
+    private <T> Object invokeAction(String methodName, String pathName, String pathValue, MultivaluedMap<String, String> formParams, T body) {
         ServiceHandler serviceHandler = mapper.map(pathName);
         if (serviceHandler == null) {
             throw new WebApplicationException(new IllegalStateException("No ServiceHandler defined for service " + pathName));
@@ -124,14 +119,10 @@ public class ServiceDefinitionResource {
         Object response = null;
         Action action = serviceHandler.getAction();
         try {
-            ActionContext actionContext = new ActionContext(mapMethod(request.getMethod()), mapHeaders(), mapFormParams(formParams), request.getInputStream(), pathName, pathValue);
+            ActionContext<T> actionContext = new ActionContext<T>(mapMethod(request.getMethod()), mapHeaders(), mapFormParams(formParams), request.getInputStream(), pathName, pathValue, body);
             response = action.action(actionContext);
         } catch (Throwable e) {
-            logger.error("invokeAction", e);            
-            if (ActionException.class.isAssignableFrom(e.getClass())) {
-                ActionException actionException = ActionException.class.cast(e);
-                throw new WebApplicationException(Response.Status.fromStatusCode(actionException.getStatusCode()));
-            }
+            logger.error("invokeAction", e);
             throw new WebApplicationException(e);
         }
         return response;

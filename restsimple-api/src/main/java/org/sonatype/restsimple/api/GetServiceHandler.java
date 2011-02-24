@@ -26,22 +26,11 @@ public class GetServiceHandler extends ServiceHandler {
     /**
      * Create a new {@link ServiceHandler}
      *
-     * @param path           a uri used to map the resource to this {@link ServiceHandler}
+     * @param path   a uri used to map the resource to this {@link ServiceHandler}
      * @param action an {@link Action} implementation
      */
     public GetServiceHandler(String path, Action action) {
-        this(path, action, null);
-    }
-
-    /**
-     * Create a new {@link ServiceHandler}
-     *
-     * @param path           a uri used to map the resource to this {@link ServiceHandler}
-     * @param action an {@link Action} implementation
-     * @param mediaType      a {@link ServiceHandlerMediaType} that will be used when serializing the response
-     */
-    public GetServiceHandler(String path, Action action, Class<? extends ServiceHandlerMediaType> mediaType) {
-        super(path, action, mediaType);
+        super(path, action);
     }
 
     @Override

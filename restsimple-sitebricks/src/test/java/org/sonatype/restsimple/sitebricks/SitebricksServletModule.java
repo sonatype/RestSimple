@@ -67,7 +67,7 @@ public class SitebricksServletModule extends ServletModule {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class))
+                .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action))
                 .bind();
@@ -78,7 +78,7 @@ public class SitebricksServletModule extends ServletModule {
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
-                .withHandler(new GetServiceHandler("getAddressBook", action, AddressBookMediaType.class).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
+                .withHandler(new GetServiceHandler("getAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
                 .withHandler(postServiceHandler.producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action).producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON)))
                 .bind();
