@@ -114,14 +114,6 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             fv.visitEnd();
         }
         {
-            fv = cw.visitField(0, "serviceEntity", "Lorg/sonatype/restsimple/api/Action;", null, null);
-            {
-                av0 = fv.visitAnnotation("Lcom/google/inject/Inject;", true);
-                av0.visitEnd();
-            }
-            fv.visitEnd();
-        }
-        {
             fv = cw.visitField(0, "mapper", "Lorg/sonatype/restsimple/spi/ServiceHandlerMapper;", null, null);
             {
                 av0 = fv.visitAnnotation("Lcom/google/inject/Inject;", true);
