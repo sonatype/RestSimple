@@ -826,7 +826,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             String classToLoad = className.replace("/", ".");
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader(), classToLoad);
             final Class<?> clazz = cl.loadClass(classToLoad);
-            final String path = serviceDefinition.path().contains("/:") ? convert(serviceDefinition.path()) : serviceDefinition.path();
+            final String path = serviceDefinition.path().contains("/{") ? convert(serviceDefinition.path()) : serviceDefinition.path();
 
             moduleConfig.bind(clazz);
             if (module == null) {
