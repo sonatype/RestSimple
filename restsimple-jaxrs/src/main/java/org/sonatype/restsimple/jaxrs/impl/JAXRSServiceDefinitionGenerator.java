@@ -31,6 +31,7 @@ import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
@@ -45,6 +46,20 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
     @Inject
     public JAXRSServiceDefinitionGenerator(ResourceModuleConfig moduleConfig) {
         this.moduleConfig = moduleConfig;
+    }
+
+    private String convert(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        StringBuilder newPath = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.startsWith(":")) {
+                newPath.append("/").append(token.replace(":", "{")).append("}");
+            } else {
+               newPath.append("/").append(token);
+            }
+        }
+        return newPath.toString();
     }
 
     @Override
@@ -65,8 +80,9 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, className, null, "java/lang/Object", null);
 
         {
+            String path = serviceDefinition.path().contains("/:") ? convert(serviceDefinition.path()) : serviceDefinition.path();
             av0 = cw.visitAnnotation("Ljavax/ws/rs/Path;", true);
-            av0.visit("value", serviceDefinition.path() + "/{method}/{id}/");
+            av0.visit("value", path + "/{method}/{id}/");
             av0.visitEnd();
         }
         if (serviceDefinition.mediaToProduce().size() > 0) {

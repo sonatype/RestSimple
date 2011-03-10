@@ -31,6 +31,7 @@ import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
@@ -48,6 +49,20 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     @Inject
     public SitebricksServiceDefinitionGenerator(ResourceModuleConfig moduleConfig) {
         this.moduleConfig = moduleConfig;
+    }
+
+    private String convert(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        StringBuilder newPath = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.startsWith("{")) {
+                newPath.append("/").append(token.replace("{", ":").substring(0,newPath.length() -1));
+            } else {
+               newPath.append("/").append(token);
+            }
+        }
+        return newPath.toString();
     }
 
     @Override
@@ -807,33 +822,28 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         byte[] bytes = cw.toByteArray();
 
-        try
-
-        {
+        try {
             String classToLoad = className.replace("/", ".");
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader(), classToLoad);
             final Class<?> clazz = cl.loadClass(classToLoad);
+            final String path = serviceDefinition.path().contains("/:") ? convert(serviceDefinition.path()) : serviceDefinition.path();
 
             moduleConfig.bind(clazz);
             if (module == null) {
                 module = new com.google.sitebricks.SitebricksModule() {
                     @Override
                     protected void configureSitebricks() {
-                        at(serviceDefinition.path() + "/:method/:id").serve(clazz);
+                        at(path + "/:method/:id").serve(clazz);
                     }
                 };
                 moduleConfig.install(module);
             } else {
-                module.at(serviceDefinition.path() + "/:method/:id").serve(clazz);
+                module.at(path + "/:method/:id").serve(clazz);
             }
 
         }
 
-        catch (
-                Throwable e
-                )
-
-        {
+        catch (Throwable e) {
             logger.error("generate", e);
         }
     }
