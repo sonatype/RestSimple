@@ -42,7 +42,7 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper removeServiceHandler(ServiceHandler serviceHandler) {
-        maps.remove(serviceHandler.getHttpMethod());
+        maps.remove(serviceHandler.getPath());
         return this;
     }
 
