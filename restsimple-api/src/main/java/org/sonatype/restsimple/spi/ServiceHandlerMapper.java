@@ -48,7 +48,7 @@ public class ServiceHandlerMapper {
 
     /**
      * Map the current resource method to its's associated {@link ServiceHandler}
-     * @param path The current request's method
+     * @param path The current request's path
      * @return a {@link ServiceHandler}, or null if not mapped.
      */
     public ServiceHandler map(String path) {
