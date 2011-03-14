@@ -112,7 +112,7 @@ public class PetstoreModuleTest {
         logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePost(targetUrl + "/echo/myPets").setBody("{\"name\":\"pouetpouet\"}").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePost(targetUrl + "/echo/myPets").setBody("{\"name\":\"pouetpouet\"}").addHeader("Content-Type", acceptHeader).addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);

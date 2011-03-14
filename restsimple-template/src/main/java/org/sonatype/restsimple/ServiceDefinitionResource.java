@@ -89,9 +89,9 @@ public class ServiceDefinitionResource {
     @POST
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Response postWithBody(@PathParam("method") String service, @PathParam("id") String value) {
+    public <T> Response postWithBody(@PathParam("method") String service, @PathParam("id") String value, T jacksonObject) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = invokeAction("post", service, value, null, null);
+        Object response = invokeAction("post", service, value, null, jacksonObject);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {

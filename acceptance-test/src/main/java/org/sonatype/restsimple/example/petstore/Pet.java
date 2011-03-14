@@ -36,9 +36,12 @@
  */
 package org.sonatype.restsimple.example.petstore;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Pet {
 
-    public String name;
+    private String name;
 
     public Pet() {
     }

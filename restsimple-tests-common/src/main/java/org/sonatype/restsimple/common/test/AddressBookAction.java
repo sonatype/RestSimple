@@ -40,8 +40,6 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -87,23 +85,9 @@ public class AddressBookAction implements Action<AddressBookMediaType, String> {
                         list.addAll(e.getValue());
                     }
                 } else {
-                    InputStream is = actionContext.inputStream();
-                    StringBuffer b = new StringBuffer();
-                    int nRead = 0;
-                    while (nRead > -1) {
-                        try {
-                            byte[] bytes = new byte[1];
-                            nRead = is.read(bytes);
-                            if (nRead > -1) {
-                                b.append(new String(bytes));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    list.add(b.toString());
+                    list.add(actionContext.get());
                 }
-                                
+
                 book.put(addressBookName, list);
                 return new AddressBookMediaType("posted");
             case PUT:

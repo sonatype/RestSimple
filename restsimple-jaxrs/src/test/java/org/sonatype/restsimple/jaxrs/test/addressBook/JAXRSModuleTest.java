@@ -48,6 +48,7 @@ import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import sun.net.www.content.text.plain;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -242,7 +243,7 @@ public class JAXRSModuleTest {
         AsyncHttpClient c = new AsyncHttpClient();
 
         c.preparePut(targetUrl + "/bar/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
-        c.preparePost(targetUrl + "/bar/updateAddressBook/myBook").setBody("foo").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePost(targetUrl + "/bar/updateAddressBook/myBook").addHeader("Content-Type", "text/plain").setBody("foo").execute().get();
         Response r = c.prepareGet(targetUrl + "/bar/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);

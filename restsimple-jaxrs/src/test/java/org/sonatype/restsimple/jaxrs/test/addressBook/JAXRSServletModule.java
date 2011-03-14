@@ -93,7 +93,8 @@ public class JAXRSServletModule extends ServletModule {
 
         postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler
-                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON));
+                .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                .consumeWith(new MediaType("text","plain"), String.class);
 
         serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition

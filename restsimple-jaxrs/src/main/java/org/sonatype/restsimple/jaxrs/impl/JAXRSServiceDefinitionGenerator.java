@@ -56,7 +56,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             if (token.startsWith(":")) {
                 newPath.append("/").append(token.replace(":", "{")).append("}");
             } else {
-               newPath.append("/").append(token);
+                newPath.append("/").append(token);
             }
         }
         return newPath.toString();
@@ -479,7 +479,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 continue;
                             }
                         } else {
-                            mv = cw.visitMethod(ACC_PUBLIC, "postWithBody", "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                            String methodType = serviceHandler.consumeClass() != null ? serviceHandler.consumeClass().getName().replace(".", "/") : "java/lang/String";
+                            mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;L" + methodType + ";)Ljavax/ws/rs/core/Response;",
+                                    "<T:Ljava/lang/Object;>(Ljava/lang/String;Ljava/lang/String;TT;)Ljavax/ws/rs/core/Response;", null);
+
+
                             {
                                 av0 = mv.visitAnnotation("Ljavax/ws/rs/POST;", true);
                                 av0.visitEnd();
@@ -530,10 +534,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             mv.visitVarInsn(ALOAD, 1);
                             mv.visitVarInsn(ALOAD, 2);
                             mv.visitInsn(ACONST_NULL);
-                            mv.visitInsn(ACONST_NULL);
-                            mv.visitMethodInsn(INVOKESPECIAL, className, "invokeAction", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljavax/ws/rs/core/MultivaluedMap;Ljava/lang/Object;)Ljava/lang/Object;");
-                            mv.visitVarInsn(ASTORE, 3);
                             mv.visitVarInsn(ALOAD, 3);
+                            mv.visitMethodInsn(INVOKESPECIAL, className, "invokeAction", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljavax/ws/rs/core/MultivaluedMap;Ljava/lang/Object;)Ljava/lang/Object;");
+                            mv.visitVarInsn(ASTORE, 4);
+                            mv.visitVarInsn(ALOAD, 4);
                             Label l0 = new Label();
                             mv.visitJumpInsn(IFNONNULL, l0);
                             mv.visitFieldInsn(GETSTATIC, "javax/ws/rs/core/Response$Status", "NO_CONTENT", "Ljavax/ws/rs/core/Response$Status;");
@@ -542,11 +546,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             mv.visitInsn(ARETURN);
                             mv.visitLabel(l0);
                             mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Object"}, 0, null);
-                            mv.visitVarInsn(ALOAD, 3);
+                            mv.visitVarInsn(ALOAD, 4);
                             mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "ok", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
                             mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
                             mv.visitInsn(ARETURN);
-                            mv.visitMaxs(6, 4);
+                            mv.visitMaxs(6, 5);
                             mv.visitEnd();
                             continue;
                         }
