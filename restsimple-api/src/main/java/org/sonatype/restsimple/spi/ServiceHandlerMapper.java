@@ -13,8 +13,10 @@
 package org.sonatype.restsimple.spi;
 
 import org.sonatype.restsimple.api.ServiceHandler;
+import org.sonatype.restsimple.spi.uri.UriTemplate;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple class generated resource can you to map the request to its associated {@link ServiceHandler} representation.
@@ -22,6 +24,8 @@ import java.util.HashMap;
 public class ServiceHandlerMapper {
 
     private final HashMap<String, ServiceHandler> maps = new HashMap<String, ServiceHandler>();
+
+    private boolean supportWildcard;
 
     public ServiceHandlerMapper() {
     }
@@ -52,7 +56,14 @@ public class ServiceHandlerMapper {
      * @return a {@link ServiceHandler}, or null if not mapped.
      */
     public ServiceHandler map(String path) {
-        return maps.get(path);
+        final Map<String, String> m = new HashMap<String, String>();
+        for (Map.Entry<String, ServiceHandler> e : maps.entrySet()) {
+            UriTemplate t = new UriTemplate(e.getKey());
+            if (t.match(path, m)) {
+                return e.getValue();
+            }
+        }
+        return null;
     }
 
 }
