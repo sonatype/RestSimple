@@ -194,7 +194,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                             {
                                 AnnotationVisitor av1 = av0.visitArray("value");
-                                av1.visit(null, serviceHandler.consumeMediaType());
+                                av1.visit(null, serviceHandler.consumeMediaType().toMediaType());
                                 av1.visitEnd();
                             }
                             av0.visitEnd();
@@ -264,7 +264,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                 {
                                     AnnotationVisitor av1 = av0.visitArray("value");
-                                    av1.visit(null, serviceHandler.consumeMediaType());
+                                    av1.visit(null, serviceHandler.consumeMediaType().toMediaType());
                                     av1.visitEnd();
                                 }
                                 av0.visitEnd();
@@ -336,7 +336,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                 {
                                     AnnotationVisitor av1 = av0.visitArray("value");
-                                    av1.visit(null, serviceHandler.consumeMediaType());
+                                    av1.visit(null, serviceHandler.consumeMediaType().toMediaType());
                                     av1.visitEnd();
                                 }
                                 av0.visitEnd();
@@ -440,7 +440,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                         av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                         {
                                             AnnotationVisitor av1 = av0.visitArray("value");
-                                            av1.visit(null, serviceHandler.consumeMediaType());
+                                            av1.visit(null, serviceHandler.consumeMediaType().toMediaType());
                                             av1.visitEnd();
                                         }
                                         av0.visitEnd();
@@ -512,7 +512,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                     av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                     {
                                         AnnotationVisitor av1 = av0.visitArray("value");
-                                        av1.visit(null, serviceHandler.consumeMediaType());
+                                        av1.visit(null, serviceHandler.consumeMediaType().toMediaType());
                                         av1.visitEnd();
                                     }
                                     av0.visitEnd();
@@ -593,7 +593,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                     av0 = mv.visitAnnotation("Ljavax/ws/rs/Consumes;", true);
                                     {
                                         AnnotationVisitor av1 = av0.visitArray("value");
-                                        av1.visit(null, serviceHandler.consumeMediaType());
+                                        av1.visit(null, serviceHandler.consumeMediaType().toMediaType());
                                         av1.visitEnd();
                                     }
                                     av0.visitEnd();
