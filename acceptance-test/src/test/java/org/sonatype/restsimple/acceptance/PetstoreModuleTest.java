@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.sitebricks.test.petstore;
+package org.sonatype.restsimple.acceptance;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
@@ -44,6 +44,8 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.example.petstore.PetstoreAction;
+import org.sonatype.restsimple.example.petstore.PetstoreModuleConfig;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
