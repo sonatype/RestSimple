@@ -106,7 +106,7 @@ public class JAXRSServletModule extends ServletModule {
                 .bind();
 
         serve("/*").with(GuiceContainer.class);
-
+       
     }
 
 }
