@@ -1,3 +1,15 @@
+<!--
+ ~ Copyright (c) 2011 Sonatype, Inc.
+ ~ All rights reserved. This program and the accompanying materials
+ ~ are made available under the terms of the Eclipse Public License v1.0
+ ~ and Apache License v2.0 which accompanies this distribution.
+ ~ The Eclipse Public License is available at
+ ~   http://www.eclipse.org/legal/epl-v10.html
+ ~ The Apache License v2.0 is available at
+ ~   http://www.apache.org/licenses/LICENSE-2.0.html
+ ~ You may elect to redistribute this code under either of these licenses.
+-->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
@@ -64,6 +76,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.ning</groupId>
+                <artifactId>async-http-client</artifactId>
+                <version>1.6.2</version>
+            </dependency>
+            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>5.8</version>
@@ -81,11 +98,6 @@
                 <artifactId>jetty-server</artifactId>
                 <version>7.2.1.v20101111</version>
                 <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.ning</groupId>
-                <artifactId>async-http-client</artifactId>
-                <version>1.6.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

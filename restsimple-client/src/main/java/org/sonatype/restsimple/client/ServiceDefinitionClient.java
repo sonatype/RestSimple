@@ -36,10 +36,8 @@ import java.util.Map;
                 .withHandler(new GetServiceHandler("id", "getAddressBook", AddressBookMediaType.class))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("id", "deleteAddressBook"))
-                .usingEntity(serviceEntity)
-                .bind();
-                .usingEntity(new AddressBookAction());
- *
+\               .bind();
+] *
  *  will translate to
  *
  *       ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
