@@ -19,7 +19,7 @@ import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.sitebricks.guice.SitebricksModule;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 public class PetstoreServletModule extends ServletModule {
 
@@ -27,7 +27,7 @@ public class PetstoreServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        Injector injector = Guice.createInjector(new SitebricksModule(binder()));
+        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
         Action action = new PetstoreAction();
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);

@@ -22,13 +22,13 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.AddressBookAction;
-import org.sonatype.restsimple.sitebricks.guice.SitebricksModule;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 public class SitebricksServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        Injector injector = Guice.createInjector(new SitebricksModule(binder()));
+        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
         Action action = new AddressBookAction();
         PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler.addFormParam("update");
