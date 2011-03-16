@@ -1,5 +1,5 @@
 <!--
- ~ Copyright (c) 2011 Sonatype, Inc.
+ ~ Copyright (c) 20.1-SNAPSHOT Sonatype, Inc.
  ~ All rights reserved. This program and the accompanying materials
  ~ are made available under the terms of the Eclipse Public License v1.0
  ~ and Apache License v2.0 which accompanies this distribution.
@@ -10,7 +10,7 @@
  ~ You may elect to redistribute this code under either of these licenses.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/20.1-SNAPSHOT/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.sonatype.forge</groupId>
         <artifactId>forge-parent</artifactId>
@@ -21,7 +21,7 @@
     <groupId>org.sonatype.restsimple</groupId>
     <artifactId>restsimple-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.1</version>
+    <version>0.1-SNAPSHOT</version>
     <name>restsimple-parent</name>
     <url>http://www.sonatype.com</url>
     <description>
@@ -124,13 +124,13 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>7.2.1.v20101111</version>
+                <version>7.2.1.v2010.1-SNAPSHOT11</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>7.2.1.v20101111</version>
+                <version>7.2.1.v2010.1-SNAPSHOT11</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
