@@ -29,9 +29,9 @@
         A simple REST framework based on ServiceDefinition.
     </description>
     <scm>
-        <connection>scm:git@github.com:sonatype/RestSimple.git</connection>
+        <connection>scm:git:git@github.com:sonatype/RestSimple.git</connection>
         <url>https://github.com/sonatype/RestSimple</url>
-        <developerConnection>scm:git@github.com:sonatype/RestSimple.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:sonatype/RestSimple.git</developerConnection>
     </scm>
     <prerequisites>
         <maven>2.0.9</maven>
