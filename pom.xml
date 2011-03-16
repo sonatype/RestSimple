@@ -30,7 +30,7 @@
     </description>
     <scm>
         <connection>scm:git:git@github.com:sonatype/RestSimple.git</connection>
-        <url>https://github.com/sonatype/RestSimple</url>
+        <url>scm:git:git@github.com:sonatype/RestSimple.git</url>
         <developerConnection>scm:git:git@github.com:sonatype/RestSimple.git</developerConnection>
     </scm>
     <prerequisites>
