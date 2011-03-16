@@ -125,7 +125,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         }
 
         if (generator == null) {
-            throw new NullPointerException("bint must be invoked with a non null value");
+            throw new NullPointerException("bind() must be invoked with a non null ServiceDefinitionGenerator value");
         }
 
         generator.generate(this);
