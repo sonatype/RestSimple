@@ -124,13 +124,13 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
-                <version>7.2.1.v2010.1-SNAPSHOT11</version>
+                <version>7.2.1.v20101111</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>7.2.1.v2010.1-SNAPSHOT11</version>
+                <version>7.2.1.v20101111</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
