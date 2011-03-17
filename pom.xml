@@ -21,7 +21,7 @@
     <groupId>org.sonatype.restsimple</groupId>
     <artifactId>restsimple-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <name>restsimple-parent</name>
     <url>http://www.sonatype.com</url>
     <description>
