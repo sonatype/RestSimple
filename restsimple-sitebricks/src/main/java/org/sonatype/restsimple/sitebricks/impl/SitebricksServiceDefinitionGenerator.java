@@ -101,7 +101,6 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
     }
 
-
     private void bind(SitebricksModule module, String path, ServiceDefinition serviceDefinition) {
         PageBinder.ShowBinder showBinder = module.at(path.equals("/") ? "/:method/:id" : path + "/:method/:id");
 

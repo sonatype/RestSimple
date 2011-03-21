@@ -26,8 +26,6 @@ public class ServiceHandlerMapper {
 
     private final HashMap<String, ServiceHandler> maps = new HashMap<String, ServiceHandler>();
 
-    private boolean supportWildcard;
-
     public ServiceHandlerMapper() {
     }
 
@@ -37,13 +35,14 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper addServiceHandler(ServiceHandler serviceHandler) {
-        maps.put(convert(serviceHandler.getPath()), serviceHandler);
+        maps.put(convert(serviceHandler.path()), serviceHandler);
         return this;
     }
 
     private String convert(String path) {
         StringTokenizer st = new StringTokenizer(path, "/");
         StringBuilder newPath = new StringBuilder();
+
         while (st.hasMoreTokens()) {
             String token = st.nextToken();
             if (token.startsWith(":")) {
@@ -61,7 +60,7 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper removeServiceHandler(ServiceHandler serviceHandler) {
-        maps.remove(serviceHandler.getPath());
+        maps.remove(serviceHandler.path());
         return this;
     }
 
@@ -71,6 +70,12 @@ public class ServiceHandlerMapper {
      * @return a {@link ServiceHandler}, or null if not mapped.
      */
     public ServiceHandler map(String path) {
+
+        // JAXRS remove the / for PathParam, where Sitebricks don't
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
         final Map<String, String> m = new HashMap<String, String>();
         for (Map.Entry<String, ServiceHandler> e : maps.entrySet()) {
             UriTemplate t = new UriTemplate(e.getKey());

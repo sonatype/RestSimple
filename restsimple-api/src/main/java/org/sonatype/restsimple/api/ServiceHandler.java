@@ -58,7 +58,7 @@ abstract public class ServiceHandler {
      * Return the URI used to map this {@link ServiceHandler}
      * @return the URI used to map this {@link ServiceHandler}
      */
-    public String getPath() {
+    public String path() {
         return path;
     }
 
