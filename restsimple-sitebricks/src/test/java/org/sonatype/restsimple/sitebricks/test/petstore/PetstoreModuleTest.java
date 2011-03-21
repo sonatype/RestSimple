@@ -80,7 +80,7 @@ public class PetstoreModuleTest {
         server.stop();
     }
 
-    //@Test(timeOut = 20000)
+    @Test(timeOut = 20000)
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
