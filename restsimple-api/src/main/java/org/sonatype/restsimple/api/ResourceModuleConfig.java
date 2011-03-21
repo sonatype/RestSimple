@@ -12,6 +12,8 @@
  */
 package org.sonatype.restsimple.api;
 
+import com.google.inject.Injector;
+
 /**
  * Bind and install a resource using dependency injection (Default is Guice). This class can also be used
  * to manually bind or install a resource if dependency injection is not supported.
@@ -43,4 +45,5 @@ public interface ResourceModuleConfig<T> {
      * @param module
      */
     void install(T module);
+    
 }

@@ -42,18 +42,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- ASM -->
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-util</artifactId>
-            <version>3.3.1</version>
-        </dependency>
-
         <!-- AOP -->
         <dependency>
             <groupId>aopalliance</groupId>
@@ -65,7 +53,7 @@
         <dependency>
             <groupId>com.google.sitebricks</groupId>
             <artifactId>sitebricks</artifactId>
-            <version>0.8.3</version>
+            <version>0.8.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>

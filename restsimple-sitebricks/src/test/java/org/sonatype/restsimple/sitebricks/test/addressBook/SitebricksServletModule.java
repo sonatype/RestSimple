@@ -36,8 +36,10 @@ public class SitebricksServletModule extends ServletModule {
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
+                .withPath("/")
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
+                .consuming(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .withHandler(new PutServiceHandler("createAddressBook", action))
                 .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)
