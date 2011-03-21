@@ -32,8 +32,8 @@ public class PetstoreServletModule extends ServletModule {
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
-                .withHandler(new GetServiceHandler("echo", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new PostServiceHandler("echo", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("/:echo", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new PostServiceHandler("/:echo", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .bind();
 
     }

@@ -17,6 +17,7 @@ import org.sonatype.restsimple.spi.uri.UriTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * A simple class generated resource can you to map the request to its associated {@link ServiceHandler} representation.
@@ -36,8 +37,22 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper addServiceHandler(ServiceHandler serviceHandler) {
-        maps.put(serviceHandler.getPath(), serviceHandler);
+        maps.put(convert(serviceHandler.getPath()), serviceHandler);
         return this;
+    }
+
+    private String convert(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        StringBuilder newPath = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.startsWith(":")) {
+                newPath.append("/").append(token.replace(":", "{")).append("}");
+            } else {
+                newPath.append("/").append(token);
+            }
+        }
+        return newPath.toString();
     }
 
     /**

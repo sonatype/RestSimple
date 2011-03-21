@@ -178,7 +178,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            ServiceHandler serviceHandler = mapper.map(map.get("method"));
+            ServiceHandler serviceHandler = mapper.map(convertToJaxRs(map.get("method")));
             Class<? extends Transport> transport = Text.class;
             String subType = serviceHandler.consumeMediaType() == null ? null : serviceHandler.consumeMediaType().subType();
             if (subType != null && subType.endsWith("json")) {
@@ -282,7 +282,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     }
 
     private static <T> Object createResponse(String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
-        ServiceHandler serviceHandler = mapper.map(pathName);
+        ServiceHandler serviceHandler = mapper.map(convertToJaxRs(pathName));
         if (serviceHandler == null) {
             return Reply.with("No ServiceHandler defined for service " + pathName).error();
         }
@@ -349,6 +349,21 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
         }
         return Collections.unmodifiableMap(map);
+    }
+
+
+    private static String convertToJaxRs(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        StringBuilder newPath = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.startsWith(":")) {
+                newPath.append("/").append(token.replace(":", "{")).append("}");
+            } else {
+                newPath.append("/").append(token);
+            }
+        }
+        return newPath.toString();
     }
 }
 
