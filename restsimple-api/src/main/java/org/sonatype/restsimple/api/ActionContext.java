@@ -29,7 +29,8 @@ public class ActionContext<T> {
     private final String pathValue;
     private final T object;
 
-    public ActionContext(ServiceDefinition.METHOD methodName, Map<String, Collection<String>> headers, Map<String, Collection<String>> formParam, InputStream inputStream, String pathName, String pathValue, T object) {
+    public ActionContext(ServiceDefinition.METHOD methodName, Map<String, Collection<String>> headers, Map<String,
+            Collection<String>> formParam, InputStream inputStream, String pathName, String pathValue, T object) {
         this.formParam = formParam;
         this.methodName = methodName;
         this.inputStream = inputStream;
@@ -89,8 +90,8 @@ public class ActionContext<T> {
     }
 
     /**
-     * Return the T defined by the {@link org.sonatype.restsimple.api.ServiceHandler#mediaType()};
-     * @return the T defined by the {@link org.sonatype.restsimple.api.ServiceHandler#mediaType()};
+     * Return the T defined by the {@link ServiceHandler#consumeMediaType()};
+     * @return the T defined by the {@link org.sonatype.restsimple.api.ServiceHandler#consumeMediaType()};
      */
     public T get() {
         return object;

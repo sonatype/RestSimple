@@ -12,6 +12,9 @@
  */
 package org.sonatype.restsimple.api;
 
+/**
+ * An exception thrown from an {@link Action}
+ */
 public class ActionException extends Exception {
 
     private final int statusCode;

@@ -23,7 +23,7 @@ public interface ServiceDefinitionGenerator {
 
     /**
      * Generate a REST resource based on the information a {@link org.sonatype.restsimple.api.ServiceDefinition} represents.
-     * @param serviceDefinition
+     * @param serviceDefinition a {@link ServiceDefinition}
      */
     void generate(ServiceDefinition serviceDefinition);
 

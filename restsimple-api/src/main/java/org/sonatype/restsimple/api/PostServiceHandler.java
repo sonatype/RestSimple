@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A {@link ServiceHandler} that support the POST HTTP method
+ */
 public class PostServiceHandler extends ServiceHandler {
 
     private final ArrayList<String> formParam = new ArrayList<String>();

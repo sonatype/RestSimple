@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
- * A simple class generated resource can you to map the request to its associated {@link ServiceHandler} representation.
+ * A URI mapper for {@link ServiceHandler}
  */
 public class ServiceHandlerMapper {
 

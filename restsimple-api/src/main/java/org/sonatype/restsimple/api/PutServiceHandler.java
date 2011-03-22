@@ -12,6 +12,9 @@
  */
 package org.sonatype.restsimple.api;
 
+/**
+ * A {@link ServiceHandler} that support the PUT HTTP method
+ */
 public class PutServiceHandler extends ServiceHandler {
 
     /**

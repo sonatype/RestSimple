@@ -16,7 +16,7 @@ import com.google.inject.Provider;
 import org.sonatype.restsimple.api.ServiceDefinition;
 
 /**
- * A Guice Provider for {@link org.sonatype.restsimple.api.ServiceDefinition}
+ * A Marker Interface used as a Guice Provider for {@link org.sonatype.restsimple.api.ServiceDefinition}
  */
 public interface ServiceDefinitionProvider extends Provider<ServiceDefinition>{
 }

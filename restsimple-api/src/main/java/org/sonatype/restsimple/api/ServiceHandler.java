@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Represent how a REST resource handles requests. A {@link ServiceHandler} is used when mapping the request to
- * a {@link Action}'s method
+ * an {@link Action}.
  */
 abstract public class ServiceHandler {
     private final String path;

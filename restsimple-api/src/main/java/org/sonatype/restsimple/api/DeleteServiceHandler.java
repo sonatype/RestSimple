@@ -12,6 +12,9 @@
  */
 package org.sonatype.restsimple.api;
 
+/**
+ * A {@link ServiceHandler} that support the DELETE HTTP method
+ */
 public class DeleteServiceHandler extends ServiceHandler {
 
     /**

@@ -12,6 +12,9 @@
  */
 package org.sonatype.restsimple.api;
 
+/**
+ * A {@link ServiceHandler} that support the GET HTTP method
+ */
 public class GetServiceHandler extends ServiceHandler {
 
     /**

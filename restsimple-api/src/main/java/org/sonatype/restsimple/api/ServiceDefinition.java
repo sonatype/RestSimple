@@ -18,29 +18,23 @@ import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import java.util.List;
 
 /**
- * A ServiceDefinition represents a  REST resource. A ServiceDefinition is translated by this framework into a resource
+ * A ServiceDefinition represents a REST resource. A ServiceDefinition gets translated by this framework into a resource
  * that can be deployed or integrated into other framework like SiteBricks or Jersey (JAXRS).
  *
  * As an example, the following ServiceDefinition 
  * {@code
  *
- *      ServiceEntity serviceEntity = new AddressBookServiceEntity();
-        bind(Action.class).toInstance(serviceEntity);
+        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
+        Action action = new PetstoreAction();
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
-        serviceDefinition.withPath("/{method}/{id}")
-                .producing(MediaType.JSON)
-                .producing(MediaType.XML)
-                .consuming(MediaType.JSON)
-                .consuming(MediaType.XML)
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.GET, "id", "getAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.POST, "id", "updateAddressBook"))
-                .withHandler(new ServiceHandler(ServiceDefinition.HttpMethod.DELETE, "id", "deleteAddressBook"))
-                .usingEntity(serviceEntity)
+        serviceDefinition
+                .withHandler(new GetServiceHandler("/{echo}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new PostServiceHandler("/{echo}", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .bind();
  * }
- * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension.
+ * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension. A ServiceDefinition can be
+ * seen as a DLS for REST application.
  *
  * Request will be delegated to the {@link Action}'s method using the information contained within passed
  * {@link ServiceHandler}. Using the example above, a request to:
@@ -49,14 +43,14 @@ import java.util.List;
  * <p>
  * will be mapped on the server side to the ServiceHandler defined as
  * <p>
- * new ServiceHandler(ServiceDefinition.HttpMethod.PUT, "id", "createAddressBook")
+ * new PutServiceHandler("/createAddressBook/myBook", action))
  * <p>
  * which will invoke the {@link Action}
  * <p>
- *     serviceEntity.createAddressBook(myBook)  
+ *     {@link Action#action(ActionContext)}
  * <p>
  * Note. A {@link ServiceDefinition} gets generated only when {@link ServiceDefinition#bind} gets invoked. You can
- * reconfigure the service at any moment and regenerate it's associated resource at any moment. 
+ * reconfigure the service at any moment and regenerate it's associated resource at any moment as well.
  */
 public interface ServiceDefinition {
 
@@ -82,14 +76,16 @@ public interface ServiceDefinition {
     ServiceDefinition withHandler(ServiceHandler serviceHandler);
 
     /**
-     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} are used when writing the response and maps the HTTP response's content-type header.
+     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} a
+     * re used when writing the response and maps the HTTP response's content-type header.
      * @param mediaType {@link org.sonatype.restsimple.api.MediaType}
      * @return the current {@link ServiceDefinition}
      */
     ServiceDefinition producing(MediaType mediaType);
 
     /**
-     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType} are used when reading the request and maps the HTTP request's content-type header.
+     * Add a {@link org.sonatype.restsimple.api.MediaType} this ServiceDefinition. {@link org.sonatype.restsimple.api.MediaType}
+     * are used when reading the request and maps the HTTP request's content-type header.
      * @param mediaType {@link org.sonatype.restsimple.api.MediaType}
      * @return the current {@link ServiceDefinition}
      */

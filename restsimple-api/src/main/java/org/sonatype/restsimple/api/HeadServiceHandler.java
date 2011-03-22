@@ -12,6 +12,9 @@
  */
 package org.sonatype.restsimple.api;
 
+/**
+ * A {@link ServiceHandler} that support the HEAD HTTP method
+ */
 public class HeadServiceHandler extends ServiceHandler {
     /**
      * Create a new {@link ServiceHandler}
