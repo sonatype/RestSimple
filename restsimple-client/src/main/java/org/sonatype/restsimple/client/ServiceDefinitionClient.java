@@ -51,7 +51,7 @@ public abstract class ServiceDefinitionClient {
 
     /**
      * Execute a remote GET operation. The GET operation is generated using a {@link org.sonatype.restsimple.api.ServiceHandler}
-     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#getServiceEntityMethod()}. The paths values
+     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#path()}. The paths values
      * is defined from {@link org.sonatype.restsimple.api.ServiceHandler#path()} instance.
      * 
      * @param paths A list of URI to execute a remote resource
@@ -61,7 +61,7 @@ public abstract class ServiceDefinitionClient {
 
     /**
      * Execute a remote HEAD operation. The HEAD operation is generated using a {@link org.sonatype.restsimple.api.ServiceHandler}
-     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#getServiceEntityMethod()}. The paths values
+     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#path()}. The paths values
      * is defined from {@link org.sonatype.restsimple.api.ServiceHandler#path()} instance.
      *
      * @param paths A list of URI to execute a remote resource
@@ -71,7 +71,7 @@ public abstract class ServiceDefinitionClient {
 
     /**
      * Execute a remote PUT operation. The POST operation is generated using a {@link org.sonatype.restsimple.api.ServiceHandler}
-     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#getServiceEntityMethod()}. The paths values
+     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#path()}. The paths values
      * is defined from {@link org.sonatype.restsimple.api.ServiceHandler#path()} instance.
      *
      * @param paths A list of URI to execute a remote resource
@@ -81,7 +81,7 @@ public abstract class ServiceDefinitionClient {
 
     /**
      * Execute a remote POST operation. The POST operation is generated using a {@link org.sonatype.restsimple.api.ServiceHandler}
-     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#getServiceEntityMethod()}. The paths values
+     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#path()}. The paths values
      * is defined from {@link org.sonatype.restsimple.api.ServiceHandler#path()} instance.
      *
      * @param map a {@link Map} where key and value are String, which gets translated to a list of POST parameters. 
@@ -92,7 +92,7 @@ public abstract class ServiceDefinitionClient {
 
     /**
      * Execute a remote DELETE operation. The DELETE operation is generated using a {@link org.sonatype.restsimple.api.ServiceHandler}
-     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#getServiceEntityMethod()}. The paths values
+     * and the default URI is from {@link org.sonatype.restsimple.api.ServiceHandler#path()}. The paths values
      * is defined from {@link org.sonatype.restsimple.api.ServiceHandler#path()} instance.
      *
      * @param paths A list of URI to execute a remote resource

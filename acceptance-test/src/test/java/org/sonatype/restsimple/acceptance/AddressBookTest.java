@@ -11,13 +11,10 @@
  *******************************************************************************/
 package org.sonatype.restsimple.acceptance;
 
-import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.Response;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.WebDriver;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -27,15 +24,11 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.ServiceDefinitionClient;
-import org.sonatype.restsimple.client.ServiceDefinitionProxy;
 import org.sonatype.restsimple.common.test.AddressBookAction;
-import org.sonatype.restsimple.example.addressBook.AddressBookModuleConfig;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,71 +39,44 @@ public class AddressBookTest {
 
     private static final Logger logger = LoggerFactory.getLogger(AddressBookTest.class);
 
-    protected Server server;
-
-    public int port;
-
-    public String targetUrl;
+    private WebDriver webDriver;
 
     private ServiceDefinition serviceDefinition;
 
-    protected int findFreePort() throws IOException {
-        ServerSocket socket = null;
-
-        try {
-            socket = new ServerSocket(0);
-
-            return socket.getLocalPort();
-        }
-        finally {
-            if (socket != null) {
-                socket.close();
-            }
-        }
-    }
+    private ServiceDefinitionClient stub;
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = findFreePort();
-        server = new Server(port);
-
-        targetUrl = "http://127.0.0.1:" + port;
-
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new AddressBookModuleConfig());
-        context.addServlet(DefaultServlet.class, "/");
-
-        server.setHandler(context);
-        server.start();
 
         Action action = new AddressBookAction();
-        serviceDefinition = new DefaultServiceDefinition();
-        serviceDefinition.withPath(targetUrl)
+        PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
+        postServiceHandler.addFormParam("update");
+
+        serviceDefinition = new DefaultServiceDefinition();        
+        serviceDefinition
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
                 .consuming(MediaType.XML)
                 .withHandler(new PutServiceHandler("createAddressBook", action))
                 .withHandler(new GetServiceHandler("getAddressBook", action))
-                .withHandler(new PostServiceHandler("updateAddressBook", action))
+                .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
 
+        webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
+        stub = webDriver.stub();
 
         logger.info("Local HTTP server started successfully");
     }
 
     @AfterClass(alwaysRun = true)
     public void tearDown() throws Exception {
-        server.stop();
+        webDriver.shutdown();
     }
 
     @Test(timeOut = 20000)
     public void testPut() throws Throwable {
         logger.info("running test: testPut");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-
         Response r = stub.doPut("myBook");
 
         assertNotNull(r);
@@ -120,8 +86,6 @@ public class AddressBookTest {
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-
         stub.doPut("myBook");
         Map<String, String> m = new HashMap<String, String>();
         m.put("update", "foo");
@@ -135,8 +99,6 @@ public class AddressBookTest {
     @Test(timeOut = 20000)
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-
         stub.doPut("myBook");
         Map<String, String> m = new HashMap<String, String>();
         m.put("update", "foo");
@@ -152,8 +114,6 @@ public class AddressBookTest {
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
-
         stub.doPut("myBook");
         Map<String, String> m = new HashMap<String, String>();
         m.put("update", "foo");

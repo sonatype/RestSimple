@@ -38,7 +38,7 @@ public class PetstoreServletModule extends ServletModule {
                 .bind();
 
         serve("/*").with(GuiceContainer.class);
-        
+
     }
 }
 

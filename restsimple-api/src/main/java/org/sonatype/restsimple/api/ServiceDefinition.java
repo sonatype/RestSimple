@@ -14,6 +14,7 @@
 package org.sonatype.restsimple.api;
 
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.util.List;
 
@@ -127,4 +128,5 @@ public interface ServiceDefinition {
      * @return the current {@link ServiceDefinition}
      */
     ServiceDefinition generateWith(ServiceDefinitionGenerator generator);
+
 }

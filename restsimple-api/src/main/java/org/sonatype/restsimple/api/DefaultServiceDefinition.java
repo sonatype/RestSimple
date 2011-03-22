@@ -42,6 +42,11 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this.serviceHandlerMapper = new ServiceHandlerMapper();
     }
 
+    public DefaultServiceDefinition(ServiceHandlerMapper serviceHandlerMapper) {
+        this.generator = null;
+        this.serviceHandlerMapper = serviceHandlerMapper;
+    }
+
     public DefaultServiceDefinition(ServiceDefinitionGenerator generator, ServiceHandlerMapper serviceHandlerMapper) {
         this.generator = generator;
         this.serviceHandlerMapper = serviceHandlerMapper;
@@ -129,7 +134,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         }
 
         generator.generate(this);
-
     }
 
     @Override

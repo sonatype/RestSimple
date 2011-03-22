@@ -12,6 +12,7 @@
  */
 package org.sonatype.restsimple;
 
+import com.ning.http.client.BodyGenerator;
 import com.ning.http.client.FluentStringsMap;
 import com.ning.http.client.Response;
 import com.ning.http.client.SimpleAsyncHttpClient;
@@ -66,7 +67,7 @@ public class ServiceDefinitionClientImpl extends ServiceDefinitionClient{
         String path = createUri("createAddressBook", uriPaths);
 
         try {
-            return sahc.derive().setUrl(remoteServerUri + path).build().put(null).get();
+            return sahc.derive().setUrl(remoteServerUri + path).build().put((BodyGenerator) null).get();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -83,7 +84,7 @@ public class ServiceDefinitionClientImpl extends ServiceDefinitionClient{
         String path = createUri("updateAddressBook", uriPaths);
 
         try {
-            return sahc.derive().setParameters(ahcMap).setUrl(remoteServerUri + path).build().post(null).get();
+            return sahc.derive().setParameters(ahcMap).setUrl(remoteServerUri + path).build().post((BodyGenerator) null).get();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
