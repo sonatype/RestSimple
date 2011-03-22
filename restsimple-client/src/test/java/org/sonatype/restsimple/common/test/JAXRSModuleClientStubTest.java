@@ -70,7 +70,7 @@ public class JAXRSModuleClientStubTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = findFreePort();
+        port = 8080;
         server = new Server(port);
 
         targetUrl = "http://127.0.0.1:" + port;
@@ -87,7 +87,7 @@ public class JAXRSModuleClientStubTest {
         Action action = new AddressBookAction();
         serviceDefinition = new DefaultServiceDefinition();
 
-        serviceDefinition .withPath(targetUrl)
+        serviceDefinition
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(MediaType.JSON)
@@ -108,7 +108,7 @@ public class JAXRSModuleClientStubTest {
     @Test(timeOut = 20000)
     public void testPut() throws Throwable {
         logger.info("running test: testPut");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);
 
         Response r = stub.doPut("myBook");
 
@@ -119,7 +119,7 @@ public class JAXRSModuleClientStubTest {
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);
 
         stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();
@@ -134,7 +134,7 @@ public class JAXRSModuleClientStubTest {
     @Test(timeOut = 20000)
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);
 
         stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();
@@ -151,7 +151,7 @@ public class JAXRSModuleClientStubTest {
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
-        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(serviceDefinition);
+        ServiceDefinitionClient stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);
 
         stub.doPut("myBook");
         Map<String,String> m = new HashMap<String,String>();

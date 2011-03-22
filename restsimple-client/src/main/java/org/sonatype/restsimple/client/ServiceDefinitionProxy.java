@@ -27,6 +27,7 @@ import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 
 import java.lang.reflect.Constructor;
+import java.net.URI;
 
 /**
  * Generates an implementation of {@link ServiceDefinitionClient} from a {@link ServiceDefinition}.
@@ -41,17 +42,18 @@ public final class ServiceDefinitionProxy implements Opcodes {
      * @param serviceDefinition a {@link ServiceDefinition}
      * @return An implementation of {@ServiceDefinitionClient}
      */
-    public final static ServiceDefinitionClient getProxy(ServiceDefinition serviceDefinition) {
-        SimpleAsyncHttpClient.Builder builder = new SimpleAsyncHttpClient.Builder().setUrl(serviceDefinition.path());
+    public final static ServiceDefinitionClient getProxy(String uri, ServiceDefinition serviceDefinition) {
+
+        SimpleAsyncHttpClient.Builder builder = new SimpleAsyncHttpClient.Builder().setUrl(uri);
 
         for (MediaType m : serviceDefinition.mediaToProduce()) {
             builder.addHeader("Accept", m.toMediaType());
         }
 
-        return generate(builder.build(), serviceDefinition);
+        return generate(uri, builder.build(), serviceDefinition);
     }
 
-    private static ServiceDefinitionClient generate(SimpleAsyncHttpClient sahc, ServiceDefinition serviceDefinition) {
+    private static ServiceDefinitionClient generate(String uri, SimpleAsyncHttpClient sahc, ServiceDefinition serviceDefinition) {
 
         ClassWriter cw = new ClassWriter(0);
         FieldVisitor fv;
@@ -438,7 +440,7 @@ public final class ServiceDefinitionProxy implements Opcodes {
             Class<?> clazz = cl.loadClass("org.sonatype.restsimple.client.model.ServiceDefinitionClientImpl");
 
             Constructor constructor = clazz.getConstructor(new Class[]{SimpleAsyncHttpClient.class, String.class});
-            return (ServiceDefinitionClient) constructor.newInstance(new Object[]{sahc, serviceDefinition.path()});
+            return (ServiceDefinitionClient) constructor.newInstance(new Object[]{sahc, uri + serviceDefinition.path()});
         } catch (Throwable e ){
             logger.error("generate", e);
         }
