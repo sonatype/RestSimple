@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.example.hello.HelloWorldModuleConfig;
 import org.sonatype.restsimple.example.hello.HelloWorldAction;
-import org.sonatype.restsimple.common.test.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -87,7 +86,7 @@ public class HelloWorldModuleTest {
     public void testGetPlainText() throws Throwable {
         logger.info("running test: testGetPlainText");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.TXT;
+        acceptHeader = HelloWorldAction.APPLICATION + "/" + HelloWorldAction.TXT;
         Response r = c.prepareGet(targetUrl + "/sayPlainTextHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
@@ -102,7 +101,7 @@ public class HelloWorldModuleTest {
     public void testGetHTML() throws Throwable {
         logger.info("running test: testGetHTML");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.HTML;
+        acceptHeader = HelloWorldAction.APPLICATION + "/" + HelloWorldAction.HTML;
 
         Response r = c.prepareGet(targetUrl + "/sayPlainHtmlHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
@@ -119,7 +118,7 @@ public class HelloWorldModuleTest {
     public void testGetXML() throws Throwable {
         logger.info("running test: testGetXML");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.XML;
+        acceptHeader = HelloWorldAction.APPLICATION + "/" + HelloWorldAction.XML;
 
         Response r = c.prepareGet(targetUrl + "/sayPlainXmlHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
@@ -135,7 +134,7 @@ public class HelloWorldModuleTest {
     public void testGetJSON() throws Throwable {
         logger.info("running test: testGetJSON");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookAction.APPLICATION + "/" + HelloWorldAction.JSON;
+        acceptHeader = HelloWorldAction.APPLICATION + "/" + HelloWorldAction.JSON;
 
         Response r = c.prepareGet(targetUrl + "/sayPlainJsonHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
@@ -151,7 +150,7 @@ public class HelloWorldModuleTest {
     public void testContentNegociation() throws Throwable {
         logger.info("running test: testContentNegociation");
         AsyncHttpClient c = new AsyncHttpClient();
-        acceptHeader = AddressBookAction.APPLICATION + "/" + "vnd.org.sonatype.rest-v2+json";
+        acceptHeader = HelloWorldAction.APPLICATION + "/" + "vnd.org.sonatype.rest-v2+json";
 
         Response r = c.prepareGet(targetUrl + "/sayPlainJsonHello/sonatype").addHeader("Accept", acceptHeader).execute().get();
 
