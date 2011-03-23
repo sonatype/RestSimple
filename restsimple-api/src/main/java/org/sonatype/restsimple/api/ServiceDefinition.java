@@ -30,8 +30,8 @@ import java.util.List;
 
         ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
         serviceDefinition
-                .withHandler(new GetServiceHandler("/{echo}", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new PostServiceHandler("/{echo}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("/{getPet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new PostServiceHandler("/{addPet}", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .bind();
  * }
  * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension. A ServiceDefinition can be
