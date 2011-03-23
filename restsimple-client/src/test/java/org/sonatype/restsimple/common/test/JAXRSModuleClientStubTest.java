@@ -70,7 +70,7 @@ public class JAXRSModuleClientStubTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = 8080;
+        port = findFreePort();
         server = new Server(port);
 
         targetUrl = "http://127.0.0.1:" + port;

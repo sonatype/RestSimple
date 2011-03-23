@@ -89,6 +89,10 @@ public class WebDriver {
         return this;
     }
 
+    public String getUri(){
+        return targetUrl;
+    }
+
     public WebDriver serviceDefinition(final ServiceDefinition serviceDefinition) throws Exception {
 
         context.addEventListener(new GuiceServletContextListener() {
@@ -115,12 +119,14 @@ public class WebDriver {
         });
 
         this.serviceDefinition = serviceDefinition;
-        this.stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);
         server.start();
         return this;
     }
 
     public ServiceDefinitionClient stub() {
+        if (stub == null) {
+            stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);            
+        }
         return stub;
     }
 

@@ -11,22 +11,22 @@
  *******************************************************************************/
 package org.sonatype.restsimple.acceptance;
 
-import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.example.hello.HelloWorldModuleConfig;
+import org.sonatype.restsimple.WebDriver;
+import org.sonatype.restsimple.api.Action;
+import org.sonatype.restsimple.api.DefaultServiceDefinition;
+import org.sonatype.restsimple.api.GetServiceHandler;
+import org.sonatype.restsimple.api.MediaType;
+import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.client.ServiceDefinitionClient;
 import org.sonatype.restsimple.example.hello.HelloWorldAction;
-import org.testng.annotations.AfterClass;
+import org.sonatype.restsimple.example.petstore.PetstoreAction;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import java.io.IOException;
-import java.net.ServerSocket;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -40,46 +40,35 @@ public class HelloWorldModuleTest {
     public int port;
 
     public String targetUrl;
-    
+
     public String acceptHeader;
 
-    protected int findFreePort() throws IOException {
-        ServerSocket socket = null;
+    private WebDriver webDriver;
 
-        try {
-            socket = new ServerSocket(0);
+    private ServiceDefinition serviceDefinition;
 
-            return socket.getLocalPort();
-        }
-        finally {
-            if (socket != null) {
-                socket.close();
-            }
-        }
-    }
+    private ServiceDefinitionClient stub;
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = findFreePort();
-        server = new Server(port);
 
+        acceptHeader = PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON;
 
-        targetUrl = "http://127.0.0.1:" + port;
+        Action action = new HelloWorldAction();
+        ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
+        serviceDefinition
+                .withHandler(new GetServiceHandler("sayPlainTextHello", action).producing(
+                        new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.TXT)))
+                .withHandler(new GetServiceHandler("sayPlainXmlHello", action).producing(
+                        new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.XML)))
+                .withHandler(new GetServiceHandler("sayPlainHtmlHello", action).producing(
+                        new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.HTML)))
+                .withHandler(new GetServiceHandler("sayPlainJsonHello", action).producing(
+                        new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.JSON)));
 
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setContextPath("/");
-        context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new HelloWorldModuleConfig());
-        context.addServlet(DefaultServlet.class, "/");
-
-        server.setHandler(context);
-        server.start();
+        webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
+        targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
-    }
-
-    @AfterClass(alwaysRun = true)
-    public void tearDown() throws Exception {
-        server.stop();
     }
 
     @Test(timeOut = 20000)
