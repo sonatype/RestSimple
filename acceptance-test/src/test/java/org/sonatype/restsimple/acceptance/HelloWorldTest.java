@@ -35,10 +35,6 @@ public class HelloWorldTest {
 
     private static final Logger logger = LoggerFactory.getLogger(HelloWorldTest.class);
 
-    protected Server server;
-
-    public int port;
-
     public String targetUrl;
 
     public String acceptHeader;
@@ -114,7 +110,9 @@ public class HelloWorldTest {
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><helloWorldMediaType><helloWorld>sonatype</helloWorld></helloWorldMediaType>");
+        assertEquals(r.getResponseBody(), "<org.sonatype.restsimple.example.hello.HelloWorldMediaType>\n" +
+                "  <helloWorld>sonatype</helloWorld>\n" +
+                "</org.sonatype.restsimple.example.hello.HelloWorldMediaType>");
 
         c.close();
     }
@@ -135,7 +133,8 @@ public class HelloWorldTest {
         c.close();
     }
 
-    @Test(timeOut = 20000)
+    // Sitebricks doesn't support that natively.
+    @Test(timeOut = 20000, enabled = false)
     public void testContentNegociation() throws Throwable {
         logger.info("running test: testContentNegociation");
         AsyncHttpClient c = new AsyncHttpClient();

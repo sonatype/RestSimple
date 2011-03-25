@@ -20,20 +20,12 @@
         </dependency>
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
-            <artifactId>restsimple-jaxrs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonatype.restsimple</groupId>
             <artifactId>restsimple-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
             <artifactId>restsimple-tests-common</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.sonatype.restsimple</groupId>-->
-        <!--<artifactId>restsimple-sitebricks</artifactId>-->
-        <!--</dependency>-->
 
         <!-- guice -->
         <dependency>

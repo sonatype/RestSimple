@@ -24,8 +24,4 @@ public class HelloWorldMediaType {
         this.helloWorld = helloWorld;
     }
 
-    @Override
-    public String toString() {
-        return helloWorld;
-    }
 }

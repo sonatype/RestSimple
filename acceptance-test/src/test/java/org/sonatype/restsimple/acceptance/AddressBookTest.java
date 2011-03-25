@@ -51,13 +51,14 @@ public class AddressBookTest {
         Action action = new AddressBookAction();
         PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler.addFormParam("update");
+        postServiceHandler.addFormParam("update2");
 
         serviceDefinition = new DefaultServiceDefinition();        
         serviceDefinition
+                .withPath("")
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
-                .consuming(MediaType.JSON)
-                .consuming(MediaType.XML)
+                .consuming(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .withHandler(new PutServiceHandler("createAddressBook", action))
                 .withHandler(new GetServiceHandler("getAddressBook", action))
                 .withHandler(postServiceHandler)

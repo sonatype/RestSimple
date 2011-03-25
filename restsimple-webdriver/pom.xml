@@ -24,6 +24,10 @@
         </dependency>
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
+            <artifactId>restsimple-sitebricks</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.restsimple</groupId>
             <artifactId>restsimple-client</artifactId>
         </dependency>
         <dependency>

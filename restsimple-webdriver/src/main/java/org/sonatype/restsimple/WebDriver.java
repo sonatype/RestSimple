@@ -28,12 +28,17 @@ import org.sonatype.restsimple.client.ServiceDefinitionClient;
 import org.sonatype.restsimple.client.ServiceDefinitionProxy;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
+import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 
 public class WebDriver {
+
+    public static enum PROVIDER {JAXRS, SITEBRICKS}
 
     private static final Logger logger = LoggerFactory.getLogger(WebDriver.class);
 
@@ -46,6 +51,8 @@ public class WebDriver {
     private final String targetUrl;
 
     private ServiceDefinitionClient stub;
+
+    private PROVIDER provider = PROVIDER.JAXRS;
 
     private WebDriver(Server server, String targetUrl, ServletContextHandler context) {
         this.server = server;
@@ -68,6 +75,10 @@ public class WebDriver {
     }
 
     public static WebDriver getDriver() throws Exception {
+        return getDriver(PROVIDER.SITEBRICKS);
+    }
+        
+    public static WebDriver getDriver(PROVIDER provider) throws Exception {
 
         int port = findFreePort();
         String targetUrl = "http://127.0.0.1:" + port;
@@ -77,10 +88,11 @@ public class WebDriver {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addServlet(DefaultServlet.class, "/");
+        context.addServlet(DefaultServlet.class, "/");                        
         server.setHandler(context);
         
         WebDriver w = new WebDriver(server, targetUrl, context);
+        w.provider = provider;
         return w;
     }
 
@@ -101,7 +113,12 @@ public class WebDriver {
                 return Guice.createInjector(new ServletModule() {
                     @Override                    
                     public void configureServlets() {
-                        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
+                        Injector injector;
+                        if (provider.equals(PROVIDER.JAXRS)) {
+                            injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
+                        } else {
+                            injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
+                        }
 
                         // If the ServiceDefinition was created without using injection, we need to get the proper
                         // list of ServiceHandler as more than one instance of ServiceHandlerMapper exits
@@ -110,9 +127,13 @@ public class WebDriver {
                             mapper.addServiceHandler(handler);
                         }
                         
-                        serviceDefinition.generateWith(injector.getInstance(JAXRSServiceDefinitionGenerator.class));
+                        if (provider.equals(PROVIDER.JAXRS)) {
+                            serviceDefinition.generateWith(injector.getInstance(JAXRSServiceDefinitionGenerator.class));
+                            serve("/*").with(GuiceContainer.class);
+                        } else {
+                            serviceDefinition.generateWith(injector.getInstance(SitebricksServiceDefinitionGenerator.class));
+                        }
                         serviceDefinition.bind();
-                        serve("/*").with(GuiceContainer.class);
                     }
                 });
             }
