@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -94,7 +95,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                 };
                 moduleConfig.install(module);
             } else {
-                bind(module, path, serviceDefinition); 
+                bind(module, path, serviceDefinition);
             }
         } catch (Throwable e) {
             logger.error("generate", e);
@@ -282,6 +283,11 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     private static <T> Object createResponse(String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
         ServiceHandler serviceHandler = mapper.map(convertToJaxRs(pathName));
+
+        if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
+            return Reply.with("Not Acceptable").status(406);
+        }
+
         if (serviceHandler == null) {
             return Reply.with("No ServiceHandler defined for service " + pathName).error();
         }
@@ -289,6 +295,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
             return Reply.with("Method not allowed").status(405);
         }
+
 
         if (body == null) {
             body = (T) "";
@@ -306,6 +313,24 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         return response;
     }
 
+    private static boolean contentNegotiate(Multimap<String, String> headers, List<MediaType> mediaTypes) {
+
+        if (mediaTypes.size() == 0) {
+            return true;
+        }
+
+        for (Map.Entry<String, String> e : headers.entries()) {
+            if (e.getKey().equalsIgnoreCase("Accept")) {
+                for (MediaType mediaType : mediaTypes) {
+                    if (mediaType.toMediaType().equalsIgnoreCase(e.getValue())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+
+    }
 
     private static Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {
         Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();

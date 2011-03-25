@@ -133,8 +133,7 @@ public class HelloWorldTest {
         c.close();
     }
 
-    // Sitebricks doesn't support that natively.
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testContentNegociation() throws Throwable {
         logger.info("running test: testContentNegociation");
         AsyncHttpClient c = new AsyncHttpClient();
