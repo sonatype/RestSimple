@@ -31,9 +31,9 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class HelloWorldModuleTest {
+public class HelloWorldTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(HelloWorldModuleTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(HelloWorldTest.class);
 
     protected Server server;
 
