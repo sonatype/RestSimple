@@ -273,8 +273,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             return Reply.with("").noContent();
         } else if (contentType != null) {
             if (contentType.endsWith("json")) {
-                return Reply.with(response).as(Json.class);
+                Map<String,String> m = new HashMap<String,String>();
+                m.put("Content-Type","application/json");
+                return Reply.with(response).headers(m).as(Json.class);
             } else if (contentType.endsWith("xml")) {
+                Map<String,String> m = new HashMap<String,String>();                
+                m.put("Content-Type","application/xml");                
                 return Reply.with(response).as(Xml.class);
             }
         }
@@ -295,7 +299,6 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
             return Reply.with("Method not allowed").status(405);
         }
-
 
         if (body == null) {
             body = (T) "";
@@ -350,7 +353,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             return ServiceDefinition.METHOD.GET;
         } else if (method.equalsIgnoreCase("PUT")) {
             return ServiceDefinition.METHOD.PUT;
-        } else if (method.equalsIgnoreCase("POST")) {
+        } else if (method.equalsIgnoreCase("POST")) {                                
             return ServiceDefinition.METHOD.POST;
         } else if (method.equalsIgnoreCase("DELETE")) {
             return ServiceDefinition.METHOD.DELETE;

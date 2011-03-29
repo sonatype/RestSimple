@@ -11,18 +11,18 @@
  *******************************************************************************/
 package org.sonatype.restsimple;
 
-import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.api.ServiceDefinition;
+import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.client.ServiceDefinitionClient;
 import org.sonatype.restsimple.client.ServiceDefinitionProxy;
@@ -30,7 +30,6 @@ import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
-import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.io.IOException;
