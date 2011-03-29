@@ -79,7 +79,7 @@ public class WebDriver {
         
     public static WebDriver getDriver(PROVIDER provider) throws Exception {
 
-        int port = 8080;
+        int port = findFreePort();
         String targetUrl = "http://127.0.0.1:" + port;
         Server server = new org.eclipse.jetty.server.Server(port);
 
