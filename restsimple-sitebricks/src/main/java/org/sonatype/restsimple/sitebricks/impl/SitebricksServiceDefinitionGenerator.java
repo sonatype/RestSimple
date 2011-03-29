@@ -58,7 +58,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     private final ResourceModuleConfig moduleConfig;
 
-    private final Logger logger = LoggerFactory.getLogger(SitebricksServiceDefinitionGenerator.class);
+    private final static Logger logger = LoggerFactory.getLogger(SitebricksServiceDefinitionGenerator.class);
 
     private com.google.sitebricks.SitebricksModule module;
 
@@ -311,7 +311,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mapFormParams(request.params()), new ByteArrayInputStream(body.toString().getBytes()), pathName, pathValue, body);
             response = action.action(actionContext);
         } catch (Throwable e) {
-            e.printStackTrace();
+            logger.debug("ActionContext error", e);
             return Reply.with(e).error();
         }
         return response;
