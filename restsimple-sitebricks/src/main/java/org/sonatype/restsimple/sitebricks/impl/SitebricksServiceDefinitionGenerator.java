@@ -154,7 +154,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             Request request = requestProvider.get();
             Object response = createResponse("put", map.get("method"), map.get("id"), null, request, mapper);
 
-            if (Reply.class.isAssignableFrom(response.getClass())) {
+            if (response == null) {
+                return Reply.NO_REPLY.noContent();
+            } else if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
             }
 
@@ -220,7 +222,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             Request request = requestProvider.get();
             Object response = createResponse("get", map.get("method"), map.get("id"), null, request, mapper);
 
-            if (Reply.class.isAssignableFrom(response.getClass())) {
+            if (response == null) {
+                return Reply.NO_REPLY.noContent();
+            } else if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
             }
 
@@ -246,6 +250,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             Request request = requestProvider.get();
 
             Object response = createResponse("delete", map.get("method"), map.get("id"), null, request, mapper);
+            if (response == null) {
+                return Reply.NO_REPLY.noContent();
+            }
             return serializeResponse(request, response);
         }
     }

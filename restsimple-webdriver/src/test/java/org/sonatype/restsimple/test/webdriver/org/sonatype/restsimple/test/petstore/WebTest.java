@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
 
 public class WebTest {
 
@@ -99,6 +100,9 @@ public class WebTest {
 
         pet = (Pet) web.clientOf(targetUrl + "/deletePet/myPet").headers(m).delete();
         assertNotNull(pet);
+
+        pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet").headers(m).get();
+        assertNull(pet);
     }
 
     @Test(timeOut = 20000)

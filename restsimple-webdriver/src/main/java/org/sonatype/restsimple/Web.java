@@ -13,6 +13,7 @@ package org.sonatype.restsimple;
 
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -76,53 +77,101 @@ public class Web {
     }
 
     public <T> T post(Map<String, String> formParams, Class<T> t) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.POST).post(t, formParams);
+        try {
+            WebResource r = buildRequest();
+            return headers(r, TYPE.POST).post(t, formParams);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public <T> T post(Object o, Class<T> t) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.POST).post(t, o);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.POST).post(t, o);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public Object post(Object o) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public <T> T delete(Class<T> t) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.DELETE).delete(t);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.DELETE).delete(t);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public Object delete() {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE));
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE));
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public <T> T delete(Object o, Class<T> t) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.DELETE).delete(t, o);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.DELETE).delete(t, o);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public <T> T get(Class<T> t) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.GET).get(t);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.GET).get(t);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public Object get() {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.GET).get(findEntity(r, TYPE.GET));
+        try {
+            WebResource r = buildRequest();
+            return headers(r, TYPE.GET).get(findEntity(r, TYPE.GET));
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public <T> T put(Object o, Class<T> t) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.PUT).put(t, o);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.PUT).put(t, o);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     public Object put(Object o) {
-        WebResource r = buildRequest();
-        return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
+        try {
+
+            WebResource r = buildRequest();
+            return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
     }
 
     private WebResource buildRequest() {
@@ -155,7 +204,7 @@ public class Web {
                 // IllegalStateException ?
             }
         }
-        return null;        
+        return null;
     }
 
     private WebResource.Builder headers(WebResource r, TYPE type) {
@@ -177,12 +226,12 @@ public class Web {
             }
 
             if (list.size() > 0) {
-                for (MediaType m: list) {
+                for (MediaType m : list) {
                     builder.header("Accept", m.toMediaType());
                     builder.header("Content-Type", m.toMediaType());
                 }
                 acceptAdded = true;
-                break;                
+                break;
             }
         }
 
