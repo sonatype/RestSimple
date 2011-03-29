@@ -75,7 +75,7 @@ public class Web {
 
     public <T> T post(Object o, Class<T> t) {
         WebResource r = buildRequest();
-        return headers(r, TYPE.POST).post(t);
+        return headers(r, TYPE.POST).post(t, o);
     }
 
     public Object post(Object o) {
@@ -110,12 +110,12 @@ public class Web {
 
     public <T> T put(Object o, Class<T> t) {
         WebResource r = buildRequest();
-        return headers(r, TYPE.PUT).put(t);
+        return headers(r, TYPE.PUT).put(t, o);
     }
 
     public Object put(Object o) {
         WebResource r = buildRequest();
-        return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT));
+        return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
     }
 
     private WebResource buildRequest() {
