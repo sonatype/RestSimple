@@ -69,7 +69,7 @@ public class WebTest {
     }
 
     @Test(timeOut = 20000)
-    public void testPut() throws Throwable {
+    public void testPost() throws Throwable {
         logger.info("running test: testPut");
 
         Web web = new Web(serviceDefinition);
@@ -77,6 +77,23 @@ public class WebTest {
         m.put("Content-Type", acceptHeader);
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+
+        pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);
+
+        assertNotNull(pet);
+    }
+
+    @Test(timeOut = 20000)
+    public void testPostWithoutSD() throws Throwable {
+        logger.info("running test: testPut");
+
+        Web web = new Web();
+        Map<String,String> m = new HashMap<String,String>();
+        m.put("Content-Type", acceptHeader);
+        m.put("Accept", acceptHeader);
+
+        Pet pet = web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}", Pet.class);
         assertNotNull(pet);
 
         pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);

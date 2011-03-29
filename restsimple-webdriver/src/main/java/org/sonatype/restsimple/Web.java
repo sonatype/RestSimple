@@ -14,6 +14,7 @@ package org.sonatype.restsimple;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
+import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
@@ -46,6 +47,12 @@ public class Web {
 
     private Map<String, String> headers;
     private Map<String, String> queryString;
+
+    public Web() {
+        ahcConfig = new DefaultAhcConfig();
+        configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
+        this.serviceDefinition = new DefaultServiceDefinition();
+    }
 
     public Web(ServiceDefinition serviceDefinition) {
         ahcConfig = new DefaultAhcConfig();
