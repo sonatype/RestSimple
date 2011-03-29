@@ -17,6 +17,7 @@ import org.sonatype.restsimple.Web;
 import org.sonatype.restsimple.WebDriver;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
+import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
@@ -56,6 +57,7 @@ public class WebTest {
         serviceDefinition = new DefaultServiceDefinition();
         serviceDefinition
                 .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
 
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
@@ -77,6 +79,37 @@ public class WebTest {
         m.put("Content-Type", acceptHeader);
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+
+        pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);
+
+        assertNotNull(pet);
+    }
+
+    @Test(timeOut = 20000)
+    public void testDelete() throws Throwable {
+        logger.info("running test: testPut");
+
+        Web web = new Web(serviceDefinition);
+        Map<String,String> m = new HashMap<String,String>();
+        m.put("Content-Type", acceptHeader);
+
+        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+
+        pet = (Pet) web.clientOf(targetUrl + "/deletePet/myPet").headers(m).delete();
+        assertNotNull(pet);
+    }
+
+    @Test(timeOut = 20000)
+    public void testPostWithType() throws Throwable {
+        logger.info("running test: testPut");
+
+        Web web = new Web(serviceDefinition);
+        Map<String,String> m = new HashMap<String,String>();
+        m.put("Content-Type", acceptHeader);
+
+        Pet pet = web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}", Pet.class);
         assertNotNull(pet);
 
         pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);

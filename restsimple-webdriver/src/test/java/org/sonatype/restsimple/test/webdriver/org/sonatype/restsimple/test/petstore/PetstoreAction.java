@@ -31,6 +31,8 @@ public class PetstoreAction implements Action<Pet,Pet> {
         switch (actionContext.method()) {
              case GET:
                 return pets.get(actionContext.pathValue());
+             case DELETE:
+                return pets.remove(actionContext.pathValue());               
              case POST:
                  pets.put(actionContext.pathValue(), actionContext.get());
                  return actionContext.get();
