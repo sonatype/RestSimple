@@ -311,6 +311,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mapFormParams(request.params()), new ByteArrayInputStream(body.toString().getBytes()), pathName, pathValue, body);
             response = action.action(actionContext);
         } catch (Throwable e) {
+            e.printStackTrace();
             return Reply.with(e).error();
         }
         return response;

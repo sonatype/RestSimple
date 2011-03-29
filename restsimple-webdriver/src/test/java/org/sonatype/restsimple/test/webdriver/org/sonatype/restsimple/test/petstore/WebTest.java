@@ -77,6 +77,9 @@ public class WebTest {
         m.put("Content-Type", acceptHeader);
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+
+        pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);
 
         assertNotNull(pet);
     }

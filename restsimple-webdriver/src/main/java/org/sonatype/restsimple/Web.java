@@ -121,12 +121,6 @@ public class Web {
     private WebResource buildRequest() {
         asyncClient = AhcHttpClient.create(ahcConfig);
         WebResource r = asyncClient.resource(uri);
-        if (headers != null && headers.size() > 0) {
-            for (Map.Entry<String, String> e : headers.entrySet()) {
-                r.header(e.getKey(), e.getValue());
-            }
-        }
-
         if (queryString != null && queryString.size() > 0) {
             for (Map.Entry<String, String> e : queryString.entrySet()) {
                 r = r.queryParam(e.getKey(), e.getValue());
@@ -159,6 +153,7 @@ public class Web {
 
     private WebResource.Builder headers(WebResource r, TYPE type) {
         WebResource.Builder builder = r.getRequestBuilder();
+        boolean acceptAdded = false;
         for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
 
             List<MediaType> list;
@@ -179,9 +174,19 @@ public class Web {
                     builder.header("Accept", m.toMediaType());
                     builder.header("Content-Type", m.toMediaType());
                 }
+                acceptAdded = true;
                 break;                
             }
         }
+
+        if (!acceptAdded) {
+            if (headers != null && headers.size() > 0) {
+                for (Map.Entry<String, String> e : headers.entrySet()) {
+                    builder.header(e.getKey(), e.getValue());
+                }
+            }
+        }
+
         return builder;
     }
 

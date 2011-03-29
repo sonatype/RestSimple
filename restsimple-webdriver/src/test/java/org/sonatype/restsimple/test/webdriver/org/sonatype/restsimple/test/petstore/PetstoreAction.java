@@ -15,19 +15,24 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class PetstoreAction implements Action<Pet,Pet> {
 
     public final static String APPLICATION = "application";
     public final static String JSON = "vnd.org.sonatype.rest+json";
     public final static String XML = "vnd.org.sonatype.rest+xml";
-    
+
+    private final ConcurrentHashMap<String,Pet> pets = new ConcurrentHashMap<String,Pet>();
+
     @Override
     public Pet action(ActionContext<Pet> actionContext) throws ActionException {
 
         switch (actionContext.method()) {
              case GET:
-                return actionContext.get();
+                return pets.get(actionContext.pathValue());
              case POST:
+                 pets.put(actionContext.pathValue(), actionContext.get());
                  return actionContext.get();
              default:
                  throw new ActionException(405);
