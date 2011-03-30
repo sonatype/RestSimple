@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.client.ServiceDefinitionClient;
-import org.sonatype.restsimple.client.ServiceDefinitionProxy;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
@@ -48,8 +46,6 @@ public class WebDriver {
     private ServiceDefinition serviceDefinition;
 
     private final String targetUrl;
-
-    private ServiceDefinitionClient stub;
 
     private PROVIDER provider = PROVIDER.JAXRS;
 
@@ -142,14 +138,4 @@ public class WebDriver {
         server.start();
         return this;
     }
-
-    public ServiceDefinitionClient stub() {
-        if (stub == null) {
-            stub = ServiceDefinitionProxy.getProxy(targetUrl, serviceDefinition);            
-        }
-        return stub;
-    }
-
-
-
 }

@@ -9,12 +9,13 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple;
+package org.sonatype.restsimple.client;
 
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.representation.Form;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
@@ -78,8 +79,12 @@ public class Web {
 
     public <T> T post(Map<String, String> formParams, Class<T> t) {
         try {
+            Form form = new Form();
+            for (Map.Entry<String, String> e : formParams.entrySet()) {
+                form.add(e.getKey(), e.getValue());
+            }
             WebResource r = buildRequest();
-            return headers(r, TYPE.POST).post(t, formParams);
+            return headers(r, TYPE.POST, true).post(t, form);
         } catch (UniformInterfaceException u) {
             return null;
         }
@@ -97,7 +102,6 @@ public class Web {
 
     public Object post(Object o) {
         try {
-
             WebResource r = buildRequest();
             return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
         } catch (UniformInterfaceException u) {
@@ -208,6 +212,10 @@ public class Web {
     }
 
     private WebResource.Builder headers(WebResource r, TYPE type) {
+        return headers(r, type, false);
+    }
+
+    private WebResource.Builder headers(WebResource r, TYPE type, boolean formEncoded) {
         WebResource.Builder builder = r.getRequestBuilder();
         boolean acceptAdded = false;
         for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
@@ -223,21 +231,31 @@ public class Web {
                 list = s.mediaToProduce();
             } else {
                 list = new ArrayList<MediaType>();
+                if (serviceDefinition != null) {
+                    list = serviceDefinition.mediaToProduce();
+                }
             }
 
             if (list.size() > 0) {
                 for (MediaType m : list) {
-                    builder.header("Accept", m.toMediaType());
-                    builder.header("Content-Type", m.toMediaType());
+                    if (headers.get("Accept") == null) {
+                        builder.header("Accept", m.toMediaType());
+                        acceptAdded = true;
+                    }
+
+                    if (headers.get("Content-Type") == null && !formEncoded) {
+                        builder.header("Content-Type", m.toMediaType());
+                    }
                 }
                 acceptAdded = true;
                 break;
             }
         }
 
-        if (!acceptAdded) {
-            if (headers != null && headers.size() > 0) {
-                for (Map.Entry<String, String> e : headers.entrySet()) {
+        if (headers != null && headers.size() > 0) {
+            for (Map.Entry<String, String> e : headers.entrySet()) {
+                // Do not override
+                if ( (e.getKey().equalsIgnoreCase ("Accept") && !acceptAdded) || (e.getKey().equalsIgnoreCase("Content-Type") && !formEncoded)) {
                     builder.header(e.getKey(), e.getValue());
                 }
             }

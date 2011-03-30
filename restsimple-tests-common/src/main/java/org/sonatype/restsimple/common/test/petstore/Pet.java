@@ -9,19 +9,24 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.common.test;
+package org.sonatype.restsimple.common.test.petstore;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class AddressBookMediaType{
-    public String entries = "invalid";
+public class Pet {
 
-    public AddressBookMediaType(){
+    private String name;
+
+    public Pet() {
     }
 
-    public AddressBookMediaType(String entries) {
-        this.entries = entries;
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+        
 }

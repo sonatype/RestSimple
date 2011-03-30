@@ -23,8 +23,8 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.client.ServiceDefinitionClient;
-import org.sonatype.restsimple.common.test.AddressBookAction;
+import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -43,17 +43,23 @@ public class AddressBookTest {
 
     private ServiceDefinition serviceDefinition;
 
-    private ServiceDefinitionClient stub;
+    public String targetUrl;
+
+    public String acceptHeader;
+
+    private Web web;
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
+
+        acceptHeader = AddressBookAction.APPLICATION + "/" + AddressBookAction.JSON;
 
         Action action = new AddressBookAction();
         PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
         postServiceHandler.addFormParam("update");
         postServiceHandler.addFormParam("update2");
 
-        serviceDefinition = new DefaultServiceDefinition();        
+        serviceDefinition = new DefaultServiceDefinition();
         serviceDefinition
                 .withPath("")
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
@@ -65,7 +71,8 @@ public class AddressBookTest {
                 .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
 
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
-        stub = webDriver.stub();
+        targetUrl = webDriver.getUri();
+        web = new Web(serviceDefinition);
 
         logger.info("Local HTTP server started successfully");
     }
@@ -77,55 +84,76 @@ public class AddressBookTest {
 
     @Test(timeOut = 20000)
     public void testPut() throws Throwable {
-        logger.info("running test: testPut");
-        Response r = stub.doPut("myBook");
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("Content-Type", acceptHeader);
 
-        assertNotNull(r);
-        assertEquals(r.getStatusCode(), 201);
+        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
+        assertNotNull(s);
+
     }
 
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
-        stub.doPut("myBook");
         Map<String, String> m = new HashMap<String, String>();
-        m.put("update", "foo");
-        Response r = stub.doPost(m, "myBook");
+        m.put("Content-Type", acceptHeader);
+        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
+        assertNotNull(s);
 
-        assertNotNull(r);
-        assertEquals(r.getStatusCode(), 200);
+        m = new HashMap<String, String>();
+        m.put("update", "foo");
+        s = web.clientOf(targetUrl + "/updateAddressBook/myBook").headers(m).post(m, String.class);
+
+        assertNotNull(s);
 
     }
 
     @Test(timeOut = 20000)
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
-        stub.doPut("myBook");
         Map<String, String> m = new HashMap<String, String>();
-        m.put("update", "foo");
-        stub.doPost(m, "myBook");
-        Response r = stub.doGet("myBook");
+        m.put("Content-Type", acceptHeader);
+        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
+        assertNotNull(s);
 
-        assertNotNull(r);
-        assertEquals(r.getStatusCode(), 200);
-        System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "{\"entries\":\"foo - \"}");
+        m = new HashMap<String, String>();
+        m.put("update", "foo");
+        s = web.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
+
+        assertNotNull(s);
+
+        s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+
+        assertNotNull(s);
+        assertEquals(s, "{\"entries\":\"foo - \"}");
     }
 
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
-        stub.doPut("myBook");
         Map<String, String> m = new HashMap<String, String>();
+        m.put("Content-Type", acceptHeader);
+        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
+        assertNotNull(s);
+
+        m = new HashMap<String, String>();
         m.put("update", "foo");
-        Response r = stub.doPost(m, "myBook");
-        assertEquals(r.getStatusCode(), 200);
+        s = web.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
 
-        stub.doDelete("myBook");
-        r = stub.doGet("myBook");
+        assertNotNull(s);
 
-        assertNotNull(r);
-        assertEquals(r.getStatusCode(), 500);
+        s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+
+        assertNotNull(s);
+        assertEquals(s, "{\"entries\":\"foo - \"}");
+
+        s = web.clientOf(targetUrl + "/deleteAddressBook/myBook").headers(m).delete(String.class);
+        assertNotNull(s);
+
+
+        s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+        assertEquals(s, null);
+        
     }
 
 }

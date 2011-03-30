@@ -47,8 +47,8 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
-import org.sonatype.restsimple.common.test.AddressBookAction;
 
 public class JAXRSServletModule extends ServletModule {
 

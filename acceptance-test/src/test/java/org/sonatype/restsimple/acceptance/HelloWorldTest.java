@@ -13,7 +13,6 @@ package org.sonatype.restsimple.acceptance;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
-import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.WebDriver;
@@ -22,9 +21,7 @@ import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.client.ServiceDefinitionClient;
 import org.sonatype.restsimple.example.hello.HelloWorldAction;
-import org.sonatype.restsimple.example.petstore.PetstoreAction;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -43,12 +40,10 @@ public class HelloWorldTest {
 
     private ServiceDefinition serviceDefinition;
 
-    private ServiceDefinitionClient stub;
-
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
 
-        acceptHeader = PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON;
+        acceptHeader = HelloWorldAction.APPLICATION + "/" + HelloWorldAction.JSON;
 
         Action action = new HelloWorldAction();
         ServiceDefinition serviceDefinition = new DefaultServiceDefinition();

@@ -9,12 +9,12 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.test.webdriver.org.sonatype.restsimple.test.petstore;
+package org.sonatype.restsimple.common.test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.sonatype.restsimple.Web;
 import org.sonatype.restsimple.WebDriver;
+import org.sonatype.restsimple.client.Web;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -22,7 +22,8 @@ import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.client.ServiceDefinitionClient;
+import org.sonatype.restsimple.common.test.petstore.Pet;
+import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -46,8 +47,6 @@ public class WebTest {
     private WebDriver webDriver;
 
     private ServiceDefinition serviceDefinition;
-
-    private ServiceDefinitionClient stub;
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
