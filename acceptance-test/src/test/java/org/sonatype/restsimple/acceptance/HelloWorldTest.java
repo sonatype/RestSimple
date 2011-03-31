@@ -22,6 +22,7 @@ import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.example.hello.HelloWorldAction;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -60,6 +61,11 @@ public class HelloWorldTest {
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void tearDown() throws Exception {
+        webDriver.shutdown();
     }
 
     @Test(timeOut = 20000)

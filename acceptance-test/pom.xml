@@ -31,14 +31,13 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.24</version>
         </dependency>
 
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
+            <scope>test</scope>            
         </dependency>
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>

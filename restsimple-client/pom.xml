@@ -14,12 +14,22 @@
     <name>restsimple-client</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
-
+        <!-- guice -->
+        <dependency>
+            <groupId>org.sonatype.sisu</groupId>
+            <artifactId>sisu-guice</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.sisu.inject</groupId>
+            <artifactId>guice-servlet</artifactId>
+            <version>2.9.5</version>
+        </dependency>
+        
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
             <artifactId>restsimple-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
             <artifactId>restsimple-jaxrs</artifactId>
@@ -44,11 +54,17 @@
             <artifactId>jersey-client</artifactId>
             <version>1.5</version>
         </dependency>
+        
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>0.9.26</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <classifier>jdk15</classifier>
         </dependency>
     </dependencies>
 </project>

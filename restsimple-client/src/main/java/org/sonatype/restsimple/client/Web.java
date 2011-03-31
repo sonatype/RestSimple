@@ -28,6 +28,7 @@ import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class Web {
 
     private final DefaultAhcConfig ahcConfig;
 
-    private Map<String, String> headers;
+    private Map<String, String> headers = Collections.emptyMap();
     private Map<String, String> queryString;
 
     public Web() {
@@ -104,6 +105,15 @@ public class Web {
         try {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
+        } catch (UniformInterfaceException u) {
+            return null;
+        }
+    }
+
+    public Object delete(Object o) {
+        try {
+            WebResource r = buildRequest();
+            return headers(r, TYPE.DELETE).post(findEntity(r, TYPE.DELETE), o);
         } catch (UniformInterfaceException u) {
             return null;
         }
@@ -235,7 +245,7 @@ public class Web {
                     list = serviceDefinition.mediaToProduce();
                 }
             }
-
+            
             if (list.size() > 0) {
                 for (MediaType m : list) {
                     if (headers.get("Accept") == null) {
@@ -252,10 +262,10 @@ public class Web {
             }
         }
 
-        if (headers != null && headers.size() > 0) {
+        if (headers.size() > 0) {
             for (Map.Entry<String, String> e : headers.entrySet()) {
                 // Do not override
-                if ( (e.getKey().equalsIgnoreCase ("Accept") && !acceptAdded) || (e.getKey().equalsIgnoreCase("Content-Type") && !formEncoded)) {
+                if ((e.getKey().equalsIgnoreCase("Accept") && !acceptAdded) || (e.getKey().equalsIgnoreCase("Content-Type") && !formEncoded)) {
                     builder.header(e.getKey(), e.getValue());
                 }
             }
@@ -263,5 +273,6 @@ public class Web {
 
         return builder;
     }
+
 
 }

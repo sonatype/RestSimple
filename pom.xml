@@ -131,8 +131,7 @@
             <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
-                <version>5.8</version>
-                <classifier>jdk15</classifier>
+                <version>5.14.10</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

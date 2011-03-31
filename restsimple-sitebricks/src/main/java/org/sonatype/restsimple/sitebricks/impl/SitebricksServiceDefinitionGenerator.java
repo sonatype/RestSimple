@@ -294,13 +294,13 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     private static <T> Object createResponse(String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
         ServiceHandler serviceHandler = mapper.map(convertToJaxRs(pathName));
+        
+        if (serviceHandler == null) {
+            return Reply.with("No ServiceHandler defined for service " + pathName).error();
+        }
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
             return Reply.with("Not Acceptable").status(406);
-        }
-
-        if (serviceHandler == null) {
-            return Reply.with("No ServiceHandler defined for service " + pathName).error();
         }
 
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {

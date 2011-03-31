@@ -19,6 +19,8 @@ import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.common.test.petstore.Pet;
+import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 public class PetstoreServletModule extends ServletModule {
