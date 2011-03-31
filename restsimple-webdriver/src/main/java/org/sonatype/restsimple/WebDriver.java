@@ -71,7 +71,7 @@ public class WebDriver {
 
     public static WebDriver getDriver() throws Exception {
         return getDriver(PROVIDER.SITEBRICKS);
-    }
+    }                                                                       
         
     public static WebDriver getDriver(PROVIDER provider) throws Exception {
 

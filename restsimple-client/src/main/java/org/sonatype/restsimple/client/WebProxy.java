@@ -41,6 +41,41 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A simple proxy that generates RestSimple client from an annotated interface. jsr 311 annotations are all supported.
+ * As simple as {code
+ *
+    public static interface ProxyClient {
+
+        @GET
+        @Path("getPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet get(@PathParam("myPet") String path);
+
+        @GET
+        @Path("getPetString")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public String getString(@PathParam("myPet") String path);
+
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(@PathParam("myPet") String myPet, String body);
+
+        @DELETE
+        @Path("deletePet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet delete(@PathParam("myPet") String path);
+
+    }
+
+    ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create("http://someurl/));
+    Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
+
+ }
+ *
+ *
+ */
 public class WebProxy {
 
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
