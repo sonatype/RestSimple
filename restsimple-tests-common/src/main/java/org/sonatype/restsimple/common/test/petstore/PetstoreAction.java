@@ -15,29 +15,54 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class PetstoreAction implements Action<Pet,Pet> {
+public class PetstoreAction implements Action<Pet, Pet> {
 
     public final static String APPLICATION = "application";
     public final static String JSON = "vnd.org.sonatype.rest+json";
     public final static String XML = "vnd.org.sonatype.rest+xml";
+    public final static String PET_EXTRA_NAME = "petType";
 
-    private final ConcurrentHashMap<String,Pet> pets = new ConcurrentHashMap<String,Pet>();
+    private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();
 
     @Override
     public Pet action(ActionContext<Pet> actionContext) throws ActionException {
 
         switch (actionContext.method()) {
-             case GET:
+            case GET:
                 return pets.get(actionContext.pathValue());
-             case DELETE:
-                return pets.remove(actionContext.pathValue());               
-             case POST:
-                 pets.put(actionContext.pathValue(), actionContext.get());
-                 return actionContext.get();
-             default:
-                 throw new ActionException(405);
+            case DELETE:
+                return pets.remove(actionContext.pathValue());
+            case POST:
+                Map<String, Collection<String>> headers = actionContext.headers();
+                Map<String, Collection<String>> queryStrings = actionContext.queryStrings();
+
+                Pet pet = actionContext.get();
+                if (headers.size() > 0) {
+                    for (Map.Entry<String, Collection<String>> e : headers.entrySet()) {
+                        if (e.getKey().equals(PET_EXTRA_NAME)) {
+                            pet.setName(pet.getName() + "--" + e.getValue().iterator().next());
+                            break;
+                        }
+                    }
+                }
+
+                if (queryStrings.size() > 0) {
+                    for (Map.Entry<String, Collection<String>> e : queryStrings.entrySet()) {
+                        if (e.getKey().equals(PET_EXTRA_NAME)) {
+                            pet.setName(pet.getName() + "--" + e.getValue().iterator().next());
+                            break;
+                        }
+                    }
+                }
+
+                pets.put(actionContext.pathValue(), pet);
+                return pet;
+            default:
+                throw new ActionException(405);
         }
     }
 }

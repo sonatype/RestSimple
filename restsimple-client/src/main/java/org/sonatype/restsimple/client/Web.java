@@ -228,6 +228,7 @@ public class Web {
     private WebResource.Builder headers(WebResource r, TYPE type, boolean formEncoded) {
         WebResource.Builder builder = r.getRequestBuilder();
         boolean acceptAdded = false;
+        boolean contentTypeAdded = formEncoded;
         for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
 
             List<MediaType> list;
@@ -245,7 +246,7 @@ public class Web {
                     list = serviceDefinition.mediaToProduce();
                 }
             }
-            
+
             if (list.size() > 0) {
                 for (MediaType m : list) {
                     if (headers.get("Accept") == null) {
@@ -255,6 +256,7 @@ public class Web {
 
                     if (headers.get("Content-Type") == null && !formEncoded) {
                         builder.header("Content-Type", m.toMediaType());
+                        contentTypeAdded = true;
                     }
                 }
                 acceptAdded = true;
@@ -265,7 +267,12 @@ public class Web {
         if (headers.size() > 0) {
             for (Map.Entry<String, String> e : headers.entrySet()) {
                 // Do not override
-                if ((e.getKey().equalsIgnoreCase("Accept") && !acceptAdded) || (e.getKey().equalsIgnoreCase("Content-Type") && !formEncoded)) {
+                String headerName = e.getKey();
+                if (headerName.equalsIgnoreCase("Accept") && acceptAdded) {
+                    continue;
+                } else if (headerName.equalsIgnoreCase("Content-Type") && contentTypeAdded) {
+                    continue;
+                } else {
                     builder.header(e.getKey(), e.getValue());
                 }
             }

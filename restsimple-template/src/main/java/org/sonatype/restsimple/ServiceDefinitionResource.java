@@ -129,7 +129,8 @@ public class ServiceDefinitionResource {
         Object response = null;
         Action action = serviceHandler.getAction();
         try {
-            ActionContext<T> actionContext = new ActionContext<T>(mapMethod(request.getMethod()), mapHeaders(), mapFormParams(formParams), request.getInputStream(), pathName, pathValue, body);
+            ActionContext<T> actionContext = new ActionContext<T>(mapMethod(request.getMethod()), mapHeaders(),
+                    mapFormParams(formParams), request.getInputStream(), pathName, pathValue, body);
             response = action.action(actionContext);
         } catch (Throwable e) {
             logger.error("invokeAction", e);

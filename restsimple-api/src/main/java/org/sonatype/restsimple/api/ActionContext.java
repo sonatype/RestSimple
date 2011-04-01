@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class ActionContext<T> {
 
-    private final Map<String, Collection<String>> formParam;
+    private final Map<String, Collection<String>> queryStrings;
     private final Map<String, Collection<String>> headers;
     private final InputStream inputStream;
     private final ServiceDefinition.METHOD methodName;
@@ -29,9 +29,15 @@ public class ActionContext<T> {
     private final String pathValue;
     private final T object;
 
-    public ActionContext(ServiceDefinition.METHOD methodName, Map<String, Collection<String>> headers, Map<String,
-            Collection<String>> formParam, InputStream inputStream, String pathName, String pathValue, T object) {
-        this.formParam = formParam;
+    public ActionContext(ServiceDefinition.METHOD methodName,
+                         Map<String, Collection<String>> headers,
+                         Map<String, Collection<String>> queryStrings,
+                         InputStream inputStream,
+                         String pathName,
+                         String pathValue,
+                         T object) {
+        
+        this.queryStrings = queryStrings;
         this.methodName = methodName;
         this.inputStream = inputStream;
         this.headers = headers;
@@ -44,8 +50,8 @@ public class ActionContext<T> {
      * Return the form params if they were specified.
      * @return a {@link Map} of form parameters.
      */
-    public Map<String, Collection<String>> formParams() {
-        return formParam;
+    public Map<String, Collection<String>> queryStrings() {
+        return queryStrings;
 
     }
 

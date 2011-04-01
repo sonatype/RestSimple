@@ -11,9 +11,16 @@
  *******************************************************************************/
 package org.sonatype.restsimple.test.client;
 
+import org.sonatype.restsimple.WebDriver;
+import org.sonatype.restsimple.api.Action;
+import org.sonatype.restsimple.api.DefaultServiceDefinition;
+import org.sonatype.restsimple.api.DeleteServiceHandler;
+import org.sonatype.restsimple.api.GetServiceHandler;
+import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.DELETE;
@@ -27,7 +34,26 @@ import java.net.URI;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class ProxyTest extends BaseTest {
+public class RootResourceProxyTest extends BaseTest {
+
+    @BeforeClass(alwaysRun = true)
+    public void setUpGlobal() throws Exception {
+
+        acceptHeader = PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON;
+
+        Action action = new PetstoreAction();
+        serviceDefinition = new DefaultServiceDefinition();
+        serviceDefinition
+                .withPath("/foo")
+                .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+
+        webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
+        targetUrl = webDriver.getUri();
+        logger.info("Local HTTP server started successfully");
+    }
 
     @Test(timeOut = 20000)
     public void testBasicPostGenerate() throws Throwable {
@@ -65,14 +91,14 @@ public class ProxyTest extends BaseTest {
         assertEquals(petString, null);
     }
 
+    @Path("/foo")
     public static interface ProxyClient {
 
         @GET
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
-
-
+        
         @GET
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
