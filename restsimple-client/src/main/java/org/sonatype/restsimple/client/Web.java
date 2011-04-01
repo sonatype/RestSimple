@@ -27,6 +27,7 @@ import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
+import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +51,8 @@ public class Web {
 
     private Map<String, String> headers = Collections.emptyMap();
     private Map<String, String> queryString;
+    private Map<String, String> matrixParams = Collections.emptyMap();
+
 
     public Web() {
         ahcConfig = new DefaultAhcConfig();
@@ -70,6 +73,11 @@ public class Web {
 
     public Web queryString(Map<String, String> queryString) {
         this.queryString = queryString;
+        return this;
+    }
+
+    public Web matrixParams(Map<String, String> matrixParams) {
+        this.matrixParams = matrixParams;
         return this;
     }
 
@@ -190,12 +198,20 @@ public class Web {
 
     private WebResource buildRequest() {
         asyncClient = AhcHttpClient.create(ahcConfig);
-        WebResource r = asyncClient.resource(uri);
+        UriBuilder u = UriBuilder.fromUri(uri);
+        if (matrixParams.size() > 0) {
+            for (Map.Entry<String,String> e: matrixParams.entrySet()){
+                u.matrixParam(e.getKey(), e.getValue());
+            }
+        }         
+        WebResource r = asyncClient.resource(u.build());
+
         if (queryString != null && queryString.size() > 0) {
             for (Map.Entry<String, String> e : queryString.entrySet()) {
                 r = r.queryParam(e.getKey(), e.getValue());
             }
         }
+
         return r;
     }
 
@@ -277,7 +293,6 @@ public class Web {
                 }
             }
         }
-
         return builder;
     }
 

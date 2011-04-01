@@ -13,6 +13,7 @@
 package org.sonatype.restsimple.api;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 

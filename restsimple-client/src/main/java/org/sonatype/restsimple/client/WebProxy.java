@@ -31,6 +31,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -141,21 +142,25 @@ public class WebProxy {
                     return web.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
+                            .matrixParams(constructMatrix(inf.getMethod(), args))
                             .get(inf.getReturnClassType());
                 case POST:
                     return web.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
+                            .matrixParams(constructMatrix(inf.getMethod(), args))
                             .post(body, inf.getReturnClassType());
                 case DELETE:
                     return web.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
+                            .matrixParams(constructMatrix(inf.getMethod(), args))
                             .delete(body, inf.getReturnClassType());
                 case PUT:
                     return web.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
+                            .matrixParams(constructMatrix(inf.getMethod(), args))                            
                             .put(body, inf.getReturnClassType());
                 default:
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
@@ -225,6 +230,23 @@ public class WebProxy {
             return queryStrings;
         }
 
+        private Map<String, String> constructMatrix(Method m, Object params[]) {
+            Map<String, String> matrix = new HashMap<String, String>();
+            Annotation[][] ans = m.getParameterAnnotations();
+
+            int i = 0;
+            for (Annotation[] annotations : ans) {
+                for (Annotation a : annotations) {
+                    if (MatrixParam.class.isAssignableFrom(a.getClass())) {
+                        logger.debug("Processing @MatrixParam {}", a);
+                        matrix.put(MatrixParam.class.cast(a).value(), params[i].toString());
+                    }
+                    i++;
+                }
+            }
+            return matrix;
+        }
+
         private Map<String, String> constructFormString(Method m, Object params[], Map<String, String> queryStrings) {
             Annotation[][] ans = m.getParameterAnnotations();
 
@@ -240,6 +262,7 @@ public class WebProxy {
             }
             return queryStrings;
         }
+
     }
 
     /**
