@@ -31,10 +31,15 @@ public class WebTest extends BaseTest {
         Map<String,String> m = new HashMap<String,String>();
         m.put("Content-Type", acceptHeader);
 
-        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}");
+        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post("{\"name\":\"pouetpouet\"}");
+
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);
+        pet = web.clientOf(targetUrl + "/getPet/myPet")
+                .headers(m)
+                .get(Pet.class);
 
         assertNotNull(pet);
     }
@@ -47,13 +52,22 @@ public class WebTest extends BaseTest {
         Map<String,String> m = new HashMap<String,String>();
         m.put("Content-Type", acceptHeader);
 
-        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}");
+        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post("{\"name\":\"pouetpouet\"}");
+
         assertNotNull(pet);
 
-        pet = (Pet) web.clientOf(targetUrl + "/deletePet/myPet").headers(m).delete();
+        pet = (Pet) web.clientOf(targetUrl + "/deletePet/myPet")
+                .headers(m)
+                .delete();
+
         assertNotNull(pet);
 
-        pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet").headers(m).get();
+        pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet")
+                .headers(m)
+                .get();
+
         assertNull(pet);
     }
 
@@ -65,10 +79,15 @@ public class WebTest extends BaseTest {
         Map<String,String> m = new HashMap<String,String>();
         m.put("Content-Type", acceptHeader);
 
-        Pet pet = web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}", Pet.class);
+        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post("{\"name\":\"pouetpouet\"}", Pet.class);
+
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);
+        pet = web.clientOf(targetUrl + "/getPet/myPet")
+                .headers(m)
+                .get(Pet.class);
 
         assertNotNull(pet);
     }
@@ -82,10 +101,15 @@ public class WebTest extends BaseTest {
         m.put("Content-Type", acceptHeader);
         m.put("Accept", acceptHeader);
 
-        Pet pet = web.clientOf(targetUrl + "/addPet/myPet").headers(m).post("{\"name\":\"pouetpouet\"}", Pet.class);
+        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post("{\"name\":\"pouetpouet\"}", Pet.class);
+
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet").headers(m).get(Pet.class);
+        pet = web.clientOf(targetUrl + "/getPet/myPet")
+                .headers(m)
+                .get(Pet.class);
 
         assertNotNull(pet);
     }
