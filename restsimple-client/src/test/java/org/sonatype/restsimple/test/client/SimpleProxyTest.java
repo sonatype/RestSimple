@@ -29,6 +29,50 @@ import static org.testng.Assert.assertNotNull;
 
 public class SimpleProxyTest extends BaseTest {
 
+    public static interface ProxyClient {
+
+        @GET
+        @Path("getPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet get(@PathParam("myPet") String path);
+
+        @GET
+        @Path("getPetString")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public String getString(@PathParam("myPet") String path);
+
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(@PathParam("myPet") String myPet, String body);
+
+        @DELETE
+        @Path("deletePet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet delete(@PathParam("myPet") String path);
+
+    }
+
+    public static interface ProxyClient2 {
+
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(String body, @PathParam("myPet") String myPety);
+
+
+    }
+
+    public static interface ProxyClient3 {
+
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(Pet body, @PathParam("myPet") String myPety);
+
+
+    }
+
     @Test(timeOut = 20000)
     public void testBasicPostGenerate() throws Throwable {
         logger.info("running test: testPut");
@@ -74,37 +118,12 @@ public class SimpleProxyTest extends BaseTest {
         assertEquals(pet.getName(), "pouetpouet");
     }
 
-    public static interface ProxyClient {
-
-        @GET
-        @Path("getPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet get(@PathParam("myPet") String path);
-        
-        @GET
-        @Path("getPetString")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public String getString(@PathParam("myPet") String path);
-
-        @POST
-        @Path("addPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet post(@PathParam("myPet") String myPet, String body);
-
-        @DELETE
-        @Path("deletePet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
-        public Pet delete(@PathParam("myPet") String path);
-
-    }
-
-    public static interface ProxyClient2 {
-
-        @POST
-        @Path("addPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet post(String body, @PathParam("myPet") String myPety);
-
-
+    @Test(timeOut = 20000)
+    public void testRealPetPost() throws Throwable {
+        logger.info("running test: testBodyOrderForPost");
+        ProxyClient3 client = WebProxy.createProxy(ProxyClient3.class, URI.create(targetUrl));
+        Pet pet = client.post(new Pet("pouetpouet"), "myPet");
+        assertNotNull(pet);
+        assertEquals(pet.getName(), "pouetpouet");
     }
 }

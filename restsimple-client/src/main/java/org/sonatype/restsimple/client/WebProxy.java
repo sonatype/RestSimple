@@ -136,7 +136,7 @@ public class WebProxy {
                 }
             }
 
-            String body = retrieveBody(inf.getMethod(), args);
+            Object body = retrieveBody(inf.getMethod(), args);
             switch (m) {
                 case GET:
                     return web.clientOf(builder.toString())
@@ -167,13 +167,13 @@ public class WebProxy {
             }
         }
 
-        private String retrieveBody(Method m, Object params[]) {
+        private Object retrieveBody(Method m, Object params[]) {
             Annotation[][] ans = m.getParameterAnnotations();
 
             int i = 0;
             for (Annotation[] annotations : ans) {
                 if (annotations.length == 0) {
-                    return params[i].toString();
+                    return params[i];
                 }
                 i++;
             }
