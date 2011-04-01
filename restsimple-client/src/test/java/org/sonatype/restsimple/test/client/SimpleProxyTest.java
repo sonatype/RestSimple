@@ -65,6 +65,15 @@ public class SimpleProxyTest extends BaseTest {
         assertEquals(petString, null);
     }
 
+    @Test(timeOut = 20000)
+    public void testBodyOrderForPost() throws Throwable {
+        logger.info("running test: testBodyOrderForPost");
+        ProxyClient2 client = WebProxy.createProxy(ProxyClient2.class, URI.create(targetUrl));
+        Pet pet = client.post("{\"name\":\"pouetpouet\"}", "myPet");
+        assertNotNull(pet);
+        assertEquals(pet.getName(), "pouetpouet");
+    }
+
     public static interface ProxyClient {
 
         @GET
@@ -89,5 +98,13 @@ public class SimpleProxyTest extends BaseTest {
 
     }
 
+    public static interface ProxyClient2 {
 
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(String body, @PathParam("myPet") String myPety);
+
+
+    }
 }

@@ -133,15 +133,8 @@ public class WebProxy {
                     builder.append(path);
                 }
             }
-            /**
-             * TODO: quite dangerous, need to support T for body
-             * TODO: The last element is always the body
-             */
-            String body = args[0].toString();
-            if (args.length > 1) {
-                body = args[args.length - 1].toString();
-            }
 
+            String body = retrieveBody(inf.getMethod(), args);
             switch (m) {
                 case GET:
                     return web.clientOf(builder.toString())
@@ -166,6 +159,19 @@ public class WebProxy {
                 default:
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
             }
+        }
+
+        private String retrieveBody(Method m, Object params[]) {
+            Annotation[][] ans = m.getParameterAnnotations();
+
+            int i = 0;
+            for (Annotation[] annotations : ans) {
+                if (annotations.length == 0) {
+                    return params[i].toString();
+                }
+                i++;
+            }
+            return "";
         }
 
         private Map<String, String> constructHeaders(Method m, Object params[]) {
