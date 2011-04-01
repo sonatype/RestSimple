@@ -27,6 +27,7 @@ import org.sonatype.restsimple.api.ServiceHandler;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -145,22 +146,22 @@ public class WebProxy {
                 case GET:
                     return web.clientOf(builder.toString())
                             .headers(constructHeaders(inf.getMethod(), args))
-                            .queryString(constructQueryString(inf.getMethod(), args))
+                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .get(inf.getReturnClassType());
                 case POST:
                     return web.clientOf(builder.toString())
                             .headers(constructHeaders(inf.getMethod(), args))
-                            .queryString(constructQueryString(inf.getMethod(), args))
+                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .post(body, inf.getReturnClassType());
                 case DELETE:
                     return web.clientOf(builder.toString())
                             .headers(constructHeaders(inf.getMethod(), args))
-                            .queryString(constructQueryString(inf.getMethod(), args))
+                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .delete(body, inf.getReturnClassType());
                 case PUT:
                     return web.clientOf(builder.toString())
                             .headers(constructHeaders(inf.getMethod(), args))
-                            .queryString(constructQueryString(inf.getMethod(), args))
+                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .put(body, inf.getReturnClassType());
                 default:
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
@@ -185,7 +186,7 @@ public class WebProxy {
         }
 
         private Map<String, String> constructQueryString(Method m, Object params[]) {
-            Map<String, String> headers = new HashMap<String, String>();
+            Map<String, String> queryStrings = new HashMap<String, String>();
             Annotation[][] ans = m.getParameterAnnotations();
 
             int i = 0;
@@ -193,12 +194,28 @@ public class WebProxy {
                 for (Annotation a : annotations) {
                     if (QueryParam.class.isAssignableFrom(a.getClass())) {
                         logger.debug("Processing @QueryParam {}", a);
-                        headers.put(QueryParam.class.cast(a).value(), params[i].toString());
+                        queryStrings.put(QueryParam.class.cast(a).value(), params[i].toString());
                     }
                     i++;
                 }
             }
-            return headers;
+            return queryStrings;
+        }
+
+        private Map<String, String> constructFormString(Method m, Object params[], Map<String, String> queryStrings) {
+            Annotation[][] ans = m.getParameterAnnotations();
+
+            int i = 0;
+            for (Annotation[] annotations : ans) {
+                for (Annotation a : annotations) {
+                    if (FormParam.class.isAssignableFrom(a.getClass())) {
+                        logger.debug("Processing @FormParam {}", a);
+                        queryStrings.put(FormParam.class.cast(a).value(), params[i].toString());
+                    }
+                    i++;
+                }
+            }
+            return queryStrings;
         }
     }
 
