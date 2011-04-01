@@ -33,14 +33,30 @@ public class PetstoreAction implements Action<Pet, Pet> {
 
         switch (actionContext.method()) {
             case GET:
-                return pets.get(actionContext.pathValue());
+
+                Map<String, Collection<String>> headers = actionContext.headers();
+                Pet pet = pets.get(actionContext.pathValue());
+                if (pet != null) {
+
+                    if (headers.size() > 0) {
+                        for (Map.Entry<String, Collection<String>> e : headers.entrySet()) {
+                            if (e.getKey().equals("Cookie")) {
+                                pet.setName(pet.getName() + "--" + e.getValue().iterator().next());
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+                return pet;
             case DELETE:
                 return pets.remove(actionContext.pathValue());
             case POST:
-                Map<String, Collection<String>> headers = actionContext.headers();
+                headers = actionContext.headers();
                 Map<String, Collection<String>> queryStrings = actionContext.queryStrings();
 
-                Pet pet = actionContext.get();
+                pet = actionContext.get();
                 if (headers.size() > 0) {
                     for (Map.Entry<String, Collection<String>> e : headers.entrySet()) {
                         if (e.getKey().equals(PET_EXTRA_NAME)) {

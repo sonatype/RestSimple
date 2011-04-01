@@ -26,6 +26,7 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -138,22 +139,22 @@ public class WebProxy {
             switch (m) {
                 case GET:
                     return web.clientOf(builder.toString())
-                            .headers(constructHeaders(inf.getMethod(), args))
+                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .get(inf.getReturnClassType());
                 case POST:
                     return web.clientOf(builder.toString())
-                            .headers(constructHeaders(inf.getMethod(), args))
+                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .post(body, inf.getReturnClassType());
                 case DELETE:
                     return web.clientOf(builder.toString())
-                            .headers(constructHeaders(inf.getMethod(), args))
+                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .delete(body, inf.getReturnClassType());
                 case PUT:
                     return web.clientOf(builder.toString())
-                            .headers(constructHeaders(inf.getMethod(), args))
+                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .put(body, inf.getReturnClassType());
                 default:
@@ -184,6 +185,22 @@ public class WebProxy {
                     if (HeaderParam.class.isAssignableFrom(a.getClass())) {
                         logger.debug("Processing @HeaderParam {}", a);
                         headers.put(HeaderParam.class.cast(a).value(), params[i].toString());
+                    }
+                    i++;
+                }
+            }
+            return headers;
+        }
+
+        private Map<String, String> constructCookie(Method m, Object params[], Map<String, String> headers) {
+            Annotation[][] ans = m.getParameterAnnotations();
+
+            int i = 0;
+            for (Annotation[] annotations : ans) {
+                for (Annotation a : annotations) {
+                    if (CookieParam.class.isAssignableFrom(a.getClass())) {
+                        logger.debug("Processing @CookieParam {}", a);
+                        headers.put("Cookie", params[i].toString());
                     }
                     i++;
                 }
