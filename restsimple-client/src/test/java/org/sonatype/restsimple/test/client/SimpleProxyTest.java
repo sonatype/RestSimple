@@ -60,7 +60,6 @@ public class SimpleProxyTest extends BaseTest {
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(String body, @PathParam("myPet") String myPety);
 
-
     }
 
     public static interface ProxyClient3 {
@@ -69,7 +68,6 @@ public class SimpleProxyTest extends BaseTest {
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(Pet body, @PathParam("myPet") String myPety);
-
 
     }
 

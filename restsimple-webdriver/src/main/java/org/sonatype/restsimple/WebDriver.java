@@ -33,6 +33,11 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import java.io.IOException;
 import java.net.ServerSocket;
 
+/**
+ * Simple utilities class that configure Jetty and properly bind a {@link ServiceDefinition} to
+ * its {@link org.sonatype.restsimple.spi.ServiceDefinitionGenerator}. The purpose of this class is to easy unit test
+ * development. 
+ */
 public class WebDriver {
 
     public static enum PROVIDER {JAXRS, SITEBRICKS}
@@ -71,8 +76,8 @@ public class WebDriver {
 
     public static WebDriver getDriver() throws Exception {
         return getDriver(PROVIDER.SITEBRICKS);
-    }                                                                       
-        
+    }
+         
     public static WebDriver getDriver(PROVIDER provider) throws Exception {
 
         int port = findFreePort();
@@ -116,7 +121,7 @@ public class WebDriver {
                         }
 
                         // If the ServiceDefinition was created without using injection, we need to get the proper
-                        // list of ServiceHandler as more than one instance of ServiceHandlerMapper exits
+                        // list of ServiceHandler as more than one instance of ServiceHandlerMapper exist
                         ServiceHandlerMapper mapper = injector.getInstance(ServiceHandlerMapper.class);
                         for(ServiceHandler handler: serviceDefinition.serviceHandlers()) {
                             mapper.addServiceHandler(handler);
