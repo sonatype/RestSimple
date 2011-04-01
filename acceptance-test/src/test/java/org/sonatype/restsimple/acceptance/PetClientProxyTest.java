@@ -9,7 +9,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.test.client;
+package org.sonatype.restsimple.acceptance;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +21,26 @@ import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-public class BaseTest {
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import java.net.URI;
 
-    protected static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+
+public class PetClientProxyTest {
+    protected static final Logger logger = LoggerFactory.getLogger(PetClientProxyTest.class);
 
     protected final static MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 
@@ -57,10 +69,71 @@ public class BaseTest {
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
     }
-    
+
     @AfterClass(alwaysRun = true)
     public void tearDown() throws Exception {
         webDriver.shutdown();
     }
+
+    @Test(timeOut = 20000)
+    public void testBasicPostGenerate() throws Throwable {
+        logger.info("running test: testPut");
+        ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
+        Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+    }
+
+    @Test(timeOut = 20000)
+    public void testBasicGetGenerate() throws Throwable {
+        logger.info("running test: testPut");
+        ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
+        Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+
+        pet = client.get("myPet");
+        assertNotNull(pet);
+
+        String petString = client.getString("myPet");
+        assertEquals(petString, "{\"name\":\"pouetpouet\"}");
+    }
+
+    @Test(timeOut = 20000)
+    public void testDelete() throws Throwable {
+        logger.info("running test: testPut");
+        ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
+        Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
+        assertNotNull(pet);
+
+        pet = client.delete("myPet");
+        assertNotNull(pet);
+
+        String petString = client.getString("myPet");
+        assertEquals(petString, null);
+    }
+
+    public static interface ProxyClient {
+
+        @GET
+        @Path("getPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet get(@PathParam("myPet") String path);
+        
+        @GET
+        @Path("getPetString")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public String getString(@PathParam("myPet") String path);
+
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(@PathParam("myPet") String myPet, String body);
+
+        @DELETE
+        @Path("deletePet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
+        public Pet delete(@PathParam("myPet") String path);
+
+    }
+
 
 }
