@@ -25,7 +25,7 @@ public class WebTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testPost");
 
         Web web = new Web(serviceDefinition);
         Map<String,String> m = new HashMap<String,String>();
@@ -33,7 +33,7 @@ public class WebTest extends BaseTest {
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
-                .post("{\"name\":\"pouetpouet\"}");
+                .post(new Pet("pouetpouet"));
 
         assertNotNull(pet);
 
@@ -46,7 +46,7 @@ public class WebTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testDelete");
 
         Web web = new Web(serviceDefinition);
         Map<String,String> m = new HashMap<String,String>();
@@ -54,7 +54,7 @@ public class WebTest extends BaseTest {
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
-                .post("{\"name\":\"pouetpouet\"}");
+                .post(new Pet("pouetpouet"));
 
         assertNotNull(pet);
 
@@ -73,7 +73,7 @@ public class WebTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testPostWithType() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testPostWithType");
 
         Web web = new Web(serviceDefinition);
         Map<String,String> m = new HashMap<String,String>();
@@ -81,7 +81,7 @@ public class WebTest extends BaseTest {
 
         Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
-                .post("{\"name\":\"pouetpouet\"}", Pet.class);
+                .post(new Pet("pouetpouet"), Pet.class);
 
         assertNotNull(pet);
 
@@ -94,7 +94,7 @@ public class WebTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testPostWithoutSD() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testPostWithoutSD");
 
         Web web = new Web();
         Map<String,String> m = new HashMap<String,String>();
@@ -103,7 +103,7 @@ public class WebTest extends BaseTest {
 
         Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
-                .post("{\"name\":\"pouetpouet\"}", Pet.class);
+                .post(new Pet("pouetpouet"), Pet.class);
 
         assertNotNull(pet);
 

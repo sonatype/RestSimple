@@ -265,12 +265,7 @@ public class WebProxy {
 
     }
 
-    /**
-     * \// TODO: Better design should use the visitor pattern.
-     *
-     * @param clazz
-     * @return
-     */
+
     private static ServiceDefinitionInfo createServiceDefinitionInfo(Class<?> clazz) {
 
         Path rootPath = clazz.getAnnotation(Path.class);
