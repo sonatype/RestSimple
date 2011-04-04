@@ -7,10 +7,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.restsimple</groupId>
-    <artifactId>acceptance-test</artifactId>
+    <artifactId>restsimple-acceptance-test</artifactId>
     <packaging>jar</packaging>
     <version>0.2-SNAPSHOT</version>
-    <name>acceptance-test</name>
+    <name>restsimple-acceptance-test</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
 

@@ -68,7 +68,7 @@
         <module>restsimple-client</module>
         <module>restsimple-template</module>
         <module>restsimple-webdriver</module>
-        <module>acceptance-test</module>
+        <module>restsimple-acceptance-test</module>
     </modules>
 
     <dependencyManagement>
