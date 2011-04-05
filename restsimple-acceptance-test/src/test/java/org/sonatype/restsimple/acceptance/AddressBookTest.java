@@ -86,7 +86,6 @@ public class AddressBookTest {
     @Test(timeOut = 20000)
     public void testPut() throws Throwable {
         Map<String, String> m = new HashMap<String, String>();
-        m.put("Content-Type", acceptHeader);
 
         String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
         assertNotNull(s);
@@ -97,7 +96,6 @@ public class AddressBookTest {
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
         Map<String, String> m = new HashMap<String, String>();
-        m.put("Content-Type", acceptHeader);
         String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
         assertNotNull(s);
 
@@ -113,7 +111,6 @@ public class AddressBookTest {
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
         Map<String, String> m = new HashMap<String, String>();
-        m.put("Content-Type", acceptHeader);
         String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
         assertNotNull(s);
 
@@ -133,7 +130,6 @@ public class AddressBookTest {
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
         Map<String, String> m = new HashMap<String, String>();
-        m.put("Content-Type", acceptHeader);
         String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
         assertNotNull(s);
 

@@ -24,7 +24,7 @@ import static org.testng.Assert.assertNotNull;
 
 public class WebNegotiationTest extends BaseTest {
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000)
     public void testPostContentNegotiation() throws Throwable {
         logger.info("running test: testPostWithType");
 

@@ -221,7 +221,7 @@ public class Web {
     }
 
     private String negotiate(UniformInterfaceException u) {
-        if (u.getResponse().getStatus() == 206 && supportedContentType.size() > 0) {
+        if ( u.getResponse().getStatus() == 406 && supportedContentType.size() > 0) {
             String[] serverChallenge = u.getResponse().getHeaders().get("Accept-Content-Type").get(0).split(",");
             for (String challenge : serverChallenge) {
                 for (MediaType m: supportedContentType) {
@@ -320,15 +320,7 @@ public class Web {
 
         if (headers.size() > 0) {
             for (Map.Entry<String, String> e : headers.entrySet()) {
-                // Do not override
-                String headerName = e.getKey();
-                if (headerName.equalsIgnoreCase("Accept") && acceptAdded) {
-                    continue;
-                } else if (headerName.equalsIgnoreCase("Content-Type") && contentTypeAdded) {
-                    continue;
-                } else {
-                    builder.header(e.getKey(), e.getValue());
-                }
+                builder.header(e.getKey(), e.getValue());
             }
         }
         return builder;
