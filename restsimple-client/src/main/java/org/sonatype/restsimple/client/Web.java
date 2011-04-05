@@ -52,6 +52,7 @@ public class Web {
     private Map<String, String> headers = Collections.emptyMap();
     private Map<String, String> queryString;
     private Map<String, String> matrixParams = Collections.emptyMap();
+    private List<MediaType> supportedContentType = new ArrayList<MediaType>();
 
 
     public Web() {
@@ -95,7 +96,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST, true).post(t, form);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return post(formParams, t);
         }
     }
 
@@ -105,7 +107,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST).post(t, o);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return post(o, t);
         }
     }
 
@@ -114,7 +117,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return post(o);
         }
     }
 
@@ -123,7 +127,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).post(findEntity(r, TYPE.DELETE), o);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return delete(o);
         }
     }
 
@@ -133,7 +138,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(t);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return delete(t);
         }
     }
 
@@ -143,7 +149,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE));
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return delete();
         }
     }
 
@@ -153,7 +160,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(t, o);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return delete(o, t);
         }
     }
 
@@ -163,7 +171,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.GET).get(t);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return get(t);
         }
     }
 
@@ -172,7 +181,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.GET).get(findEntity(r, TYPE.GET));
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return get();
         }
     }
 
@@ -182,7 +192,8 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.PUT).put(t, o);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return put(o, t);
         }
     }
 
@@ -192,8 +203,35 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
         } catch (UniformInterfaceException u) {
-            return null;
+            headers.put("Accept", negotiate(u));
+            return put(o);
         }
+    }
+
+    /**
+     * Add a {@link MediaType} to the list of supported content-type. The list of supported content-type
+     * is used when the server returns a http statis code of 206.
+     *
+     * @param mediaType
+     * @return this
+     */
+    public Web supportedContentType(MediaType mediaType) {
+        supportedContentType.add(mediaType);
+        return this;
+    }
+
+    private String negotiate(UniformInterfaceException u) {
+        if (u.getResponse().getStatus() == 206 && supportedContentType.size() > 0) {
+            String[] serverChallenge = u.getResponse().getHeaders().get("Accept-Content-Type").get(0).split(",");
+            for (String challenge : serverChallenge) {
+                for (MediaType m: supportedContentType) {
+                    if (challenge.equalsIgnoreCase(m.toMediaType())) {
+                        return challenge;
+                    }
+                }
+            }
+        }
+        throw new WebException(u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
     }
 
     private WebResource buildRequest() {
@@ -295,6 +333,5 @@ public class Web {
         }
         return builder;
     }
-
 
 }

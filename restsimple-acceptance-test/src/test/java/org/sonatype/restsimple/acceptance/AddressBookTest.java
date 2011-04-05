@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.sonatype.restsimple.acceptance;
 
-import com.ning.http.client.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.WebDriver;
@@ -24,6 +23,7 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.FileAssert.fail;
 
 public class AddressBookTest {
 
@@ -150,10 +151,13 @@ public class AddressBookTest {
         s = web.clientOf(targetUrl + "/deleteAddressBook/myBook").headers(m).delete(String.class);
         assertNotNull(s);
 
+        try {
+            s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+            fail("No exception");
+        } catch (WebException ex) {
+            assertEquals(ex.getClass(), WebException.class);
+        }
 
-        s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
-        assertEquals(s, null);
-        
     }
 
 }

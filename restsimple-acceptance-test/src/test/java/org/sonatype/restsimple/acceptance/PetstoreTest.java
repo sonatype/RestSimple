@@ -22,6 +22,7 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.AfterClass;
@@ -31,8 +32,10 @@ import org.testng.annotations.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
+import static org.testng.FileAssert.fail;
 
 public class PetstoreTest {
 
@@ -100,8 +103,12 @@ public class PetstoreTest {
         pet = (Pet) web.clientOf(targetUrl + "/deletePet/myPet").headers(m).delete();
         assertNotNull(pet);
 
-        pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet").headers(m).get();
-        assertNull(pet);
+        try {
+            pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet").headers(m).get();
+            fail("No exception");
+        } catch (WebException ex) {
+            assertEquals(ex.getClass(), WebException.class);
+        }
     }
 
     @Test(timeOut = 20000)

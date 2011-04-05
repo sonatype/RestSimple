@@ -280,12 +280,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             return Reply.with("").noContent();
         } else if (contentType != null) {
             if (contentType.endsWith("json")) {
-                Map<String,String> m = new HashMap<String,String>();
-                m.put("Content-Type","application/json");
+                Map<String, String> m = new HashMap<String, String>();
+                m.put("Content-Type", "application/json");
                 return Reply.with(response).headers(m).as(Json.class);
             } else if (contentType.endsWith("xml")) {
-                Map<String,String> m = new HashMap<String,String>();                
-                m.put("Content-Type","application/xml");                
+                Map<String, String> m = new HashMap<String, String>();
+                m.put("Content-Type", "application/xml");
                 return Reply.with(response).as(Xml.class);
             }
         }
@@ -294,13 +294,15 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     private static <T> Object createResponse(String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
         ServiceHandler serviceHandler = mapper.map(convertToJaxRs(pathName));
-        
+
         if (serviceHandler == null) {
             return Reply.with("No ServiceHandler defined for service " + pathName).error();
         }
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
-            return Reply.with("Not Acceptable").status(406);
+            Map<String, String> m = new HashMap<String, String>();
+            m.put("Accept-Content-Type", createAcceptContentTypeHeadser(serviceHandler.mediaToProduce()));
+            return Reply.with("Not Acceptable").headers(m).status(406);
         }
 
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {
@@ -340,7 +342,17 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
         }
         return false;
+    }
 
+    private static String createAcceptContentTypeHeadser(List<MediaType> mediaTypes) {
+        StringBuilder acceptedContentType = new StringBuilder();
+        for (MediaType mediaType : mediaTypes) {
+            acceptedContentType.append(mediaType.toMediaType()).append(",");
+        }
+        if (acceptedContentType.length() > 0) {
+            acceptedContentType.delete(acceptedContentType.length() - 1, acceptedContentType.length());
+        }
+        return acceptedContentType.toString();
     }
 
     private static Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {
@@ -361,7 +373,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             return ServiceDefinition.METHOD.GET;
         } else if (method.equalsIgnoreCase("PUT")) {
             return ServiceDefinition.METHOD.PUT;
-        } else if (method.equalsIgnoreCase("POST")) {                                
+        } else if (method.equalsIgnoreCase("POST")) {
             return ServiceDefinition.METHOD.POST;
         } else if (method.equalsIgnoreCase("DELETE")) {
             return ServiceDefinition.METHOD.DELETE;

@@ -21,6 +21,7 @@ import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
@@ -38,6 +39,7 @@ import java.net.URI;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.FileAssert.fail;
 
 public class PetClientProxyTest {
     protected static final Logger logger = LoggerFactory.getLogger(PetClientProxyTest.class);
@@ -107,8 +109,12 @@ public class PetClientProxyTest {
         pet = client.delete("myPet");
         assertNotNull(pet);
 
-        String petString = client.getString("myPet");
-        assertEquals(petString, null);
+        try {
+            client.getString("myPet");           
+            fail("No exception");
+        } catch (WebException ex) {
+            assertEquals(ex.getClass(), WebException.class);
+        }
     }
 
     public static interface ProxyClient {

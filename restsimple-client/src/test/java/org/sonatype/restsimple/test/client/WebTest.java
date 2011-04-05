@@ -12,14 +12,17 @@
 package org.sonatype.restsimple.test.client;
 
 import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
+import static org.testng.FileAssert.fail;
 
 public class WebTest extends BaseTest {
 
@@ -28,7 +31,7 @@ public class WebTest extends BaseTest {
         logger.info("running test: testPost");
 
         Web web = new Web(serviceDefinition);
-        Map<String,String> m = new HashMap<String,String>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
@@ -49,7 +52,7 @@ public class WebTest extends BaseTest {
         logger.info("running test: testDelete");
 
         Web web = new Web(serviceDefinition);
-        Map<String,String> m = new HashMap<String,String>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
         Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
@@ -64,11 +67,15 @@ public class WebTest extends BaseTest {
 
         assertNotNull(pet);
 
-        pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet")
-                .headers(m)
-                .get();
+        try {
+            pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet")
+                    .headers(m)
+                    .get();
+            fail("No exception");
+        } catch (WebException ex) {
+            assertEquals(ex.getClass(), WebException.class);
+        }
 
-        assertNull(pet);
     }
 
     @Test(timeOut = 20000)
@@ -76,7 +83,7 @@ public class WebTest extends BaseTest {
         logger.info("running test: testPostWithType");
 
         Web web = new Web(serviceDefinition);
-        Map<String,String> m = new HashMap<String,String>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
         Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
@@ -97,7 +104,7 @@ public class WebTest extends BaseTest {
         logger.info("running test: testPostWithoutSD");
 
         Web web = new Web();
-        Map<String,String> m = new HashMap<String,String>();
+        Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
         m.put("Accept", acceptHeader);
 
