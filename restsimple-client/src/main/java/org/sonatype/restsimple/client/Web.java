@@ -89,6 +89,7 @@ public class Web {
     private Map<String, String> queryString;
     private Map<String, String> matrixParams = Collections.emptyMap();
     private List<MediaType> supportedContentType = new ArrayList<MediaType>();
+    private NegotiateHandler negociateHandler;
 
     /**
      * Create a Web Client
@@ -115,6 +116,7 @@ public class Web {
         this.ahcConfig = ahcConfig;
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
+        this.negociateHandler = new RFC2295NegotiateHandler();
     }
 
     /**
@@ -352,23 +354,7 @@ public class Web {
     }
 
     private String negotiate(UniformInterfaceException u) {
-        List<String> list = u.getResponse().getHeaders().get("Alternates");
-        if ( list != null && u.getResponse().getStatus() == 406 && supportedContentType.size() > 0) {
-            String[] serverChallenge = list.get(0).split(",");
-            for (String challenge : serverChallenge) {
-                int typePos = challenge.indexOf("type");
-                int eof = challenge.indexOf("}", typePos);
-                if (typePos > 0) {
-                    String type = challenge.substring(typePos + "type".length(), eof).trim();
-                    for (MediaType m: supportedContentType) {
-                        if (type.equalsIgnoreCase(m.toMediaType())) {
-                            return type;
-                        }
-                    }
-                }
-            }
-        }
-        throw new WebException(u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
+        return negociateHandler.negotiate(supportedContentType, u.getResponse());
     }
 
     private WebResource buildRequest() {
