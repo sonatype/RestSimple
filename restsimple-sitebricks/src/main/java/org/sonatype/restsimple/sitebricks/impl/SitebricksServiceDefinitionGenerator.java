@@ -320,7 +320,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
             Map<String, String> m = new HashMap<String, String>();
-            m.put("Alternates", tokenGenerator.generateNegotiationHeader(pathName + "/" + pathValue, serviceHandler.mediaToProduce()));
+            m.put(tokenGenerator.challengedHeaderName(),
+                  tokenGenerator.generateNegotiationHeader(pathName + "/" + pathValue, serviceHandler.mediaToProduce()));
+            
             return Reply.with("Not Acceptable").headers(m).status(406);
         }
 

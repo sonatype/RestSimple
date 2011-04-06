@@ -58,7 +58,6 @@ public class JaxrsModule extends AbstractModule {
         this(binder, new ServiceHandlerMapper(), RFC2295NegotiationTokenGenerator.class, JAXRSServiceDefinitionProvider.class);
     }
 
-
     @Override
     protected void configure() {
         bind(ServiceHandlerMapper.class).toInstance(mapper);

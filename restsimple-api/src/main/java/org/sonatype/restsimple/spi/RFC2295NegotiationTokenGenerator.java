@@ -19,7 +19,19 @@ import java.util.List;
 /**
  * Generate an Alternates headers based on RFC 2295.
  */
-public class RFC2295NegotiationTokenGenerator implements NegotiationTokenGenerator{
+public class RFC2295NegotiationTokenGenerator implements NegotiationTokenGenerator {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String challengedHeaderName() {
+        return "Alternates";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String generateNegotiationHeader(String uri, List<MediaType> mediaTypes) {
         StringBuilder acceptedContentType = new StringBuilder();

@@ -16,8 +16,23 @@ import org.sonatype.restsimple.api.MediaType;
 
 import java.util.List;
 
+/**
+ * Server side implementation for implementing a negotiation challenge between a client and a server.
+ */
 public interface NegotiationTokenGenerator {
 
+    /**
+     * Return the name of the challenged header.
+     * @return
+     */
+    String challengedHeaderName();
+
+    /**
+     * Generate an challenge header for challenging the server during version/content negotiation.
+     * @param uri The uri challenged
+     * @param mediaTypes the list of server's MediaType.
+     * @return A string representing the value for the challenged header.
+     */
     String generateNegotiationHeader(String uri, List<MediaType> mediaTypes);
 
 }
