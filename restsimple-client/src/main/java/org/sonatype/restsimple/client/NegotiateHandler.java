@@ -22,10 +22,18 @@ import java.util.List;
 public interface NegotiateHandler {
 
     /**
+     * Return the name of the challenged header.
+     *
+     * @return
+     */
+    String challengedHeaderName();
+
+
+    /**
      * Decides if it is possible to challenge the server from a set of response's headers.
      *
-     * @param mediaTypes  a List of supported media type.
-     * @param response the response's instance
+     * @param mediaTypes a List of supported media type.
+     * @param response   the response's instance
      * @return a new Accept header value to use for challenging the server
      * @throws WebException if no challenge is possible.
      */

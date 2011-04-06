@@ -89,7 +89,7 @@ public class Web {
     private Map<String, String> queryString;
     private Map<String, String> matrixParams = Collections.emptyMap();
     private List<MediaType> supportedContentType = new ArrayList<MediaType>();
-    private NegotiateHandler negociateHandler;
+    private NegotiateHandler negotiateHandler;
 
     /**
      * Create a Web Client
@@ -113,10 +113,40 @@ public class Web {
      * @param serviceDefinition a {@link ServiceDefinition}
      */
     public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
+        this(ahcConfig, serviceDefinition, new RFC2295NegotiateHandler());
+    }
+    
+    /**
+     * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
+     * can be made using the {@link DefaultAhcConfig}
+     * @param ahcConfig An {@link DefaultAhcConfig}
+     * @param serviceDefinition a {@link ServiceDefinition}
+     * @param negotiateHandler an implementation of {@link NegotiateHandler}
+     */
+    public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiateHandler negotiateHandler) {
         this.ahcConfig = ahcConfig;
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
-        this.negociateHandler = new RFC2295NegotiateHandler();
+        this.negotiateHandler = negotiateHandler;
+    }
+
+    /**
+     * Create a Web Client and populate it using the {@link ServiceDefinition}.
+     * @param serviceDefinition a {@link ServiceDefinition}
+     * @param negotiateHandler an implementation of {@link NegotiateHandler}
+     */
+    public Web(ServiceDefinition serviceDefinition, NegotiateHandler negotiateHandler) {
+        this(new DefaultAhcConfig(), serviceDefinition, negotiateHandler);
+    }
+
+    /**
+     * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
+     * can be made using the {@link DefaultAhcConfig}
+     * @param ahcConfig An {@link DefaultAhcConfig}
+     * @param negotiateHandler an implementation of {@link NegotiateHandler}
+     */
+    public Web(DefaultAhcConfig ahcConfig, NegotiateHandler negotiateHandler) {
+        this(ahcConfig, new DefaultServiceDefinition(), negotiateHandler);
     }
 
     /**
@@ -175,7 +205,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST, true).post(t, form);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(formParams, t);
         }
     }
@@ -193,7 +223,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST).post(t, o);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(o, t);
         }
     }
@@ -208,7 +238,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(o);
         }
     }
@@ -223,7 +253,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).post(findEntity(r, TYPE.DELETE), o);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(o);
         }
     }
@@ -239,7 +269,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(t);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(t);
         }
     }
@@ -254,7 +284,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE));
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete();
         }
     }
@@ -272,7 +302,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(t, o);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(o, t);
         }
     }
@@ -288,7 +318,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.GET).get(t);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return get(t);
         }
     }
@@ -302,7 +332,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.GET).get(findEntity(r, TYPE.GET));
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return get();
         }
     }
@@ -320,7 +350,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.PUT).put(t, o);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return put(o, t);
         }
     }
@@ -336,7 +366,7 @@ public class Web {
             WebResource r = buildRequest();
             return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
         } catch (UniformInterfaceException u) {
-            headers.put("Accept", negotiate(u));
+            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return put(o);
         }
     }
@@ -354,7 +384,7 @@ public class Web {
     }
 
     private String negotiate(UniformInterfaceException u) {
-        return negociateHandler.negotiate(supportedContentType, u.getResponse());
+        return negotiateHandler.negotiate(supportedContentType, u.getResponse());
     }
 
     private WebResource buildRequest() {

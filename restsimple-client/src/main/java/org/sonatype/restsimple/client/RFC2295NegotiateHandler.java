@@ -21,6 +21,11 @@ import java.util.List;
  */
 public class RFC2295NegotiateHandler implements NegotiateHandler {
 
+    @Override
+    public String challengedHeaderName() {
+        return "Accept";
+    }
+
     /**
      * {@inheritDoc}
      */
