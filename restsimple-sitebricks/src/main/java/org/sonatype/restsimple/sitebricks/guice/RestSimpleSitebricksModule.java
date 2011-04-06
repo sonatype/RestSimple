@@ -40,6 +40,7 @@ public class RestSimpleSitebricksModule extends AbstractModule {
     protected void configure() {
         final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
+        bind(NegotiationTokenGenerator.class).to(RFC2295NegotiationTokenGenerator.class);
 
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 

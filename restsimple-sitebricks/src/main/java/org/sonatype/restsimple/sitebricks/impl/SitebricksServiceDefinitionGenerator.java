@@ -62,11 +62,14 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     private final static Logger logger = LoggerFactory.getLogger(SitebricksServiceDefinitionGenerator.class);
 
-    private com.google.sitebricks.SitebricksModule module;
+    private SitebricksModule module;
+
+    private final NegotiationTokenGenerator negotiationTokenGenerator;
 
     @Inject
-    public SitebricksServiceDefinitionGenerator(ResourceModuleConfig moduleConfig) {
+    public SitebricksServiceDefinitionGenerator(ResourceModuleConfig moduleConfig, NegotiationTokenGenerator negotiationTokenGenerator) {
         this.moduleConfig = moduleConfig;
+        this.negotiationTokenGenerator = negotiationTokenGenerator;
     }
 
     private String convert(String path) {
@@ -87,8 +90,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     public void generate(final ServiceDefinition serviceDefinition) {
         try {
             final String path = serviceDefinition.path().contains("/{") ? convert(serviceDefinition.path()) : serviceDefinition.path();
-            //TODO: Must be configurable
-            moduleConfig.bindTo(NegotiationTokenGenerator.class, RFC2295NegotiationTokenGenerator.class);
+            //TODO: this is extremely ugly
+            moduleConfig.bindTo(NegotiationTokenGenerator.class, negotiationTokenGenerator.getClass());
 
             if (module == null) {
                 module = new com.google.sitebricks.SitebricksModule() {
