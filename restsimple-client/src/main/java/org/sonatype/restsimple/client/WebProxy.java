@@ -49,25 +49,31 @@ import java.util.Map;
 /**
  * A simple proxy that generates RestSimple client from an annotated interface. jsr 311 annotations are all supported.
  * As simple as {code
- * <p/>
- * public static interface ProxyClient {
- *
- * @GET
- * @Path("getPet")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public Pet get(@PathParam("myPet") String path);
- * @GET
- * @Path("getPetString")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public String getString(@PathParam("myPet") String path);
- * @POST
- * @Path("addPet")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public Pet post(@PathParam("myPet") String myPet, String body);
- * @DELETE
- * @Path("deletePet")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public Pet delete(@PathParam("myPet") String path);
+ * {@code
+    public static interface ProxyClient {
+
+        @GET
+        @Path("getPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet get(@PathParam("myPet") String path);
+
+        @GET
+        @Path("getPetString")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public String getString(@PathParam("myPet") String path);
+
+        @POST
+        @Path("addPet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet post(@PathParam("myPet") String myPet, String body);
+
+        @DELETE
+        @Path("deletePet")
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        public Pet delete(@PathParam("myPet") String path);
+
+    }
+   }
  * <p/>
  * }
  * <p/>
@@ -80,6 +86,13 @@ public class WebProxy {
 
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
 
+    /**
+     * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
+     * @param clazz A class an interface annotated with jaxrs annotations.
+     * @param uri the based uri.
+     * @param <T>
+     * @return an instance of T
+     */
     public static final <T> T createProxy(Class<T> clazz, URI uri) {
 
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
@@ -264,7 +277,6 @@ public class WebProxy {
         }
 
     }
-
 
     private static ServiceDefinitionInfo createServiceDefinitionInfo(Class<?> clazz) {
 

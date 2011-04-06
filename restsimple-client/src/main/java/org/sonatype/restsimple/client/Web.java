@@ -33,6 +33,42 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A simple HTTP client which support {@link ServiceDefinition} as a source of information when executing the request.
+ * The information contained in {@link ServiceDefinition} will be used when setting the content-type, accept, etc. and
+ * will also be used to serialize and de-serialize the request/response. As an example, you can create a simple petstore
+ * application by doing
+ * {@code
+ *
+ *      Web web = new Web(serviceDefinition);
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("Content-Type", acceptHeader);
+
+        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post(new Pet("pouetpouet"), Pet.class);
+
+ * }
+ *
+ * The class can also be used without a service definition. All the request information must be "manually" configured.
+ * {@code
+ *
+        Web web = new Web();
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("Content-Type", acceptHeader);
+        m.put("Accept", acceptHeader);
+
+        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post(new Pet("pouetpouet"), Pet.class);
+ *
+ * }
+ *
+ * The client support content negotiation as defined in RFC 2295 via the
+ * {@link Web#supportedContentType(org.sonatype.restsimple.api.MediaType)}
+ *
+ * This client build on top of the Sonatype's Jersey AHC Client.
+ */
 public class Web {
 
     private static enum TYPE {
@@ -54,39 +90,80 @@ public class Web {
     private Map<String, String> matrixParams = Collections.emptyMap();
     private List<MediaType> supportedContentType = new ArrayList<MediaType>();
 
-
+    /**
+     * Create a Web Client
+     */
     public Web() {
-        ahcConfig = new DefaultAhcConfig();
-        configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
-        this.serviceDefinition = new DefaultServiceDefinition();
+        this(new DefaultServiceDefinition());
     }
 
+    /**
+     * Create a Web Client and populate it using the {@link ServiceDefinition}
+     * @param serviceDefinition a {@link ServiceDefinition}
+     */
     public Web(ServiceDefinition serviceDefinition) {
-        ahcConfig = new DefaultAhcConfig();
+        this(new DefaultAhcConfig(), serviceDefinition);
+    }
+
+    /**
+     * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
+     * can be made using the {@link DefaultAhcConfig}
+     * @param ahcConfig An {@link DefaultAhcConfig}
+     * @param serviceDefinition a {@link ServiceDefinition}
+     */
+    public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
+        this.ahcConfig = ahcConfig;
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
     }
 
+    /**
+     * Configure the headers of the request.
+     * @param headers a {@link Map} of request's headers.
+     * @return this
+     */
     public Web headers(Map<String, String> headers) {
         this.headers = headers;
         return this;
     }
 
+    /**
+     * Configure the query string of the request.
+     * @param queryString a {@link Map} of request's query string.
+     * @return this
+     */
     public Web queryString(Map<String, String> queryString) {
         this.queryString = queryString;
         return this;
     }
 
+    /**
+     * Configure the matrix parameters of the request.
+     * @param matrixParams a {@link Map} of request's matrix parameters 
+     * @return this
+     */
     public Web matrixParams(Map<String, String> matrixParams) {
         this.matrixParams = matrixParams;
         return this;
     }
 
+    /**
+     * Set the request URI.
+     * @param uri the request URI.
+     * @return this
+     */
     public Web clientOf(String uri) {
         this.uri = uri;
         return this;
     }
 
+    /**
+     * Execute a POST operation
+     * @param formParams  A Map of forms parameters
+     * @param t A class of type T that will be used when de-serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
     public <T> T post(Map<String, String> formParams, Class<T> t) {
         try {
             Form form = new Form();
@@ -101,6 +178,13 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a POST operation
+     * @param o An object that will be serialized as the request body
+     * @param t A class of type T that will be used when de-serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
     public <T> T post(Object o, Class<T> t) {
         try {
 
@@ -112,6 +196,11 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a POST operation
+     * @param o An object that will be serialized as the request body
+     * @return An Object representing the response's body
+     */
     public Object post(Object o) {
         try {
             WebResource r = buildRequest();
@@ -122,6 +211,11 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a DELETE operation
+     * @param o An object that will be serialized as the request body
+     * @return An Object representing the response's body
+     */
     public Object delete(Object o) {
         try {
             WebResource r = buildRequest();
@@ -132,6 +226,11 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a DELETE operation
+     * @param t A class of type T that will be used when de-serializing the response's body.
+     * @return A T representing the response's body
+     */
     public <T> T delete(Class<T> t) {
         try {
 
@@ -143,6 +242,10 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a DELETE operation
+     * @return An Object representing the response's body
+     */
     public Object delete() {
         try {
 
@@ -154,6 +257,13 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a DELETE operation
+     * @param o An object that will be serialized as the request body
+     * @param t A class of type T that will be used when de-serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
     public <T> T delete(Object o, Class<T> t) {
         try {
 
@@ -165,6 +275,11 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a GET operation
+     * @param t A class of type T that will be used when de-serializing the response's body.
+     * @return An T representing the response's body
+     */
     public <T> T get(Class<T> t) {
         try {
 
@@ -176,6 +291,10 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a GET operation
+     * @return An Object representing the response's body
+     */
     public Object get() {
         try {
             WebResource r = buildRequest();
@@ -186,6 +305,13 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a PUT operation
+     * @param o An object that will be serialized as the request body
+     * @param t A class of type T that will be used when de-serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
     public <T> T put(Object o, Class<T> t) {
         try {
 
@@ -197,6 +323,11 @@ public class Web {
         }
     }
 
+    /**
+     * Execute a PUT operation
+     * @param o An object that will be serialized as the request body
+     * @return A T representing the response's body
+     */
     public Object put(Object o) {
         try {
 
@@ -274,9 +405,7 @@ public class Web {
                 return clazz;
             } else if (type == TYPE.DELETE && DeleteServiceHandler.class.isAssignableFrom(s.getClass())) {
                 return clazz;
-            } else {
-                // IllegalStateException ?
-            }
+            } 
         }
         return null;
     }
@@ -285,10 +414,23 @@ public class Web {
         return headers(r, type, false);
     }
 
+    @Override
+    public String toString() {
+        return "Web{" +
+                "uri='" + uri + '\'' +
+                ", serviceDefinition=" + serviceDefinition +
+                ", asyncClient=" + asyncClient +
+                ", configBuilder=" + configBuilder +
+                ", ahcConfig=" + ahcConfig +
+                ", headers=" + headers +
+                ", queryString=" + queryString +
+                ", matrixParams=" + matrixParams +
+                ", supportedContentType=" + supportedContentType +
+                '}';
+    }
+
     private WebResource.Builder headers(WebResource r, TYPE type, boolean formEncoded) {
         WebResource.Builder builder = r.getRequestBuilder();
-        boolean acceptAdded = false;
-        boolean contentTypeAdded = formEncoded;
         for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
 
             List<MediaType> list;
@@ -311,15 +453,12 @@ public class Web {
                 for (MediaType m : list) {
                     if (headers.get("Accept") == null) {
                         builder.header("Accept", m.toMediaType());
-                        acceptAdded = true;
                     }
 
                     if (headers.get("Content-Type") == null && !formEncoded) {
                         builder.header("Content-Type", m.toMediaType());
-                        contentTypeAdded = true;
                     }
                 }
-                acceptAdded = true;
                 break;
             }
         }

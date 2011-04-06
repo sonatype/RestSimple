@@ -28,7 +28,7 @@ public interface ResourceModuleConfig<T> {
     /**
      * Bind static classes
      * @param clazz  A class
-     * @prama clazz2 A class to bind to
+     * @param clazz2 A class to bind to
      */
     <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2);
 
