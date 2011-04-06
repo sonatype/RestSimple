@@ -31,16 +31,36 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 public class RestSimpleSitebricksModule extends AbstractModule {
 
     private final Binder binder;
+    private final ServiceHandlerMapper mapper;
+    private final Class<? extends NegotiationTokenGenerator> tokenGenerator;
+    private final Class<? extends ServiceDefinitionProvider> provider;
+
+    public RestSimpleSitebricksModule(Binder binder,
+                                      ServiceHandlerMapper mapper,
+                                      Class<? extends NegotiationTokenGenerator> tokenGenerator,
+                                      Class<? extends ServiceDefinitionProvider> provider) {
+        this.binder = binder;
+        this.mapper = mapper;
+        this.tokenGenerator = tokenGenerator;
+        this.provider = provider;
+    }
+
+    public RestSimpleSitebricksModule(Binder binder, Class<? extends NegotiationTokenGenerator> tokenGenerator) {
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class);
+    }
+
+    public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper) {
+        this(binder, mapper, RFC2295NegotiationTokenGenerator.class, SitebricksServiceDefinitionProvider.class);
+    }
 
     public RestSimpleSitebricksModule(Binder binder) {
-        this.binder = binder;
+        this(binder, new ServiceHandlerMapper(), RFC2295NegotiationTokenGenerator.class, SitebricksServiceDefinitionProvider.class);
     }
 
     @Override
     protected void configure() {
-        final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
-        bind(NegotiationTokenGenerator.class).to(RFC2295NegotiationTokenGenerator.class);
+        bind(NegotiationTokenGenerator.class).to(tokenGenerator);
 
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
@@ -66,11 +86,9 @@ public class RestSimpleSitebricksModule extends AbstractModule {
                 binder.install(module);
             }
         });
-
-        
         bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
-        bind(ServiceDefinitionProvider.class).to(SitebricksServiceDefinitionProvider.class);
+        bind(ServiceDefinitionProvider.class).to(provider);
         
     }
 }
