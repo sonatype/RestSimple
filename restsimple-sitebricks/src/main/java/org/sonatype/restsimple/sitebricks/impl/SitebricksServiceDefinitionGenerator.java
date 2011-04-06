@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.MediaType;
+import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
@@ -85,6 +87,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     public void generate(final ServiceDefinition serviceDefinition) {
         try {
             final String path = serviceDefinition.path().contains("/{") ? convert(serviceDefinition.path()) : serviceDefinition.path();
+            //TODO: Must be configurable
+            moduleConfig.bindTo(NegotiationTokenGenerator.class, RFC2295NegotiationTokenGenerator.class);
 
             if (module == null) {
                 module = new com.google.sitebricks.SitebricksModule() {
@@ -145,6 +149,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         @Inject
         private Provider<Request> requestProvider;
 
+        @Inject
+        NegotiationTokenGenerator tokenGenerator;
+
         @Override
         public boolean shouldCall(HttpServletRequest request) {
             return true;
@@ -152,7 +159,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            Object response = createResponse("put", map.get("method"), map.get("id"), null, request, mapper);
+            Object response = createResponse(tokenGenerator, "put", map.get("method"), map.get("id"), null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -171,6 +178,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         @Inject
         Provider<Request> requestProvider;
+
+        @Inject
+        NegotiationTokenGenerator tokenGenerator;
 
         @Override
         public boolean shouldCall(HttpServletRequest request) {
@@ -194,7 +204,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             if (serviceHandler.consumeClass() != null) {
                 body = request.read(serviceHandler.consumeClass()).as(transport);
             }
-            Object response = createResponse("post", map.get("method"), map.get("id"), body, request, mapper);
+            Object response = createResponse(tokenGenerator, "post", map.get("method"), map.get("id"), body, request, mapper);
 
             if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
@@ -211,6 +221,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         @Inject
         Provider<Request> requestProvider;
 
+        @Inject
+        NegotiationTokenGenerator tokenGenerator;
+
         @Override
         public boolean shouldCall(HttpServletRequest request) {
             return true;
@@ -220,7 +233,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         public Object call(Object page, Map<String, String> map) {
 
             Request request = requestProvider.get();
-            Object response = createResponse("get", map.get("method"), map.get("id"), null, request, mapper);
+            Object response = createResponse(tokenGenerator, "get", map.get("method"), map.get("id"), null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -240,6 +253,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         @Inject
         Provider<Request> requestProvider;
 
+        @Inject
+        NegotiationTokenGenerator tokenGenerator;
+
         @Override
         public boolean shouldCall(HttpServletRequest request) {
             return true;
@@ -249,7 +265,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
 
-            Object response = createResponse("delete", map.get("method"), map.get("id"), null, request, mapper);
+            Object response = createResponse(tokenGenerator, "delete", map.get("method"), map.get("id"), null, request, mapper);
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
             }
@@ -292,7 +308,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         return Reply.with(response.toString()).as(Text.class);
     }
 
-    private static <T> Object createResponse(String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
+    private static <T> Object createResponse(NegotiationTokenGenerator tokenGenerator, String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
         ServiceHandler serviceHandler = mapper.map(convertToJaxRs(pathName));
 
         if (serviceHandler == null) {
@@ -301,7 +317,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
             Map<String, String> m = new HashMap<String, String>();
-            m.put("Alternates", createAlternatesHeader(pathName + "/" + pathValue, serviceHandler.mediaToProduce()));
+            m.put("Alternates", tokenGenerator.generateNegotiationHeader(pathName + "/" + pathValue, serviceHandler.mediaToProduce()));
             return Reply.with("Not Acceptable").headers(m).status(406);
         }
 
@@ -342,22 +358,6 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
         }
         return false;
-    }
-
-    private static String createAlternatesHeader(String uri, List<MediaType> mediaTypes) {
-        StringBuilder acceptedContentType = new StringBuilder();
-        for (MediaType mediaType : mediaTypes) {
-            acceptedContentType.append("{\"")
-                    .append(uri)
-                    .append("\" 1.0 ")
-                    .append("{type ")
-                    .append(mediaType.toMediaType())
-                    .append("}},");
-        }
-        if (acceptedContentType.length() > 0) {
-            acceptedContentType.delete(acceptedContentType.length() - 1, acceptedContentType.length());
-        }
-        return acceptedContentType.toString();
     }
 
     private static Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {

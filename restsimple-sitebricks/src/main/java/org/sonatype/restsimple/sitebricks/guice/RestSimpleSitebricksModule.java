@@ -15,6 +15,8 @@ package org.sonatype.restsimple.sitebricks.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
@@ -38,6 +40,7 @@ public class RestSimpleSitebricksModule extends AbstractModule {
     protected void configure() {
         final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
+
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
