@@ -301,7 +301,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
             Map<String, String> m = new HashMap<String, String>();
-            m.put("Accept-Content-Type", createAcceptContentTypeHeadser(serviceHandler.mediaToProduce()));
+            m.put("Alternates", createAlternatesHeader(pathName + "/" + pathValue, serviceHandler.mediaToProduce()));
             return Reply.with("Not Acceptable").headers(m).status(406);
         }
 
@@ -344,10 +344,15 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         return false;
     }
 
-    private static String createAcceptContentTypeHeadser(List<MediaType> mediaTypes) {
+    private static String createAlternatesHeader(String uri, List<MediaType> mediaTypes) {
         StringBuilder acceptedContentType = new StringBuilder();
         for (MediaType mediaType : mediaTypes) {
-            acceptedContentType.append(mediaType.toMediaType()).append(",");
+            acceptedContentType.append("{\"")
+                    .append(uri)
+                    .append("\" 1.0 ")
+                    .append("{type ")
+                    .append(mediaType.toMediaType())
+                    .append("}},");
         }
         if (acceptedContentType.length() > 0) {
             acceptedContentType.delete(acceptedContentType.length() - 1, acceptedContentType.length());

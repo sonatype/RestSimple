@@ -221,12 +221,18 @@ public class Web {
     }
 
     private String negotiate(UniformInterfaceException u) {
-        if ( u.getResponse().getStatus() == 406 && supportedContentType.size() > 0) {
-            String[] serverChallenge = u.getResponse().getHeaders().get("Accept-Content-Type").get(0).split(",");
+        List<String> list = u.getResponse().getHeaders().get("Alternates");
+        if ( list != null && u.getResponse().getStatus() == 406 && supportedContentType.size() > 0) {
+            String[] serverChallenge = list.get(0).split(",");
             for (String challenge : serverChallenge) {
-                for (MediaType m: supportedContentType) {
-                    if (challenge.equalsIgnoreCase(m.toMediaType())) {
-                        return challenge;
+                int typePos = challenge.indexOf("type");
+                int eof = challenge.indexOf("}", typePos);
+                if (typePos > 0) {
+                    String type = challenge.substring(typePos + "type".length(), eof).trim();
+                    for (MediaType m: supportedContentType) {
+                        if (type.equalsIgnoreCase(m.toMediaType())) {
+                            return type;
+                        }
                     }
                 }
             }
