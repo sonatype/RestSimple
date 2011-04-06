@@ -15,6 +15,8 @@ package org.sonatype.restsimple.jaxrs.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
@@ -29,18 +31,38 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 public class JaxrsModule extends AbstractModule {
 
     private final Binder binder;
+    private final ServiceHandlerMapper mapper;
+    private final Class<? extends NegotiationTokenGenerator> tokenGenerator;
+    private final Class<? extends ServiceDefinitionProvider> provider;
+
+    public JaxrsModule(Binder binder,
+                       ServiceHandlerMapper mapper,
+                       Class<? extends NegotiationTokenGenerator> tokenGenerator,
+                       Class<? extends ServiceDefinitionProvider> provider) {
+        
+        this.binder = binder;
+        this.mapper = mapper;
+        this.tokenGenerator = tokenGenerator;
+        this.provider = provider;
+    }
+
+    public JaxrsModule(Binder binder, Class<? extends NegotiationTokenGenerator> tokenGenerator) {
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, JAXRSServiceDefinitionProvider.class);
+    }
+
+    public JaxrsModule(Binder binder, ServiceHandlerMapper mapper) {
+        this(binder, mapper, RFC2295NegotiationTokenGenerator.class, JAXRSServiceDefinitionProvider.class);
+    }
 
     public JaxrsModule(Binder binder) {
-        this.binder = binder;
+        this(binder, new ServiceHandlerMapper(), RFC2295NegotiationTokenGenerator.class, JAXRSServiceDefinitionProvider.class);
     }
+
 
     @Override
     protected void configure() {
-        /**
-         * We MUST bin the mapper with both Binder to be able to share the same instance.
-         */
-        final ServiceHandlerMapper mapper = new ServiceHandlerMapper();
         bind(ServiceHandlerMapper.class).toInstance(mapper);
+        bind(NegotiationTokenGenerator.class).to(tokenGenerator);
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>() {
@@ -67,7 +89,7 @@ public class JaxrsModule extends AbstractModule {
 
         bind(ServiceDefinitionGenerator.class).to(JAXRSServiceDefinitionGenerator.class);
         bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
-        bind(ServiceDefinitionProvider.class).to(JAXRSServiceDefinitionProvider.class);
+        bind(ServiceDefinitionProvider.class).to(provider);
 
     }
 }
