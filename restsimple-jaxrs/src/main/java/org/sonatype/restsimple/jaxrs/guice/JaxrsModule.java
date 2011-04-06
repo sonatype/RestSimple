@@ -24,7 +24,7 @@ import org.sonatype.restsimple.spi.ServiceDefinitionProvider;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 /**
- * A JAXRS module that install the appropriate object needed to generate JAXRS Resource.
+ * A JAXRS module which install the appropriate object needed to generate JAXRS Resource.
  */
 public class JaxrsModule extends AbstractModule {
 
