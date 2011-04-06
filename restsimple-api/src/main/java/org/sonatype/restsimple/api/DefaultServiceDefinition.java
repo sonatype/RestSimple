@@ -21,7 +21,8 @@ import java.util.List;
 
 /**
  * A default {@link ServiceDefinition} which can be injected or created directly. If you aren't using injection,
- * you must specify a {@link ServiceDefinitionGenerator} if you want your {@link ServiceDefinition} to be generated and deployed
+ * you must specify a {@link ServiceDefinitionGenerator} if you want your {@link ServiceDefinition}
+ * to be generated and deployed when invoking the {@link org.sonatype.restsimple.api.ServiceDefinition#bind()} method.
  *
  */
 public class DefaultServiceDefinition implements ServiceDefinition {
@@ -135,7 +136,10 @@ public class DefaultServiceDefinition implements ServiceDefinition {
 
         generator.generate(this);
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ServiceDefinition generateWith(ServiceDefinitionGenerator generator) {
         this.generator = generator;

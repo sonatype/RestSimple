@@ -15,7 +15,7 @@ package org.sonatype.restsimple.sitebricks.guice;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import org.sonatype.restsimple.api.ResourceModuleConfig;
+import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionProvider;

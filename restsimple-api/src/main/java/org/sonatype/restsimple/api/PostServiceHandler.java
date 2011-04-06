@@ -42,16 +42,28 @@ public class PostServiceHandler extends ServiceHandler {
         super(path, action);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ServiceDefinition.METHOD getHttpMethod() {
         return ServiceDefinition.METHOD.POST;
     }
 
+    /**
+     * Add a form parameters.
+     * @param name a form parameters
+     * @return this
+     */
     public PostServiceHandler addFormParam(String name) {
         formParam.add(name);
         return this;
     }
 
+    /**
+     * 'Return an unmodifiable {@link List} of form parameters
+     * @return
+     */
     public List<String> formParams() {
         return Collections.unmodifiableList(formParam);
     }

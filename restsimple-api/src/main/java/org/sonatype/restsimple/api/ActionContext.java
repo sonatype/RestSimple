@@ -13,12 +13,12 @@
 package org.sonatype.restsimple.api;
 
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 
 /**
- * This class encapsulates the REST request, e.g the headers, the form parameters, the path and it's value.
+ * This class encapsulates the REST request, e.g the headers, the form parameters, the path and it's value. It also
+ * contains the request's body deserialization 
  */
 public class ActionContext<T> {
 

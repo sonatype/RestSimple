@@ -13,29 +13,46 @@
 package org.sonatype.restsimple.api;
 
 /**
- * An exception thrown from an {@link Action}
+ * A runtime exception thrown from an {@link Action}. The content of this exception will be send back to a remote client.
  */
-public class ActionException extends Exception {
+public class ActionException extends RuntimeException {
 
     private final int statusCode;
-    private final String statusText;
+    private final String reasonPhrase;
 
+    /**
+     * Create a RuntimeException with a status code. The reason phrase will be empty.
+     * @param statusCode the status code
+     */
     public ActionException(int statusCode) {
         super();
         this.statusCode = statusCode;
-        this.statusText = "";
+        this.reasonPhrase = "";
     }
 
-    public ActionException(int statusCode, String statusText) {
-        super(statusText + " status code: " + statusCode);
+    /**
+     * Create a RuntimeException with a status code and a reason phrase
+     * @param statusCode the status code
+     * @param reasonPhrase the status text
+     */
+    public ActionException(int statusCode, String reasonPhrase) {
+        super(reasonPhrase + " status code: " + statusCode);
         this.statusCode = statusCode;
-        this.statusText = statusText;
+        this.reasonPhrase = reasonPhrase;
     }
 
-    public String getStatusText(){
-        return statusText;
+    /**
+     * The reason phase to send back to the client
+     * @return The reason phase to send back to the client
+     */
+    public String getReasonPhrase(){
+        return reasonPhrase;
     }
 
+    /**
+     * Return the status code to send back to the client
+     * @return the status code to send back to the clien
+     */
     public int getStatusCode(){
         return statusCode;
     }

@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.MediaType;
-import org.sonatype.restsimple.api.ResourceModuleConfig;
+import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;

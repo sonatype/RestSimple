@@ -36,6 +36,9 @@ public class DeleteServiceHandler extends ServiceHandler {
         super(path, action);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ServiceDefinition.METHOD getHttpMethod() {
         return ServiceDefinition.METHOD.DELETE;

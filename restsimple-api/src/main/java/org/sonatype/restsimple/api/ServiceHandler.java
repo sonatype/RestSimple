@@ -20,12 +20,9 @@ import java.util.List;
  * Represent how a REST resource handles requests. A {@link ServiceHandler} is used when mapping the request to
  * an {@link Action}.
  */
-abstract public class
-
-        ServiceHandler {
+abstract public class ServiceHandler {
     private final String path;
     private final Action action;
-    private Class producerClass;
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
     private Class consumerClazz;
     private MediaType consumerMediaType;
@@ -70,14 +67,6 @@ abstract public class
      */
     public Action getAction() {
         return action;
-    }
-
-    /**
-     * Return the {@link Class} to be used when serializing the response's body
-     * @return the {@link Class} to be used when serializing the response's body.
-     */
-    public Class producerClass(){
-        return producerClass;
     }
     
     /**
