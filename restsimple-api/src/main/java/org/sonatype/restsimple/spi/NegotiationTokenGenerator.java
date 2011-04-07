@@ -17,13 +17,13 @@ import org.sonatype.restsimple.api.MediaType;
 import java.util.List;
 
 /**
- * Server side implementation for implementing a negotiation challenge between a client and a server.
+ * Server side component for implementing a version or content negotiation challenge between a client and a server.
  */
 public interface NegotiationTokenGenerator {
 
     /**
      * Return the name of the challenged header.
-     * @return
+     * @return he name of the challenged header.
      */
     String challengedHeaderName();
 

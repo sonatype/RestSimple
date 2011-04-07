@@ -17,7 +17,7 @@ import org.sonatype.restsimple.api.MediaType;
 import java.util.List;
 
 /**
- * Generate an Alternates headers based on RFC 2295.
+ * Generate an <tt>Alternates</tt> headers based on RFC 2295.
  */
 public class RFC2295NegotiationTokenGenerator implements NegotiationTokenGenerator {
 

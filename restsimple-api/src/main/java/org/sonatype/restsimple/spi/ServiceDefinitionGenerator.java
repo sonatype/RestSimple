@@ -17,7 +17,7 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 /**
  * Generates a resource based on the information a {@link org.sonatype.restsimple.api.ServiceDefinition} represents.
  *
- * This class is for framework integrator.
+ * This class is targetted at framework integrator.
  */
 public interface ServiceDefinitionGenerator {
 

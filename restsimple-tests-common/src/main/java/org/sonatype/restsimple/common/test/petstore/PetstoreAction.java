@@ -35,7 +35,7 @@ public class PetstoreAction implements Action<Pet, Pet> {
             case GET:
 
                 Map<String, Collection<String>> headers = actionContext.headers();
-                
+
                 Pet pet = pets.get(actionContext.pathValue());
                 if (pet != null) {
 
@@ -48,10 +48,6 @@ public class PetstoreAction implements Action<Pet, Pet> {
                         }
                     }
                 }
-
-
-
-
                 return pet;
             case DELETE:
                 return pets.remove(actionContext.pathValue());
