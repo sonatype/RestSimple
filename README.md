@@ -8,6 +8,7 @@ RestSimple is a framework for dramatically enhancing the building of REST based 
 * Extremely simple to deploy
 
 The framework goal is to easy allow programmatic, embeddable and portable REST applications. The framework is composed by the following module
+
 * restsimple-api: the core classes of the framework.
 * restsimple-client: a client library for RestSimple.
 * restsimple-jaxrs: an implementation of the restsimple-api using Jersey.
@@ -18,7 +19,6 @@ Building a RestSimple Application.
 A RestSimple application consist of ServiceDefinition, ServiceHandler and Action. The main component of a RestSimple application is called a ServiceDefinition. A ServiceDefinition contains all information about path, serialization and deserialization of objects, entity to invoke (action), etc. To demonstrate how it works, let's build a really simple pet store application.
 
 Action action = new PetstoreAction();
-
 DefaultServiceDefinition serviceDefinition = new DefaultServiceDefinition();
 serviceDefinition
   .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
@@ -34,7 +34,6 @@ public interface Action<T, U> {
   * @return T a response to be serialized
   */
  public T action(ActionContext<U> actionContext) throws ActionException;
-
 
 Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST request can retrieve those pets. Something as simple as:
 
@@ -94,7 +93,7 @@ public class Pet {
 
 The serialization and deserialization of the Pet class will be handled be the RestSimple framework itself. Next step is to map our Action to some URL. With RestSimple, this is done using ServiceHandler. A ServiceHandler is a simple placeholder for defining how an Action are mapped from a URL. Simply said, you define a ServiceHandler as:
 
-new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON);
+   new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON);
 
 The line above map an Action to an HTTP Get operation, consuming JSON and producing JSON. If you are familiar with JAXRS, the functionality would be defined as
 
@@ -105,7 +104,7 @@ public Response invokeAction(@PathParam("getPet") Pet pet) {...}
 
 An HTTP POST operation can simply be defined as:
 
-new PostServiceHandler("addPet", action).addFormParam("petColor").addFormParam("petAge");
+   new PostServiceHandler("addPet", action).addFormParam("petColor").addFormParam("petAge");
 
 Now before deploying our ServiceDefinition, let's define it completely:
 
