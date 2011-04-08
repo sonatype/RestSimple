@@ -53,7 +53,7 @@ public class PetstoreAction implements Action<Pet, Pet> {
                 return pets.remove(actionContext.pathValue());
             case POST:
                 headers = actionContext.headers();
-                Map<String, Collection<String>> queryStrings = actionContext.queryStrings();
+                Map<String, Collection<String>> queryStrings = actionContext.paramsString();
 
                 pet = actionContext.get();
                 if (headers.size() > 0) {

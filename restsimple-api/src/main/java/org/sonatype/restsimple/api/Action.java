@@ -31,7 +31,7 @@ package org.sonatype.restsimple.api;
         @Override
         public Pet action(ActionContext<Pet> actionContext) throws ActionException {
             Map<String, Collection<String>> headers = actionContext.headers();
-            Map<String, Collection<String>> queryStrings = actionContext.queryStrings();
+            Map<String, Collection<String>> paramsString = actionContext.paramsString();
 
             switch (actionContext.method()) {
                 case GET:

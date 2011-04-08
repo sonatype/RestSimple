@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class ActionContext<T> {
 
-    private final Map<String, Collection<String>> queryStrings;
+    private final Map<String, Collection<String>> paramsStrings;
     private final Map<String, Collection<String>> headers;
     private final InputStream inputStream;
     private final ServiceDefinition.METHOD methodName;
@@ -32,13 +32,13 @@ public class ActionContext<T> {
 
     public ActionContext(ServiceDefinition.METHOD methodName,
                          Map<String, Collection<String>> headers,
-                         Map<String, Collection<String>> queryStrings,
+                         Map<String, Collection<String>> paramsStrings,
                          InputStream inputStream,
                          String pathName,
                          String pathValue,
                          T object) {
-        
-        this.queryStrings = queryStrings;
+
+        this.paramsStrings = paramsStrings;
         this.methodName = methodName;
         this.inputStream = inputStream;
         this.headers = headers;
@@ -48,11 +48,11 @@ public class ActionContext<T> {
     }
 
     /**
-     * Return the form params if they were specified.
-     * @return a {@link Map} of form parameters.
+     * Return the parameters if they were specified.
+     * @return a {@link Map} of parameters.
      */
-    public Map<String, Collection<String>> queryStrings() {
-        return queryStrings;
+    public Map<String, Collection<String>> paramsString() {
+        return paramsStrings;
 
     }
 

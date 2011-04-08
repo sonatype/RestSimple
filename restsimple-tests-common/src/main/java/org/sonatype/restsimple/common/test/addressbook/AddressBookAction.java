@@ -55,8 +55,8 @@ public class AddressBookAction implements Action<AddressBookMediaType, String> {
                     throw new IllegalStateException("No address book have been created for " + addressBookName);
                 }
 
-                if (actionContext.queryStrings().size() > 0) {
-                    for (Map.Entry<String,Collection<String>> e : actionContext.queryStrings().entrySet()) {
+                if (actionContext.paramsString().size() > 0) {
+                    for (Map.Entry<String,Collection<String>> e : actionContext.paramsString().entrySet()) {
                         list.addAll(e.getValue());
                     }
                 } else {
