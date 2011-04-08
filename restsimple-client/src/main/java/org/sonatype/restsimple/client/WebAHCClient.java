@@ -24,6 +24,7 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
+import org.sonatype.restsimple.api.WebClient;
 import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
@@ -40,7 +41,7 @@ import java.util.Map;
  * application by doing
  * {@code
  *
- *      Web web = new Web(serviceDefinition);
+ *      Web web = new WebAHCClient(serviceDefinition);
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
@@ -53,7 +54,7 @@ import java.util.Map;
  * The class can also be used without a service definition. All the request information must be "manually" configured.
  * {@code
  *
-        Web web = new Web();
+        Web web = new WebAHCClient();
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
         m.put("Accept", acceptHeader);
@@ -65,15 +66,11 @@ import java.util.Map;
  * }
  *
  * The client support content negotiation as defined in RFC 2295 via the
- * {@link Web#supportedContentType(org.sonatype.restsimple.api.MediaType)}
+ * {@link WebAHCClient#supportedContentType(org.sonatype.restsimple.api.MediaType)}
  *
  * This client build on top of the Sonatype's Jersey AHC Client.
  */
-public class Web {
-
-    private static enum TYPE {
-        POST, PUT, DELETE, GET
-    }
+public class WebAHCClient implements WebClient {
 
     private String uri;
 
@@ -92,38 +89,38 @@ public class Web {
     private NegotiationHandler negotiateHandler;
 
     /**
-     * Create a Web Client
+     * Create a WebAHCClient Client
      */
-    public Web() {
+    public WebAHCClient() {
         this(new DefaultServiceDefinition());
     }
 
     /**
-     * Create a Web Client and populate it using the {@link ServiceDefinition}
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}
      * @param serviceDefinition a {@link ServiceDefinition}
      */
-    public Web(ServiceDefinition serviceDefinition) {
+    public WebAHCClient(ServiceDefinition serviceDefinition) {
         this(new DefaultAhcConfig(), serviceDefinition);
     }
 
     /**
-     * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
      * @param ahcConfig An {@link DefaultAhcConfig}
      * @param serviceDefinition a {@link ServiceDefinition}
      */
-    public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
+    public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
         this(ahcConfig, serviceDefinition, new RFC2295NegotiationHandler());
     }
     
     /**
-     * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
      * @param ahcConfig An {@link DefaultAhcConfig}
      * @param serviceDefinition a {@link ServiceDefinition}
      * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
-    public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
+    public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this.ahcConfig = ahcConfig;
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
@@ -131,21 +128,21 @@ public class Web {
     }
 
     /**
-     * Create a Web Client and populate it using the {@link ServiceDefinition}.
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}.
      * @param serviceDefinition a {@link ServiceDefinition}
      * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
-    public Web(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
+    public WebAHCClient(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this(new DefaultAhcConfig(), serviceDefinition, negotiateHandler);
     }
 
     /**
-     * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
      * @param ahcConfig An {@link DefaultAhcConfig}
      * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
-    public Web(DefaultAhcConfig ahcConfig, NegotiationHandler negotiateHandler) {
+    public WebAHCClient(DefaultAhcConfig ahcConfig, NegotiationHandler negotiateHandler) {
         this(ahcConfig, new DefaultServiceDefinition(), negotiateHandler);
     }
 
@@ -154,7 +151,8 @@ public class Web {
      * @param headers a {@link Map} of request's headers.
      * @return this
      */
-    public Web headers(Map<String, String> headers) {
+    @Override
+    public WebClient headers(Map<String, String> headers) {
         this.headers = headers;
         return this;
     }
@@ -164,7 +162,8 @@ public class Web {
      * @param queryString a {@link Map} of request's query string.
      * @return this
      */
-    public Web queryString(Map<String, String> queryString) {
+    @Override
+    public WebClient queryString(Map<String, String> queryString) {
         this.queryString = queryString;
         return this;
     }
@@ -174,7 +173,8 @@ public class Web {
      * @param matrixParams a {@link Map} of request's matrix parameters 
      * @return this
      */
-    public Web matrixParams(Map<String, String> matrixParams) {
+    @Override
+    public WebClient matrixParams(Map<String, String> matrixParams) {
         this.matrixParams = matrixParams;
         return this;
     }
@@ -184,7 +184,8 @@ public class Web {
      * @param uri the request URI.
      * @return this
      */
-    public Web clientOf(String uri) {
+    @Override
+    public WebClient clientOf(String uri) {
         this.uri = uri;
         return this;
     }
@@ -196,6 +197,7 @@ public class Web {
      * @param <T>
      * @return An instance of t
      */
+    @Override
     public <T> T post(Map<String, String> formParams, Class<T> t) {
         try {
             Form form = new Form();
@@ -217,6 +219,7 @@ public class Web {
      * @param <T>
      * @return An instance of t
      */
+    @Override
     public <T> T post(Object o, Class<T> t) {
         try {
 
@@ -233,6 +236,7 @@ public class Web {
      * @param o An object that will be serialized as the request body
      * @return An Object representing the response's body
      */
+    @Override
     public Object post(Object o) {
         try {
             WebResource r = buildRequest();
@@ -248,6 +252,7 @@ public class Web {
      * @param o An object that will be serialized as the request body
      * @return An Object representing the response's body
      */
+    @Override
     public Object delete(Object o) {
         try {
             WebResource r = buildRequest();
@@ -263,6 +268,7 @@ public class Web {
      * @param t A class of type T that will be used when de-serializing the response's body.
      * @return A T representing the response's body
      */
+    @Override
     public <T> T delete(Class<T> t) {
         try {
 
@@ -278,6 +284,7 @@ public class Web {
      * Execute a DELETE operation
      * @return An Object representing the response's body
      */
+    @Override
     public Object delete() {
         try {
 
@@ -296,6 +303,7 @@ public class Web {
      * @param <T>
      * @return An instance of t
      */
+    @Override
     public <T> T delete(Object o, Class<T> t) {
         try {
 
@@ -312,6 +320,7 @@ public class Web {
      * @param t A class of type T that will be used when de-serializing the response's body.
      * @return An T representing the response's body
      */
+    @Override
     public <T> T get(Class<T> t) {
         try {
 
@@ -327,6 +336,7 @@ public class Web {
      * Execute a GET operation
      * @return An Object representing the response's body
      */
+    @Override
     public Object get() {
         try {
             WebResource r = buildRequest();
@@ -344,6 +354,7 @@ public class Web {
      * @param <T>
      * @return An instance of t
      */
+    @Override
     public <T> T put(Object o, Class<T> t) {
         try {
 
@@ -360,6 +371,7 @@ public class Web {
      * @param o An object that will be serialized as the request body
      * @return A T representing the response's body
      */
+    @Override
     public Object put(Object o) {
         try {
 
@@ -378,7 +390,8 @@ public class Web {
      * @param mediaType
      * @return this
      */
-    public Web supportedContentType(MediaType mediaType) {
+    @Override
+    public WebClient supportedContentType(MediaType mediaType) {
         supportedContentType.add(mediaType);
         return this;
     }
@@ -432,7 +445,7 @@ public class Web {
 
     @Override
     public String toString() {
-        return "Web{" +
+        return "WebAHCClient{" +
                 "uri='" + uri + '\'' +
                 ", serviceDefinition=" + serviceDefinition +
                 ", asyncClient=" + asyncClient +

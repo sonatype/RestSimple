@@ -11,7 +11,8 @@
  *******************************************************************************/
 package org.sonatype.restsimple.test.client;
 
-import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.api.WebClient;
+import org.sonatype.restsimple.client.WebAHCClient;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.testng.annotations.Test;
@@ -29,17 +30,17 @@ public class WebTest extends BaseTest {
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
 
-        Web web = new Web(serviceDefinition);
+        WebClient webClient = new WebAHCClient(serviceDefinition);
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
-        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
+        Pet pet = (Pet) webClient.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
                 .post(new Pet("pouetpouet"));
 
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet")
+        pet = webClient.clientOf(targetUrl + "/getPet/myPet")
                 .headers(m)
                 .get(Pet.class);
 
@@ -50,24 +51,24 @@ public class WebTest extends BaseTest {
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
 
-        Web web = new Web(serviceDefinition);
+        WebClient webClient = new WebAHCClient(serviceDefinition);
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
-        Pet pet = (Pet) web.clientOf(targetUrl + "/addPet/myPet")
+        Pet pet = (Pet) webClient.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
                 .post(new Pet("pouetpouet"));
 
         assertNotNull(pet);
 
-        pet = (Pet) web.clientOf(targetUrl + "/deletePet/myPet")
+        pet = (Pet) webClient.clientOf(targetUrl + "/deletePet/myPet")
                 .headers(m)
                 .delete();
 
         assertNotNull(pet);
 
         try {
-            pet = (Pet) web.clientOf(targetUrl + "/getPet/myPet")
+            pet = (Pet) webClient.clientOf(targetUrl + "/getPet/myPet")
                     .headers(m)
                     .get();
             fail("No exception");
@@ -81,17 +82,17 @@ public class WebTest extends BaseTest {
     public void testPostWithType() throws Throwable {
         logger.info("running test: testPostWithType");
 
-        Web web = new Web(serviceDefinition);
+        WebClient webClient = new WebAHCClient(serviceDefinition);
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
 
-        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+        Pet pet = webClient.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
                 .post(new Pet("pouetpouet"), Pet.class);
 
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet")
+        pet = webClient.clientOf(targetUrl + "/getPet/myPet")
                 .headers(m)
                 .get(Pet.class);
 
@@ -102,18 +103,18 @@ public class WebTest extends BaseTest {
     public void testPostWithoutSD() throws Throwable {
         logger.info("running test: testPostWithoutSD");
 
-        Web web = new Web();
+        WebClient webClient = new WebAHCClient();
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
         m.put("Accept", acceptHeader);
 
-        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+        Pet pet = webClient.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
                 .post(new Pet("pouetpouet"), Pet.class);
 
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet")
+        pet = webClient.clientOf(targetUrl + "/getPet/myPet")
                 .headers(m)
                 .get(Pet.class);
 

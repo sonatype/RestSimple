@@ -12,7 +12,8 @@
 package org.sonatype.restsimple.test.client;
 
 import org.sonatype.restsimple.api.MediaType;
-import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.client.WebAHCClient;
+import org.sonatype.restsimple.api.WebClient;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.Test;
@@ -28,19 +29,19 @@ public class WebNegotiationTest extends BaseTest {
     public void testPostContentNegotiation() throws Throwable {
         logger.info("running test: testPostWithType");
 
-        Web web = new Web(serviceDefinition);
+        WebClient webClient = new WebAHCClient(serviceDefinition);
         Map<String, String> m = new HashMap<String, String>();
         m.put("Content-Type", acceptHeader);
         m.put("Accept", "application/xml");
 
-        Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
+        Pet pet = webClient.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
                 .supportedContentType(new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON))
                 .post(new Pet("pouetpouet"), Pet.class);
 
         assertNotNull(pet);
 
-        pet = web.clientOf(targetUrl + "/getPet/myPet")
+        pet = webClient.clientOf(targetUrl + "/getPet/myPet")
                 .headers(m)
                 .get(Pet.class);
 

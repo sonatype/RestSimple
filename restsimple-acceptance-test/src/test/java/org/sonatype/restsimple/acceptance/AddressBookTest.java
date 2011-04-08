@@ -22,7 +22,8 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.client.Web;
+import org.sonatype.restsimple.api.WebClient;
+import org.sonatype.restsimple.client.WebAHCClient;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.testng.annotations.AfterClass;
@@ -48,7 +49,7 @@ public class AddressBookTest {
 
     public String acceptHeader;
 
-    private Web web;
+    private WebClient webClient;
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
@@ -73,7 +74,7 @@ public class AddressBookTest {
 
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
-        web = new Web(serviceDefinition);
+        webClient = new WebAHCClient(serviceDefinition);
 
         logger.info("Local HTTP server started successfully");
     }
@@ -87,7 +88,7 @@ public class AddressBookTest {
     public void testPut() throws Throwable {
         Map<String, String> m = new HashMap<String, String>();
 
-        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
+        String s = webClient.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
         assertNotNull(s);
 
     }
@@ -96,12 +97,12 @@ public class AddressBookTest {
     public void testPost() throws Throwable {
         logger.info("running test: testPost");
         Map<String, String> m = new HashMap<String, String>();
-        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
+        String s = webClient.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("doubleviedeveronique", String.class);
         assertNotNull(s);
 
         m = new HashMap<String, String>();
         m.put("update", "foo");
-        s = web.clientOf(targetUrl + "/updateAddressBook/myBook").headers(m).post(m, String.class);
+        s = webClient.clientOf(targetUrl + "/updateAddressBook/myBook").headers(m).post(m, String.class);
 
         assertNotNull(s);
 
@@ -111,16 +112,16 @@ public class AddressBookTest {
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
         Map<String, String> m = new HashMap<String, String>();
-        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
+        String s = webClient.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
         assertNotNull(s);
 
         m = new HashMap<String, String>();
         m.put("update", "foo");
-        s = web.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
+        s = webClient.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
 
         assertNotNull(s);
 
-        s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+        s = webClient.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
 
         assertNotNull(s);
         assertEquals(s, "{\"entries\":\"foo - \"}");
@@ -130,25 +131,25 @@ public class AddressBookTest {
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
         Map<String, String> m = new HashMap<String, String>();
-        String s = web.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
+        String s = webClient.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
         assertNotNull(s);
 
         m = new HashMap<String, String>();
         m.put("update", "foo");
-        s = web.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
+        s = webClient.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
 
         assertNotNull(s);
 
-        s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+        s = webClient.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
 
         assertNotNull(s);
         assertEquals(s, "{\"entries\":\"foo - \"}");
 
-        s = web.clientOf(targetUrl + "/deleteAddressBook/myBook").headers(m).delete(String.class);
+        s = webClient.clientOf(targetUrl + "/deleteAddressBook/myBook").headers(m).delete(String.class);
         assertNotNull(s);
 
         try {
-            s = web.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
+            s = webClient.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
             fail("No exception");
         } catch (WebException ex) {
             assertEquals(ex.getClass(), WebException.class);

@@ -37,10 +37,8 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
+import org.sonatype.restsimple.api.WebClient;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -106,12 +104,12 @@ public class WebProxy {
 
         private final ServiceDefinitionInfo serviceDefinitionInfo;
         private final URI uri;
-        private final Web web;
+        private final WebClient webClient;
 
         public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo) {
             this.serviceDefinitionInfo = serviceDefinitionInfo;
             this.uri = uri;
-            this.web = new Web(serviceDefinitionInfo.serviceDefinition());
+            this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition());
         }
 
         @Override
@@ -155,25 +153,25 @@ public class WebProxy {
             Object body = retrieveBody(inf.getMethod(), args);
             switch (m) {
                 case GET:
-                    return web.clientOf(builder.toString())
+                    return webClient.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
                             .get(inf.getReturnClassType());
                 case POST:
-                    return web.clientOf(builder.toString())
+                    return webClient.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
                             .post(body, inf.getReturnClassType());
                 case DELETE:
-                    return web.clientOf(builder.toString())
+                    return webClient.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
                             .delete(body, inf.getReturnClassType());
                 case PUT:
-                    return web.clientOf(builder.toString())
+                    return webClient.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))                            
