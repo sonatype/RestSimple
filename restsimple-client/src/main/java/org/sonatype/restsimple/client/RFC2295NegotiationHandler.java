@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * A NegotiationHandler based on RFC 2295 http://www.ietf.org/rfc/rfc2295.txt 
  */
-public class RFC2295NegotiateHandler implements NegotiateHandler {
+public class RFC2295NegotiationHandler implements NegotiationHandler {
 
     @Override
     public String challengedHeaderName() {

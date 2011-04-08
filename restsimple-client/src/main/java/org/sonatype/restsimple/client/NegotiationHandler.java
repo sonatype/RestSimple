@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Implementation of this class implements the necessary handling for content and version negotiation
  */
-public interface NegotiateHandler {
+public interface NegotiationHandler {
 
     /**
      * Return the name of the challenged header.

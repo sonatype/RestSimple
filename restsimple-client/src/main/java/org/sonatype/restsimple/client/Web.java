@@ -27,11 +27,9 @@ import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +89,7 @@ public class Web {
     private Map<String, String> queryString;
     private Map<String, String> matrixParams = Collections.emptyMap();
     private List<MediaType> supportedContentType = new ArrayList<MediaType>();
-    private NegotiateHandler negotiateHandler;
+    private NegotiationHandler negotiateHandler;
 
     /**
      * Create a Web Client
@@ -115,7 +113,7 @@ public class Web {
      * @param serviceDefinition a {@link ServiceDefinition}
      */
     public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
-        this(ahcConfig, serviceDefinition, new RFC2295NegotiateHandler());
+        this(ahcConfig, serviceDefinition, new RFC2295NegotiationHandler());
     }
     
     /**
@@ -123,9 +121,9 @@ public class Web {
      * can be made using the {@link DefaultAhcConfig}
      * @param ahcConfig An {@link DefaultAhcConfig}
      * @param serviceDefinition a {@link ServiceDefinition}
-     * @param negotiateHandler an implementation of {@link NegotiateHandler}
+     * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
-    public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiateHandler negotiateHandler) {
+    public Web(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this.ahcConfig = ahcConfig;
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
@@ -135,9 +133,9 @@ public class Web {
     /**
      * Create a Web Client and populate it using the {@link ServiceDefinition}.
      * @param serviceDefinition a {@link ServiceDefinition}
-     * @param negotiateHandler an implementation of {@link NegotiateHandler}
+     * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
-    public Web(ServiceDefinition serviceDefinition, NegotiateHandler negotiateHandler) {
+    public Web(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this(new DefaultAhcConfig(), serviceDefinition, negotiateHandler);
     }
 
@@ -145,9 +143,9 @@ public class Web {
      * Create a Web Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
      * @param ahcConfig An {@link DefaultAhcConfig}
-     * @param negotiateHandler an implementation of {@link NegotiateHandler}
+     * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
-    public Web(DefaultAhcConfig ahcConfig, NegotiateHandler negotiateHandler) {
+    public Web(DefaultAhcConfig ahcConfig, NegotiationHandler negotiateHandler) {
         this(ahcConfig, new DefaultServiceDefinition(), negotiateHandler);
     }
 
