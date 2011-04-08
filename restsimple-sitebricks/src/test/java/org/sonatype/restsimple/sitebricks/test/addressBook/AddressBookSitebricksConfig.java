@@ -27,7 +27,7 @@ import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddressBookModuleConfig extends GuiceServletContextListener {
+public class AddressBookSitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {

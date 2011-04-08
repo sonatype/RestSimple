@@ -26,7 +26,7 @@ import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PetstoreModuleConfig extends GuiceServletContextListener {
+public class PetstoreSitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {

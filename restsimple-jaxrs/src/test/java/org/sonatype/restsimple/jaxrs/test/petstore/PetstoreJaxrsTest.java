@@ -9,7 +9,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.sitebricks.test.petstore;
+package org.sonatype.restsimple.jaxrs.test.petstore;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
@@ -30,9 +30,9 @@ import java.net.ServerSocket;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class PetstoreModuleTest {
+public class PetstoreJaxrsTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(PetstoreModuleTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(PetstoreJaxrsTest.class);
 
     protected Server server;
 
@@ -68,7 +68,7 @@ public class PetstoreModuleTest {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new PetstoreModuleConfig());
+        context.addEventListener(new PetstoreJaxrsConfig());
         context.addServlet(DefaultServlet.class, "/");
 
         server.setHandler(context);
@@ -86,7 +86,7 @@ public class PetstoreModuleTest {
         logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePost(targetUrl + "/echo/myPets").setBody("{\"name\":\"pouetpouet\"}").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePost(targetUrl + "/echo/myPets").setBody("{\"name\":\"pouetpouet\"}").addHeader("Content-Type", acceptHeader).addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
