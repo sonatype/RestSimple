@@ -42,6 +42,8 @@ import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 
@@ -54,7 +56,7 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
 
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
+        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
 
         List<ServiceDefinition> list = defineServices(injector);
         ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
@@ -62,6 +64,12 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
             generator.generate(sd);
         }
         serve("/*").with(GuiceContainer.class);
+    }
+
+
+    @Override
+    public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
+        return new RFC2295NegotiationTokenGenerator();
     }
 
 }

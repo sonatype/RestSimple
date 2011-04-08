@@ -32,12 +32,12 @@ public class RestSimpleSitebricksModule extends AbstractModule {
 
     private final Binder binder;
     private final ServiceHandlerMapper mapper;
-    private final Class<? extends NegotiationTokenGenerator> tokenGenerator;
+    private final NegotiationTokenGenerator tokenGenerator;
     private final Class<? extends ServiceDefinitionProvider> provider;
 
     public RestSimpleSitebricksModule(Binder binder,
                                       ServiceHandlerMapper mapper,
-                                      Class<? extends NegotiationTokenGenerator> tokenGenerator,
+                                      NegotiationTokenGenerator tokenGenerator,
                                       Class<? extends ServiceDefinitionProvider> provider) {
         this.binder = binder;
         this.mapper = mapper;
@@ -45,22 +45,22 @@ public class RestSimpleSitebricksModule extends AbstractModule {
         this.provider = provider;
     }
 
-    public RestSimpleSitebricksModule(Binder binder, Class<? extends NegotiationTokenGenerator> tokenGenerator) {
+    public RestSimpleSitebricksModule(Binder binder, NegotiationTokenGenerator tokenGenerator) {
         this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class);
     }
 
     public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper) {
-        this(binder, mapper, RFC2295NegotiationTokenGenerator.class, SitebricksServiceDefinitionProvider.class);
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
     }
 
     public RestSimpleSitebricksModule(Binder binder) {
-        this(binder, new ServiceHandlerMapper(), RFC2295NegotiationTokenGenerator.class, SitebricksServiceDefinitionProvider.class);
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
     }
 
     @Override
     protected void configure() {
         bind(ServiceHandlerMapper.class).toInstance(mapper);
-        bind(NegotiationTokenGenerator.class).to(tokenGenerator);
+        bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){

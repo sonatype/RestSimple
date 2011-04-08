@@ -18,7 +18,9 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import java.util.List;
 
 /**
- * As simple interface allowing applications to define a list of {@link ServiceDefinition} to deploy.
+ * As simple interface allowing applications to define a list of {@link ServiceDefinition} to deploy, and configure
+ * the server side functionality.
+ * 
  */
 public interface ServiceDefinitionConfig {
 
@@ -28,4 +30,11 @@ public interface ServiceDefinitionConfig {
      * @return the a list of ServiceDefinition.
      */
     List<ServiceDefinition> defineServices(Injector injector);
+
+    /**
+     * Configure the {@link NegotiationTokenGenerator} used for content/version negotiation.
+     * @return an instance of {@link NegotiationTokenGenerator}
+     */
+    NegotiationTokenGenerator configureNegotiationTokenGenerator();
+    
 }

@@ -32,12 +32,12 @@ public class JaxrsModule extends AbstractModule {
 
     private final Binder binder;
     private final ServiceHandlerMapper mapper;
-    private final Class<? extends NegotiationTokenGenerator> tokenGenerator;
+    private final NegotiationTokenGenerator tokenGenerator;
     private final Class<? extends ServiceDefinitionProvider> provider;
 
     public JaxrsModule(Binder binder,
                        ServiceHandlerMapper mapper,
-                       Class<? extends NegotiationTokenGenerator> tokenGenerator,
+                       NegotiationTokenGenerator tokenGenerator,
                        Class<? extends ServiceDefinitionProvider> provider) {
         
         this.binder = binder;
@@ -46,22 +46,22 @@ public class JaxrsModule extends AbstractModule {
         this.provider = provider;
     }
 
-    public JaxrsModule(Binder binder, Class<? extends NegotiationTokenGenerator> tokenGenerator) {
+    public JaxrsModule(Binder binder, NegotiationTokenGenerator tokenGenerator) {
         this(binder, new ServiceHandlerMapper(), tokenGenerator, JAXRSServiceDefinitionProvider.class);
     }
 
     public JaxrsModule(Binder binder, ServiceHandlerMapper mapper) {
-        this(binder, mapper, RFC2295NegotiationTokenGenerator.class, JAXRSServiceDefinitionProvider.class);
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class);
     }
 
     public JaxrsModule(Binder binder) {
-        this(binder, new ServiceHandlerMapper(), RFC2295NegotiationTokenGenerator.class, JAXRSServiceDefinitionProvider.class);
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class);
     }
 
     @Override
     protected void configure() {
         bind(ServiceHandlerMapper.class).toInstance(mapper);
-        bind(NegotiationTokenGenerator.class).to(tokenGenerator);
+        bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>() {

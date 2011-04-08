@@ -41,6 +41,8 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 
@@ -53,12 +55,17 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
 
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
+        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
 
         List<ServiceDefinition> list = defineServices(injector);
         ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
         for (ServiceDefinition sd : list) {
             generator.generate(sd);
         }
+    }
+    
+    @Override
+    public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
+        return new RFC2295NegotiationTokenGenerator();
     }
 }
