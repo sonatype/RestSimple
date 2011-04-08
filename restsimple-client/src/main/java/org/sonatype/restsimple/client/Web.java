@@ -27,9 +27,11 @@ import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -384,9 +386,9 @@ public class Web {
     }
 
     private String negotiate(UniformInterfaceException u) {
-        return negotiateHandler.negotiate(supportedContentType, u.getResponse());
+        return negotiateHandler.negotiate(supportedContentType, u.getResponse().getHeaders(), u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
     }
-
+    
     private WebResource buildRequest() {
         asyncClient = AhcHttpClient.create(ahcConfig);
         UriBuilder u = UriBuilder.fromUri(uri);

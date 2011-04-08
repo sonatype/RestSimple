@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.sonatype.restsimple.client;
 
-import com.sun.jersey.api.client.ClientResponse;
 import org.sonatype.restsimple.api.MediaType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of this class implements the necessary handling for content and version negotiation
@@ -28,15 +28,16 @@ public interface NegotiateHandler {
      */
     String challengedHeaderName();
 
-
     /**
      * Decides if it is possible to challenge the server from a set of response's headers.
      *
-     * @param mediaTypes a List of supported media type.
-     * @param response   the response's instance
+     * @param mediaTypes   a List of supported media type.
+     * @param headers      the response's headers
+     * @param statusCode   the response's status code
+     * @param reasonPhrase the response's reason phrase
      * @return a new Accept header value to use for challenging the server
      * @throws WebException if no challenge is possible.
      */
-    public String negotiate(List<MediaType> mediaTypes, ClientResponse response) throws WebException;
+    public String negotiate(List<MediaType> mediaTypes, Map<String, List<String>> headers, int statusCode, String reasonPhrase) throws WebException;
 
 }

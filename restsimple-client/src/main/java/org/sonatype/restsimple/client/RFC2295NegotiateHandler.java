@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.sonatype.restsimple.client;
 
-import com.sun.jersey.api.client.ClientResponse;
 import org.sonatype.restsimple.api.MediaType;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A NegotiationHandler based on RFC 2295 http://www.ietf.org/rfc/rfc2295.txt 
@@ -30,9 +30,9 @@ public class RFC2295NegotiateHandler implements NegotiateHandler {
      * {@inheritDoc}
      */
     @Override
-    public String negotiate(List<MediaType> mediaTypes, ClientResponse response) throws WebException {
-        List<String> list = response.getHeaders().get("Alternates");
-        if ( list != null && response.getStatus() == 406 && mediaTypes.size() > 0) {
+    public String negotiate(List<MediaType> mediaTypes, Map<String,List<String>> headers, int statusCode, String reasonPhrase) throws WebException {
+        List<String> list = headers.get("Alternates");
+        if ( list != null && statusCode == 406 && mediaTypes.size() > 0) {
             String[] serverChallenge = list.get(0).split(",");
             for (String challenge : serverChallenge) {
                 int typePos = challenge.indexOf("type");
@@ -47,6 +47,6 @@ public class RFC2295NegotiateHandler implements NegotiateHandler {
                 }
             }
         }
-        throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
+        throw new WebException(statusCode, reasonPhrase);
     }
 }
