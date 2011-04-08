@@ -38,6 +38,7 @@ import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.api.WebClient;
+import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -91,6 +92,20 @@ public class WebProxy {
      * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
      * @param clazz A class an interface annotated with jaxrs annotations.
      * @param uri the based uri.
+     * @param config an instance of {@link DefaultAhcConfig} which allow configuring the {@link org.sonatype.spice.jersey.client.ahc.AhcHttpClient}
+     * @param <T>
+     * @return an instance of T
+     */
+    public static final <T> T createProxy(Class<T> clazz, URI uri, DefaultAhcConfig config ) {
+
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), config));
+    }
+
+    /**
+     * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
+     * @param clazz A class an interface annotated with jaxrs annotations.
+     * @param uri the based uri.
      * @param <T>
      * @return an instance of T
      */
@@ -107,9 +122,13 @@ public class WebProxy {
         private final WebClient webClient;
 
         public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo) {
+            this(uri,serviceDefinitionInfo, new DefaultAhcConfig());
+        }
+
+        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, DefaultAhcConfig config) {
             this.serviceDefinitionInfo = serviceDefinitionInfo;
             this.uri = uri;
-            this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition());
+            this.webClient = new WebAHCClient(config, serviceDefinitionInfo.serviceDefinition());
         }
 
         @Override

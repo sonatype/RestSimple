@@ -13,6 +13,9 @@ package org.sonatype.restsimple.api;
 
 import java.util.Map;
 
+/**
+ * A Web client for RestSimple. 
+ */
 public interface WebClient {
     WebClient headers(Map<String, String> headers);
 
