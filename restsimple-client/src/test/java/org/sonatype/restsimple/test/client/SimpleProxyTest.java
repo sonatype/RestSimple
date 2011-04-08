@@ -11,18 +11,18 @@
  *******************************************************************************/
 package org.sonatype.restsimple.test.client;
 
+import org.sonatype.restsimple.annotation.Delete;
+import org.sonatype.restsimple.annotation.Get;
+import org.sonatype.restsimple.annotation.Path;
+import org.sonatype.restsimple.annotation.PathParam;
+import org.sonatype.restsimple.annotation.Post;
+import org.sonatype.restsimple.annotation.Produces;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import java.net.URI;
 
 import static org.testng.Assert.assertEquals;
@@ -33,22 +33,22 @@ public class SimpleProxyTest extends BaseTest {
 
     public static interface ProxyClient {
 
-        @GET
+        @Get
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
 
-        @GET
+        @Get
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public String getString(@PathParam("myPet") String path);
 
-        @POST
+        @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(@PathParam("myPet") String myPet, String body);
 
-        @DELETE
+        @Delete
         @Path("deletePet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet delete(@PathParam("myPet") String path);
@@ -57,7 +57,7 @@ public class SimpleProxyTest extends BaseTest {
 
     public static interface ProxyClient2 {
 
-        @POST
+        @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(String body, @PathParam("myPet") String myPety);
@@ -66,7 +66,7 @@ public class SimpleProxyTest extends BaseTest {
 
     public static interface ProxyClient3 {
 
-        @POST
+        @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(Pet body, @PathParam("myPet") String myPety);

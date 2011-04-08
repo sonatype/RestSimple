@@ -11,18 +11,17 @@
  *******************************************************************************/
 package org.sonatype.restsimple.test.client;
 
+import org.sonatype.restsimple.annotation.Get;
+import org.sonatype.restsimple.annotation.HeaderParam;
+import org.sonatype.restsimple.annotation.Path;
+import org.sonatype.restsimple.annotation.PathParam;
+import org.sonatype.restsimple.annotation.Post;
+import org.sonatype.restsimple.annotation.Produces;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import java.net.URI;
 
 import static org.testng.Assert.assertEquals;
@@ -36,7 +35,7 @@ public class HeadersProxyTest extends BaseTest {
         ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
         Pet pet = client.post("myPet", "chatchien", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
-        assertEquals(pet.getName(), "pouetpouet--chatchien");        
+        assertEquals(pet.getName(), "pouetpouet--chatchien");
     }
 
     @Test(timeOut = 20000)
@@ -55,17 +54,17 @@ public class HeadersProxyTest extends BaseTest {
 
     public static interface ProxyClient {
 
-        @GET
+        @Get
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
 
-        @GET
+        @Get
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public String getString(@PathParam("myPet") String path);
 
-        @POST
+        @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(@PathParam("myPet") String myPet, @HeaderParam(PetstoreAction.PET_EXTRA_NAME) String petType, String body);

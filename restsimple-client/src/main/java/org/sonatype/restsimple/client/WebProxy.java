@@ -11,8 +11,21 @@
  *******************************************************************************/
 package org.sonatype.restsimple.client;
 
+import com.google.sitebricks.http.Put;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.annotation.Consumes;
+import org.sonatype.restsimple.annotation.CookieParam;
+import org.sonatype.restsimple.annotation.Delete;
+import org.sonatype.restsimple.annotation.FormParam;
+import org.sonatype.restsimple.annotation.Get;
+import org.sonatype.restsimple.annotation.HeaderParam;
+import org.sonatype.restsimple.annotation.MatrixParam;
+import org.sonatype.restsimple.annotation.Path;
+import org.sonatype.restsimple.annotation.PathParam;
+import org.sonatype.restsimple.annotation.Post;
+import org.sonatype.restsimple.annotation.Produces;
+import org.sonatype.restsimple.annotation.QueryParam;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
@@ -25,19 +38,9 @@ import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.MatrixParam;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -52,22 +55,22 @@ import java.util.Map;
  * {@code
     public static interface ProxyClient {
 
-        @GET
+        @Get
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
 
-        @GET
+        @Get
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public String getString(@PathParam("myPet") String path);
 
-        @POST
+        @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(@PathParam("myPet") String myPet, String body);
 
-        @DELETE
+        @Delete
         @Path("deletePet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet delete(@PathParam("myPet") String path);
@@ -321,28 +324,28 @@ public class WebProxy {
                 HttpMethodInfo httpMethodInfo = null;
                 String pathValue = constructPath(m, path.value());
 
-                if (GET.class.isAssignableFrom(a.getClass())) {
+                if (Get.class.isAssignableFrom(a.getClass())) {
                     sh = new GetServiceHandler(pathValue, new DummyAction());
                     httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.GET,
                             pathValue,
                             m,
                             rootPathString);
                     found = true;
-                } else if (POST.class.isAssignableFrom(a.getClass())) {
+                } else if (Post.class.isAssignableFrom(a.getClass())) {
                     sh = new PostServiceHandler(pathValue, new DummyAction());
                     httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.POST,
                             pathValue,
                             m,
                             rootPathString);
                     found = true;
-                } else if (PUT.class.isAssignableFrom(a.getClass())) {
+                } else if (Put.class.isAssignableFrom(a.getClass())) {
                     sh = new PutServiceHandler(pathValue, new DummyAction());
                     httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.PUT,
                             pathValue,
                             m,
                             rootPathString);
                     found = true;
-                } else if (DELETE.class.isAssignableFrom(a.getClass())) {
+                } else if (Delete.class.isAssignableFrom(a.getClass())) {
                     sh = new DeleteServiceHandler(pathValue, new DummyAction());
                     httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.DELETE,
                             pathValue,
