@@ -22,13 +22,10 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 public class SitebricksServiceDefinitionProvider implements ServiceDefinitionProvider {
 
     @Inject
-    public ServiceDefinitionGenerator generator;
-
-    @Inject
     ServiceHandlerMapper mapper;
 
     @Override
     public ServiceDefinition get() {
-        return new DefaultServiceDefinition(generator, mapper);
+        return new DefaultServiceDefinition(mapper);
     }
 }

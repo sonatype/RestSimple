@@ -39,11 +39,79 @@ package org.sonatype.restsimple.jaxrs.test.addressBook;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import org.sonatype.restsimple.api.Action;
+import org.sonatype.restsimple.api.DeleteServiceHandler;
+import org.sonatype.restsimple.api.GetServiceHandler;
+import org.sonatype.restsimple.api.MediaType;
+import org.sonatype.restsimple.api.PostServiceHandler;
+import org.sonatype.restsimple.api.PutServiceHandler;
+import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
+import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class JAXRSModuleConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new JAXRSServletModule());
+        return Guice.createInjector(new JaxrsConfig() {
+
+            @Override
+            public List<ServiceDefinition> defineServices(Injector injector) {
+                Action action = new AddressBookAction();
+                ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
+                List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
+
+                PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
+                postServiceHandler.addFormParam("updateAddressBook");
+
+                serviceDefinition
+                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
+                        .consuming(MediaType.JSON)
+                        .consuming(MediaType.XML)
+                        .withHandler(new PutServiceHandler("createAddressBook", action))
+                        .withHandler(new GetServiceHandler("getAddressBook", action))
+                        .withHandler(postServiceHandler)
+                        .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
+                list.add(serviceDefinition);
+
+                postServiceHandler = new PostServiceHandler("updateAddressBook", action);
+                postServiceHandler.addFormParam("update");
+                postServiceHandler.addFormParam("update2");
+
+                serviceDefinition = injector.getInstance(ServiceDefinition.class);
+                serviceDefinition
+                        .withPath("/foo")
+                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
+                        .consuming(MediaType.JSON)
+                        .consuming(MediaType.XML)
+                        .withHandler(new PutServiceHandler("createAddressBook", action))
+                        .withHandler(new GetServiceHandler("getAddressBook", action))
+                        .withHandler(postServiceHandler)
+                        .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
+                list.add(serviceDefinition);
+
+
+                postServiceHandler = new PostServiceHandler("updateAddressBook", action);
+                postServiceHandler
+                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                        .consumeWith(new MediaType("text", "plain"), String.class);
+
+                serviceDefinition = injector.getInstance(ServiceDefinition.class);
+                serviceDefinition
+                        .withPath("/bar")
+                        .withHandler(new PutServiceHandler("createAddressBook", action))
+                        .withHandler(new GetServiceHandler("getAddressBook", action))
+                        .withHandler(postServiceHandler)
+                        .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
+                list.add(serviceDefinition);
+
+                return list;
+            }
+        });
     }
 }

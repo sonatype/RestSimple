@@ -10,22 +10,22 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package org.sonatype.restsimple.jaxrs.impl;
+package org.sonatype.restsimple.spi;
 
-import com.google.inject.Inject;
-import org.sonatype.restsimple.api.DefaultServiceDefinition;
+import com.google.inject.Injector;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
-import org.sonatype.restsimple.spi.ServiceDefinitionProvider;
-import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
-public class JAXRSServiceDefinitionProvider implements ServiceDefinitionProvider {
+import java.util.List;
 
-    @Inject
-    ServiceHandlerMapper mapper;
+/**
+ * As simple interface allowing applications to define a list of {@link ServiceDefinition} to deploy.
+ */
+public interface ServiceDefinitionConfig {
 
-    @Override
-    public ServiceDefinition get() {
-        return new DefaultServiceDefinition(mapper);
-    }
+    /**
+     * Return the a list of ServiceDefinition.
+     * @param injector a Guice {@link Injector}
+     * @return the a list of ServiceDefinition.
+     */
+    List<ServiceDefinition> defineServices(Injector injector);
 }

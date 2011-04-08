@@ -30,9 +30,9 @@ import java.net.ServerSocket;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class SitebricksModuleTest {
+public class AddressBookModuleTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SitebricksModuleTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AddressBookModuleTest.class);
 
     protected Server server;
 
@@ -68,7 +68,7 @@ public class SitebricksModuleTest {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new SitebricksModuleConfig());
+        context.addEventListener(new AddressBookModuleConfig());
         context.addServlet(DefaultServlet.class, "/");
 
         server.setHandler(context);

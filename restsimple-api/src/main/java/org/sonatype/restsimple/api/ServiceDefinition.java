@@ -50,8 +50,7 @@ import java.util.List;
  * <p>
  *     {@link Action#action(ActionContext)}
  * <p>
- * Note. A {@link ServiceDefinition} gets generated only when {@link ServiceDefinition#bind} gets invoked. You can
- * reconfigure the service at any moment and regenerate it's associated resource at any moment as well.
+ *
  */
 public interface ServiceDefinition {
 
@@ -115,18 +114,5 @@ public interface ServiceDefinition {
      * @return an unmodifiable {@link List} of {@link org.sonatype.restsimple.api.MediaType}
      */
     List<MediaType> mediaToProduce();
-
-    /**
-     * Bind the {@link ServiceDefinition}. This operation may generate a new class based on the information this class is
-     * holding. The bind operation can be invoked many time and will generate a server side component on every invocation.
-     */
-    void bind();
-
-    /**
-     * Set the {@link org.sonatype.restsimple.spi.ServiceDefinitionGenerator} used to generate the REST resource.
-     * @param generator the {@link org.sonatype.restsimple.spi.ServiceDefinitionGenerator}
-     * @return the current {@link ServiceDefinition}
-     */
-    ServiceDefinition generateWith(ServiceDefinitionGenerator generator);
 
 }

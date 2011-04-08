@@ -20,9 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A default {@link ServiceDefinition} which can be injected or created directly. If you aren't using injection,
- * you must specify a {@link ServiceDefinitionGenerator} if you want your {@link ServiceDefinition}
- * to be generated and deployed when invoking the {@link org.sonatype.restsimple.api.ServiceDefinition#bind()} method.
+ * A default {@link ServiceDefinition} which can be injected or created directly.
  *
  */
 public class DefaultServiceDefinition implements ServiceDefinition {
@@ -30,26 +28,13 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
     private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
-    private ServiceDefinitionGenerator generator;
     private final ServiceHandlerMapper serviceHandlerMapper;
 
     public DefaultServiceDefinition() {
-        this.generator = null;
-        this.serviceHandlerMapper = new ServiceHandlerMapper();
-    }
-
-    public DefaultServiceDefinition(ServiceDefinitionGenerator generator) {
-        this.generator = generator;
         this.serviceHandlerMapper = new ServiceHandlerMapper();
     }
 
     public DefaultServiceDefinition(ServiceHandlerMapper serviceHandlerMapper) {
-        this.generator = null;
-        this.serviceHandlerMapper = serviceHandlerMapper;
-    }
-
-    public DefaultServiceDefinition(ServiceDefinitionGenerator generator, ServiceHandlerMapper serviceHandlerMapper) {
-        this.generator = generator;
         this.serviceHandlerMapper = serviceHandlerMapper;
     }
 
@@ -120,30 +105,4 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     public List<MediaType> mediaToProduce() {
         return Collections.unmodifiableList(mediaTypeToProduce);
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void bind() {
-        if (basePath == null) {
-            throw new NullPointerException("withPath must be invoked with a non null value");
-        }
-
-        if (generator == null) {
-            throw new NullPointerException("bind() must be invoked with a non null ServiceDefinitionGenerator value");
-        }
-
-        generator.generate(this);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ServiceDefinition generateWith(ServiceDefinitionGenerator generator) {
-        this.generator = generator;
-        return this;
-    }
-
 }

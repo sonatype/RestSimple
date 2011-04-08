@@ -126,14 +126,13 @@ public class WebDriver {
                         for(ServiceHandler handler: serviceDefinition.serviceHandlers()) {
                             mapper.addServiceHandler(handler);
                         }
-                        
+
                         if (provider.equals(PROVIDER.JAXRS)) {
-                            serviceDefinition.generateWith(injector.getInstance(JAXRSServiceDefinitionGenerator.class));
+                            injector.getInstance(JAXRSServiceDefinitionGenerator.class).generate(serviceDefinition);
                             serve("/*").with(GuiceContainer.class);
                         } else {
-                            serviceDefinition.generateWith(injector.getInstance(SitebricksServiceDefinitionGenerator.class));
+                            injector.getInstance(SitebricksServiceDefinitionGenerator.class).generate(serviceDefinition);
                         }
-                        serviceDefinition.bind();
                     }
                 });
             }
