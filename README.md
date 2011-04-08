@@ -21,10 +21,11 @@ A RestSimple application consist of ServiceDefinition, ServiceHandler and Action
 Action action = new PetstoreAction();
 DefaultServiceDefinition serviceDefinition = new DefaultServiceDefinition();
 serviceDefinition
-  .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-  .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+    .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
+    .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
 
 First, you need to define an action. An action is where the business logic reside. The Action interface is simply defined as:
+
 
 public interface Action<T, U> {
 
