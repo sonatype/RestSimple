@@ -55,9 +55,9 @@ import java.net.ServerSocket;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class JAXRSModuleTest {
+public class AddressBookTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(JAXRSModuleTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(AddressBookTest.class);
 
     protected Server server;
 
@@ -93,7 +93,7 @@ public class JAXRSModuleTest {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new JAXRSModuleConfig());
+        context.addEventListener(new AddressBookModuleConfig());
         context.addServlet(DefaultServlet.class, "/");
 
         server.setHandler(context);

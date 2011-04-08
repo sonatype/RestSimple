@@ -52,7 +52,7 @@ import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JAXRSModuleConfig extends GuiceServletContextListener {
+public class AddressBookModuleConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {

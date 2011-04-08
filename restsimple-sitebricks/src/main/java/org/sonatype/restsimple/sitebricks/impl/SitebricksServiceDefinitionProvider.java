@@ -15,7 +15,6 @@ package org.sonatype.restsimple.sitebricks.impl;
 import com.google.inject.Inject;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionProvider;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
