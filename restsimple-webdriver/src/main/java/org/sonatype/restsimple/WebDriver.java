@@ -63,7 +63,7 @@ public class WebDriver {
     private static int findFreePort() throws IOException {
         ServerSocket socket = null;
         try {
-            socket = new ServerSocket(0);
+            socket = new ServerSocket(0);                                                                                                                                             gd
 
             return socket.getLocalPort();
         }

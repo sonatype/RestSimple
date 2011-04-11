@@ -462,14 +462,17 @@ public class WebAHCClient implements WebClient {
         WebResource.Builder builder = r.getRequestBuilder();
         for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
 
+            // TODO: not optimal
+            boolean mapUri = r.getURI().getPath().contains(s.path());
+
             List<MediaType> list;
-            if (type == TYPE.GET && GetServiceHandler.class.isAssignableFrom(s.getClass())) {
+            if (mapUri && type == TYPE.GET && GetServiceHandler.class.isAssignableFrom(s.getClass())) {
                 list = s.mediaToProduce();
-            } else if (type == TYPE.POST && PostServiceHandler.class.isAssignableFrom(s.getClass())) {
+            } else if (mapUri &&  type == TYPE.POST && PostServiceHandler.class.isAssignableFrom(s.getClass())) {
                 list = s.mediaToProduce();
-            } else if (type == TYPE.PUT && PutServiceHandler.class.isAssignableFrom(s.getClass())) {
+            } else if (mapUri &&  type == TYPE.PUT && PutServiceHandler.class.isAssignableFrom(s.getClass())) {
                 list = s.mediaToProduce();
-            } else if (type == TYPE.DELETE && DeleteServiceHandler.class.isAssignableFrom(s.getClass())) {
+            } else if (mapUri && type == TYPE.DELETE && DeleteServiceHandler.class.isAssignableFrom(s.getClass())) {
                 list = s.mediaToProduce();
             } else {
                 list = new ArrayList<MediaType>();

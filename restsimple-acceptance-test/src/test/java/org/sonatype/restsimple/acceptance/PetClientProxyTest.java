@@ -63,7 +63,7 @@ public class PetClientProxyTest {
         serviceDefinition = new DefaultServiceDefinition();
         serviceDefinition
                 .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(new MediaType("text", "plain")))
                 .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
 
@@ -79,7 +79,7 @@ public class PetClientProxyTest {
 
     @Test(timeOut = 20000)
     public void testBasicPostGenerate() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testBasicPostGenerate");
         ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
         Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
@@ -87,7 +87,7 @@ public class PetClientProxyTest {
 
     @Test(timeOut = 20000)
     public void testBasicGetGenerate() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testBasicGetGenerate");
         ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
         Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
@@ -96,12 +96,12 @@ public class PetClientProxyTest {
         assertNotNull(pet);
 
         String petString = client.getString("myPet");
-        assertEquals(petString, "{\"name\":\"pouetpouet\"}");
+        assertEquals(petString, "Pet{name='pouetpouet'}");
     }
 
     @Test(timeOut = 20000)
     public void testDelete() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testDelete");
         ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
         Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
@@ -110,7 +110,7 @@ public class PetClientProxyTest {
         assertNotNull(pet);
 
         try {
-            client.getString("myPet");           
+            client.getString("myPet");
             fail("No exception");
         } catch (WebException ex) {
             assertEquals(ex.getClass(), WebException.class);
@@ -126,7 +126,7 @@ public class PetClientProxyTest {
         
         @Get
         @Path("getPetString")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Produces("text/plain")
         public String getString(@PathParam("myPet") String path);
 
         @Post
@@ -136,7 +136,7 @@ public class PetClientProxyTest {
 
         @Delete
         @Path("deletePet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet delete(@PathParam("myPet") String path);
 
     }
