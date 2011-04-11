@@ -34,44 +34,61 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.jaxrs.guice;
+package org.sonatype.restsimple.jaxrs.impl.jersey;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.ServletModule;
-import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
-import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
-import org.sonatype.restsimple.jaxrs.impl.jersey.ContentNegotiationFilter;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
-import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
-import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
-import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
-import java.util.List;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-/**
- * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
- */
-public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig{
+@Singleton
+public class ContentNegotiationFilter implements Filter {
+
+    private final ServiceHandlerMapper mapper;
+
+    private final NegotiationTokenGenerator negotiationTokenGenerator;
+
+    @Inject
+    public ContentNegotiationFilter(ServiceHandlerMapper mapper, NegotiationTokenGenerator negotiationTokenGenerator) {
+        this.mapper = mapper;
+        this.negotiationTokenGenerator = negotiationTokenGenerator;
+    }
+
 
     @Override
-    protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
+    public void init(FilterConfig filterConfig) throws ServletException {
+    }
 
-        List<ServiceDefinition> list = defineServices(injector);
-        ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
-        for (ServiceDefinition sd: list) {
-            generator.generate(sd);
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+        HttpServletRequest hreq = HttpServletRequest.class.cast(request);
+        String pathName = hreq.getServletPath().split("/")[1];
+
+        ServiceHandler serviceHandler = mapper.map(pathName);
+        // TODO: Must add a special header in Jersey generation so we don't add the header for all request.
+        if (serviceHandler != null) {
+            HttpServletResponse hres = HttpServletResponse.class.cast(response);
+            hres.addHeader(negotiationTokenGenerator.challengedHeaderName(),
+                           negotiationTokenGenerator.generateNegotiationHeader(pathName, serviceHandler.mediaToProduce()));
         }
-        filter("/*").through(ContentNegotiationFilter.class);
-        serve("/*").with(GuiceContainer.class);
-    }
+        chain.doFilter(request, response);
 
+    }
 
     @Override
-    public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
-        return new RFC2295NegotiationTokenGenerator();
-    }
+    public void destroy() {
 
+    }
 }

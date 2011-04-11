@@ -26,6 +26,7 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.restsimple.jaxrs.impl.jersey.ContentNegotiationFilter;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
@@ -63,7 +64,7 @@ public class WebDriver {
     private static int findFreePort() throws IOException {
         ServerSocket socket = null;
         try {
-            socket = new ServerSocket(0);                                                                                                                                             gd
+            socket = new ServerSocket(0);                                                                                                                                            
 
             return socket.getLocalPort();
         }
@@ -129,6 +130,7 @@ public class WebDriver {
 
                         if (provider.equals(PROVIDER.JAXRS)) {
                             injector.getInstance(JAXRSServiceDefinitionGenerator.class).generate(serviceDefinition);
+                            filter("/*").through(ContentNegotiationFilter.class);                            
                             serve("/*").with(GuiceContainer.class);
                         } else {
                             injector.getInstance(SitebricksServiceDefinitionGenerator.class).generate(serviceDefinition);

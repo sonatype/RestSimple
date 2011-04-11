@@ -62,6 +62,7 @@ public class JaxrsModule extends AbstractModule {
     protected void configure() {
         bind(ServiceHandlerMapper.class).toInstance(mapper);
         bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
+        binder.bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
         binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>() {
