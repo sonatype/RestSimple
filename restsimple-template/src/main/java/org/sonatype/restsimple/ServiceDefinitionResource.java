@@ -18,6 +18,7 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
+import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,7 +51,7 @@ import java.util.Map;
  * <p/>
  * NOTE: This class is not used, but we do instead generate some form ot it based on {@link org.sonatype.restsimple.api.ServiceDefinition}
  */
-@Path("/{path}/{method}/{id}/")
+@Path("/{method}/{id}/")
 @Produces("application/vnd.org.sonatype.rest+json")
 @Consumes("application/vnd.org.sonatype.rest+json")
 public class ServiceDefinitionResource {
@@ -99,9 +101,10 @@ public class ServiceDefinitionResource {
     @POST
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public <T> Response postWithBody(@PathParam("method") String service, @PathParam("id") String value, T jacksonObject) {
-        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = invokeAction("post", service, value, null, jacksonObject);
+    public Response postWithBody(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Pet jacksonObject) {
+        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and id {} ", service, value);
+
+        Object response = invokeAction("post", service, value, uriInfo.getQueryParameters(), jacksonObject);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
