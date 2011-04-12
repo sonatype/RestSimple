@@ -18,7 +18,6 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -101,7 +100,7 @@ public class ServiceDefinitionResource {
     @POST
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Response postWithBody(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Pet jacksonObject) {
+    public Response postWithBody(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Object jacksonObject) {
         logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and id {} ", service, value);
 
         Object response = invokeAction("post", service, value, uriInfo.getQueryParameters(), jacksonObject);
