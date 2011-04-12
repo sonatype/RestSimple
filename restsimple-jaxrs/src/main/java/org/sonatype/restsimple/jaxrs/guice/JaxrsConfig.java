@@ -41,19 +41,21 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
+import org.sonatype.restsimple.jaxrs.impl.GenericMessageBodyWriter;
+import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
  */
-public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig{
+public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
 
     @Override
     protected final void configureServlets() {
@@ -61,16 +63,20 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
 
         List<ServiceDefinition> list = defineServices(injector);
         ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
-        for (ServiceDefinition sd: list) {
+        for (ServiceDefinition sd : list) {
             generator.generate(sd);
         }
+         
+        HashMap<String, String> initParams = new HashMap<String, String>();
+        initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+
         filter("/*").through(ContentNegotiationFilter.class);
-        serve("/*").with(GuiceContainer.class);
+        serve("/*").with(GuiceContainer.class, initParams);
     }
 
 
     @Override
-    public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
+    public NegotiationTokenGenerator configureNegotiationTokenGenerator() {
         return new RFC2295NegotiationTokenGenerator();
     }
 

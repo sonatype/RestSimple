@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.sonatype.restsimple.common.test.petstore;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
 public class Pet {
 
     private String name;

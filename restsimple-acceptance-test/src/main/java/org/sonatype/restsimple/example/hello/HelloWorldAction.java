@@ -47,9 +47,9 @@ public class HelloWorldAction implements Action {
         } else if (actionContext.pathName().equalsIgnoreCase("sayPlainHtmlHello")) {
             return sayPlainHtmlHello(actionContext.pathValue());
         } else if (actionContext.pathName().equalsIgnoreCase("sayPlainXmlHello")) {
-            return new HelloWorldMediaType(sayPlainXmlHello(actionContext.pathValue()));
+            return new HelloWorld(sayPlainXmlHello(actionContext.pathValue()));
         } else {
-            return new HelloWorldMediaType(sayPlainJsonHello(actionContext.pathValue()));
+            return new HelloWorld(sayPlainJsonHello(actionContext.pathValue()));
         }
     }
 }

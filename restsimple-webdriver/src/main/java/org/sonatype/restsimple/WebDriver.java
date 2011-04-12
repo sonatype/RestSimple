@@ -25,23 +25,26 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
-import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
+import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashMap;
 
 /**
  * Simple utilities class that configure Jetty and properly bind a {@link ServiceDefinition} to
  * its {@link org.sonatype.restsimple.spi.ServiceDefinitionGenerator}. The purpose of this class is to easy unit test
- * development. 
+ * development.
  */
 public class WebDriver {
 
-    public static enum PROVIDER {JAXRS, SITEBRICKS}
+    public static enum PROVIDER {
+        JAXRS, SITEBRICKS
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(WebDriver.class);
 
@@ -64,7 +67,7 @@ public class WebDriver {
     private static int findFreePort() throws IOException {
         ServerSocket socket = null;
         try {
-            socket = new ServerSocket(0);                                                                                                                                            
+            socket = new ServerSocket(0);
 
             return socket.getLocalPort();
         }
@@ -78,7 +81,7 @@ public class WebDriver {
     public static WebDriver getDriver() throws Exception {
         return getDriver(PROVIDER.SITEBRICKS);
     }
-         
+
     public static WebDriver getDriver(PROVIDER provider) throws Exception {
 
         int port = findFreePort();
@@ -89,9 +92,9 @@ public class WebDriver {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addServlet(DefaultServlet.class, "/");                        
+        context.addServlet(DefaultServlet.class, "/");
         server.setHandler(context);
-        
+
         WebDriver w = new WebDriver(server, targetUrl, context);
         w.provider = provider;
         return w;
@@ -102,7 +105,7 @@ public class WebDriver {
         return this;
     }
 
-    public String getUri(){
+    public String getUri() {
         return targetUrl;
     }
 
@@ -112,7 +115,7 @@ public class WebDriver {
             @Override
             protected Injector getInjector() {
                 return Guice.createInjector(new ServletModule() {
-                    @Override                    
+                    @Override
                     public void configureServlets() {
                         Injector injector;
                         if (provider.equals(PROVIDER.JAXRS)) {
@@ -124,14 +127,17 @@ public class WebDriver {
                         // If the ServiceDefinition was created without using injection, we need to get the proper
                         // list of ServiceHandler as more than one instance of ServiceHandlerMapper exist
                         ServiceHandlerMapper mapper = injector.getInstance(ServiceHandlerMapper.class);
-                        for(ServiceHandler handler: serviceDefinition.serviceHandlers()) {
+                        for (ServiceHandler handler : serviceDefinition.serviceHandlers()) {
                             mapper.addServiceHandler(handler);
                         }
 
                         if (provider.equals(PROVIDER.JAXRS)) {
                             injector.getInstance(JAXRSServiceDefinitionGenerator.class).generate(serviceDefinition);
-                            filter("/*").through(ContentNegotiationFilter.class);                            
-                            serve("/*").with(GuiceContainer.class);
+                            HashMap<String, String> initParams = new HashMap<String, String>();
+                            initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+
+                            filter("/*").through(ContentNegotiationFilter.class);
+                            serve("/*").with(GuiceContainer.class, initParams);
                         } else {
                             injector.getInstance(SitebricksServiceDefinitionGenerator.class).generate(serviceDefinition);
                         }

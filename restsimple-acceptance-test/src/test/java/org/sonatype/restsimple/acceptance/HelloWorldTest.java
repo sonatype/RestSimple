@@ -111,9 +111,9 @@ public class HelloWorldTest {
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);
         System.out.println(r.getResponseBody());
-        assertEquals(r.getResponseBody(), "<org.sonatype.restsimple.example.hello.HelloWorldMediaType>\n" +
+        assertEquals(r.getResponseBody().trim(), "<org.sonatype.restsimple.example.hello.HelloWorld>\n" +
                 "  <helloWorld>sonatype</helloWorld>\n" +
-                "</org.sonatype.restsimple.example.hello.HelloWorldMediaType>");
+                "</org.sonatype.restsimple.example.hello.HelloWorld>".trim());
 
         c.close();
     }

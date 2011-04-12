@@ -15,6 +15,7 @@ import com.ning.http.client.AsyncHttpClientConfig;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.representation.Form;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -31,6 +32,7 @@ import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,6 +124,9 @@ public class WebAHCClient implements WebClient {
      */
     public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this.ahcConfig = ahcConfig;
+
+        ahcConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+        
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
         this.negotiateHandler = negotiateHandler;
@@ -271,7 +276,6 @@ public class WebAHCClient implements WebClient {
     @Override
     public <T> T delete(Class<T> t) {
         try {
-
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(t);
         } catch (UniformInterfaceException u) {

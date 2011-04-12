@@ -65,7 +65,7 @@ public abstract class QueryProxyTest extends BaseTest {
 
         @Get
         @Path("getPetString")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes("text/plain")
         public String getString(@PathParam("myPet") String path);
 

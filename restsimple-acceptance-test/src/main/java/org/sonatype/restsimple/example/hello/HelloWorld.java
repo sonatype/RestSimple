@@ -13,14 +13,14 @@ package org.sonatype.restsimple.example.hello;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
-public class HelloWorldMediaType {
+
+public class HelloWorld {
     public String helloWorld;
 
-    public HelloWorldMediaType(){
+    public HelloWorld(){
     }
 
-    public HelloWorldMediaType(String helloWorld) {
+    public HelloWorld(String helloWorld) {
         this.helloWorld = helloWorld;
     }
 

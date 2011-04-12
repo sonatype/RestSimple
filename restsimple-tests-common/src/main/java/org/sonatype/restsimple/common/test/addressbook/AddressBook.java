@@ -11,16 +11,14 @@
  *******************************************************************************/
 package org.sonatype.restsimple.common.test.addressbook;
 
-import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement
-public class AddressBookMediaType{
+public class AddressBook {
     public String entries = "invalid";
 
-    public AddressBookMediaType(){
+    public AddressBook(){
     }
 
-    public AddressBookMediaType(String entries) {
+    public AddressBook(String entries) {
         this.entries = entries;
     }
 
