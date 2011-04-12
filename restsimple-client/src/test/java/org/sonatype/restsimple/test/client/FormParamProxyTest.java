@@ -27,7 +27,7 @@ import java.net.URI;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class FormParamProxyTest extends BaseTest {
+public abstract class FormParamProxyTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testBasicPostGenerate() throws Throwable {

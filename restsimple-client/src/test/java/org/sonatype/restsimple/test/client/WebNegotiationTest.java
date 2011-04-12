@@ -23,7 +23,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertNotNull;
 
-public class WebNegotiationTest extends BaseTest {
+public abstract class WebNegotiationTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testPostContentNegotiation() throws Throwable {

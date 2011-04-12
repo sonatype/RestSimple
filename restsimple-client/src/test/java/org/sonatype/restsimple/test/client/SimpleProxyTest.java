@@ -29,7 +29,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.FileAssert.fail;
 
-public class SimpleProxyTest extends BaseTest {
+public abstract class SimpleProxyTest extends BaseTest {
 
     public static interface ProxyClient {
 

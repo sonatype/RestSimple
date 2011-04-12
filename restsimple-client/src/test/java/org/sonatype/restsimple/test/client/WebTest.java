@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.FileAssert.fail;
 
-public class WebTest extends BaseTest {
+public abstract class WebTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testPost() throws Throwable {

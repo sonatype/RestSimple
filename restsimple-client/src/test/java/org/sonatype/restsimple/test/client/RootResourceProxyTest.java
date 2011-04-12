@@ -36,7 +36,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.FileAssert.fail;
 
-public class RootResourceProxyTest extends BaseTest {
+public abstract class RootResourceProxyTest extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {

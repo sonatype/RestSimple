@@ -26,7 +26,7 @@ import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-public class BaseTest {
+abstract public class BaseTest {
 
     protected static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
 
@@ -49,15 +49,17 @@ public class BaseTest {
         serviceDefinition = new DefaultServiceDefinition();
         serviceDefinition
                 .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(new MediaType("text", "plain")))
                 .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
 
-        webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
+        webDriver = WebDriver.getDriver(provider()).serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
     }
-    
+
+    public abstract WebDriver.PROVIDER provider();
+
     @AfterClass(alwaysRun = true)
     public void tearDown() throws Exception {
         webDriver.shutdown();

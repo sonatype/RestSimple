@@ -30,7 +30,7 @@ import static org.testng.Assert.assertNotNull;
 /**
  * Disabled as Sitebricks isn't supporting it.
  */
-public class MatrixProxyTest extends BaseTest {
+public abstract class MatrixProxyTest extends BaseTest {
 
     @Test(timeOut = 20000, enabled = false)
     public void testBasicPostGenerate() throws Throwable {

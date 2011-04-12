@@ -27,7 +27,7 @@ import java.net.URI;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class HeadersProxyTest extends BaseTest {
+public abstract class HeadersProxyTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testBasicPostGenerate() throws Throwable {

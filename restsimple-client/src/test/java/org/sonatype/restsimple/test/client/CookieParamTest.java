@@ -29,7 +29,7 @@ import java.net.URI;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class CookieParamTest extends BaseTest {
+public abstract class CookieParamTest extends BaseTest {
 
     @Test(timeOut = 20000)
     public void testBasicPostGenerate() throws Throwable {
