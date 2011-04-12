@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.sonatype.restsimple.test.client;
 
+import org.sonatype.restsimple.annotation.Consumes;
 import org.sonatype.restsimple.annotation.FormParam;
 import org.sonatype.restsimple.annotation.Get;
 import org.sonatype.restsimple.annotation.Path;
@@ -51,7 +52,7 @@ public abstract class FormParamProxyTest extends BaseTest {
         assertEquals(pet.getName(), "pouetpouet--chatchien");
         
         String petString = client.getString("myPet");
-        assertEquals(petString, "{\"name\":\"pouetpouet--chatchien\"}");
+        assertEquals(petString, "Pet{name='pouetpouet--chatchien'}");
     }
 
     public static interface ProxyClient {
@@ -59,16 +60,19 @@ public abstract class FormParamProxyTest extends BaseTest {
         @Get
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
 
         @Get
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes("text/plain")                       
         public String getString(@PathParam("myPet") String path);
 
         @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
         public Pet post(@PathParam("myPet") String myPet, @FormParam(PetstoreAction.PET_EXTRA_NAME) String petType, String body);
 
 

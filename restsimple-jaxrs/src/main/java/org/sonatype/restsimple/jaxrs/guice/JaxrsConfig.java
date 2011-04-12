@@ -42,7 +42,7 @@ import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
-import org.sonatype.restsimple.jaxrs.impl.jersey.ContentNegotiationFilter;
+import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;

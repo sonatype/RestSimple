@@ -476,17 +476,17 @@ public class WebAHCClient implements WebClient {
                 list = s.mediaToProduce();
             } else {
                 list = new ArrayList<MediaType>();
-                if (serviceDefinition != null) {
+                if (mapUri && serviceDefinition != null) {
                     list = serviceDefinition.mediaToProduce();
                 }
+            }
+            
+            if (mapUri && s.consumeMediaType() !=  null ) {
+                builder.header("Accept", s.consumeMediaType().toMediaType());
             }
 
             if (list.size() > 0) {
                 for (MediaType m : list) {
-                    if (headers.get("Accept") == null) {
-                        builder.header("Accept", m.toMediaType());
-                    }
-
                     if (headers.get("Content-Type") == null && !formEncoded) {
                         builder.header("Content-Type", m.toMediaType());
                     }

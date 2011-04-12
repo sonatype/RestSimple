@@ -121,6 +121,7 @@ public class AddressBookTest {
 
         assertNotNull(s);
 
+        m.put("Accept", "application/json");
         s = webClient.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
 
         assertNotNull(s);
@@ -136,6 +137,7 @@ public class AddressBookTest {
 
         m = new HashMap<String, String>();
         m.put("update", "foo");
+        m.put("Accept", "application/json");                
         s = webClient.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
 
         assertNotNull(s);
@@ -143,7 +145,7 @@ public class AddressBookTest {
         s = webClient.clientOf(targetUrl + "/getAddressBook/myBook").headers(m).get(String.class);
 
         assertNotNull(s);
-        assertEquals(s, "{\"entries\":\"foo - \"}");
+        assertEquals(s, "{\"entries\":\"foo - application/json - \"}");
 
         s = webClient.clientOf(targetUrl + "/deleteAddressBook/myBook").headers(m).delete(String.class);
         assertNotNull(s);

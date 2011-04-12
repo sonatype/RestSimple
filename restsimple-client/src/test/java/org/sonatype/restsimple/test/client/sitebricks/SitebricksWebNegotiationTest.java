@@ -17,6 +17,6 @@ import org.sonatype.restsimple.test.client.WebNegotiationTest;
 public class SitebricksWebNegotiationTest extends WebNegotiationTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;        
+        return WebDriver.PROVIDER.SITEBRICKS;
     }
 }

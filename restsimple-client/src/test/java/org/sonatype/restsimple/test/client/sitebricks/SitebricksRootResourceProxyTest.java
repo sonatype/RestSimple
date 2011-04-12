@@ -17,6 +17,6 @@ import org.sonatype.restsimple.test.client.RootResourceProxyTest;
 public class SitebricksRootResourceProxyTest extends RootResourceProxyTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;        
+        return WebDriver.PROVIDER.SITEBRICKS;
     }
 }

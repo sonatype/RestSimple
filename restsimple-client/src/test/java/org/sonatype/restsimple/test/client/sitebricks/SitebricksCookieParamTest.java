@@ -16,6 +16,6 @@ import org.sonatype.restsimple.WebDriver;
 public class SitebricksCookieParamTest extends org.sonatype.restsimple.test.client.CookieParamTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;
+        return WebDriver.PROVIDER.SITEBRICKS;
     }
 }

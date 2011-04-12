@@ -17,6 +17,6 @@ import org.sonatype.restsimple.test.client.WebTest;
 public class SitebricksWebTest extends WebTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;
+        return WebDriver.PROVIDER.SITEBRICKS;
     }
 }

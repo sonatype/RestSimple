@@ -34,7 +34,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package org.sonatype.restsimple.jaxrs.impl.jersey;
+package org.sonatype.restsimple.jaxrs.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

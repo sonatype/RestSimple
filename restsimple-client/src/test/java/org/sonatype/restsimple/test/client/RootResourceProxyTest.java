@@ -12,6 +12,7 @@
 package org.sonatype.restsimple.test.client;
 
 import org.sonatype.restsimple.WebDriver;
+import org.sonatype.restsimple.annotation.Consumes;
 import org.sonatype.restsimple.annotation.Delete;
 import org.sonatype.restsimple.annotation.Get;
 import org.sonatype.restsimple.annotation.Path;
@@ -22,6 +23,7 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
+import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
@@ -48,7 +50,7 @@ public abstract class RootResourceProxyTest extends BaseTest {
         serviceDefinition
                 .withPath("/foo")
                 .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(new MediaType("text", "plain")))
                 .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
 
@@ -76,7 +78,7 @@ public abstract class RootResourceProxyTest extends BaseTest {
         assertNotNull(pet);
 
         String petString = client.getString("myPet");
-        assertEquals(petString, "{\"name\":\"pouetpouet\"}");
+        assertEquals(petString, "Pet{name='pouetpouet'}");
     }
 
     @Test(timeOut = 20000)
@@ -103,21 +105,25 @@ public abstract class RootResourceProxyTest extends BaseTest {
         @Get
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
         
         @Get
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes("text/plain")
         public String getString(@PathParam("myPet") String path);
 
         @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(@PathParam("myPet") String myPet, String body);
 
         @Delete
         @Path("deletePet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
+        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)                
         public Pet delete(@PathParam("myPet") String path);
 
     }

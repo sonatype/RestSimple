@@ -17,6 +17,6 @@ import org.sonatype.restsimple.test.client.HeadersProxyTest;
 public class SitebricksHeadersProxyTest extends HeadersProxyTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;
+        return WebDriver.PROVIDER.SITEBRICKS;
     }
 }

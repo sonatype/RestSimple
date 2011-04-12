@@ -17,7 +17,6 @@ import org.sonatype.restsimple.test.client.QueryProxyTest;
 public class SitebricksQueryProxyTest extends QueryProxyTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;
-        
+        return WebDriver.PROVIDER.SITEBRICKS;        
     }
 }

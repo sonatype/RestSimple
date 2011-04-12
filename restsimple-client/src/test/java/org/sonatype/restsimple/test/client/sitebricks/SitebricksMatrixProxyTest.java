@@ -17,6 +17,6 @@ import org.sonatype.restsimple.test.client.MatrixProxyTest;
 public class SitebricksMatrixProxyTest extends MatrixProxyTest {
     @Override
     public WebDriver.PROVIDER provider() {
-        return WebDriver.PROVIDER.JAXRS;
+        return WebDriver.PROVIDER.SITEBRICKS;
     }
 }

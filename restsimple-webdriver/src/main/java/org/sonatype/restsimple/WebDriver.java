@@ -26,7 +26,7 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
-import org.sonatype.restsimple.jaxrs.impl.jersey.ContentNegotiationFilter;
+import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;

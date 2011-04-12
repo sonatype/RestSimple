@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.sonatype.restsimple.test.client;
 
+import org.sonatype.restsimple.annotation.Consumes;
 import org.sonatype.restsimple.annotation.Delete;
 import org.sonatype.restsimple.annotation.Get;
 import org.sonatype.restsimple.annotation.Path;
@@ -36,21 +37,25 @@ public abstract class SimpleProxyTest extends BaseTest {
         @Get
         @Path("getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)                
         public Pet get(@PathParam("myPet") String path);
 
         @Get
         @Path("getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes("text/plain")
         public String getString(@PathParam("myPet") String path);
 
         @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)        
         public Pet post(@PathParam("myPet") String myPet, String body);
 
         @Delete
         @Path("deletePet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)                
         public Pet delete(@PathParam("myPet") String path);
 
     }
@@ -60,6 +65,7 @@ public abstract class SimpleProxyTest extends BaseTest {
         @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(String body, @PathParam("myPet") String myPety);
 
     }
@@ -69,6 +75,7 @@ public abstract class SimpleProxyTest extends BaseTest {
         @Post
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(Pet body, @PathParam("myPet") String myPety);
 
     }
@@ -92,7 +99,7 @@ public abstract class SimpleProxyTest extends BaseTest {
         assertNotNull(pet);
 
         String petString = client.getString("myPet");
-        assertEquals(petString, "{\"name\":\"pouetpouet\"}");
+        assertEquals(petString, "Pet{name='pouetpouet'}");
     }
 
     @Test(timeOut = 20000)

@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
-import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
