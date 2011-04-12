@@ -301,7 +301,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             } else if (contentType.endsWith("xml")) {
                 Map<String, String> m = new HashMap<String, String>();
                 m.put("Content-Type", "application/xml");
-                return Reply.with(response).as(Xml.class);
+                return Reply.with(response).headers(m).as(Xml.class);
             }
         }
         return Reply.with(response.toString()).as(Text.class);
@@ -349,6 +349,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             return true;
         }
 
+        //TODO: Wildcard support
         for (Map.Entry<String, String> e : headers.entries()) {
             if (e.getKey().equalsIgnoreCase("Accept")) {
                 for (MediaType mediaType : mediaTypes) {
