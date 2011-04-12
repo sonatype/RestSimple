@@ -303,19 +303,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             methodName = methodName + "_" + duplicateCounter;
                         }
 
-                        mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljava/lang/String;Ljava/lang/String;)Ljavax/ws/rs/core/Response;", null, null);
+                        String methodType = serviceHandler.consumeClass() != null ? serviceHandler.consumeClass().getName().replace(".", "/") : "java/lang/String";
+                        mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljavax/ws/rs/core/UriInfo;Ljava/lang/String;Ljava/lang/String;L" + methodType + ";)Ljavax/ws/rs/core/Response;", null, null);
                         {
                             av0 = mv.visitAnnotation("Ljavax/ws/rs/PUT;", true);
-                            av0.visitEnd();
-                        }
-                        {
-                            av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/PathParam;", true);
-                            av0.visit("value", "method");
-                            av0.visitEnd();
-                        }
-                        {
-                            av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
-                            av0.visit("value", "id");
                             av0.visitEnd();
                         }
                         if (serviceHandler.mediaToProduce().size() > 0) {
@@ -342,12 +333,26 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                 av0.visitEnd();
                             }
                         }
+                        {
+                            av0 = mv.visitParameterAnnotation(0, "Ljavax/ws/rs/core/Context;", true);
+                            av0.visitEnd();
+                        }
+                        {
+                            av0 = mv.visitParameterAnnotation(1, "Ljavax/ws/rs/PathParam;", true);
+                            av0.visit("value", "method");
+                            av0.visitEnd();
+                        }
+                        {
+                            av0 = mv.visitParameterAnnotation(2, "Ljavax/ws/rs/PathParam;", true);
+                            av0.visit("value", "id");
+                            av0.visitEnd();
+                        }
                         mv.visitCode();
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
-                        mv.visitLdcInsn("HTTP PUT: Generated Resource invocation for method {} with id {}");
-                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitLdcInsn("HTTP PUT: Generated Resource invocation for method {} with id {} and id {} ");
                         mv.visitVarInsn(ALOAD, 2);
+                        mv.visitVarInsn(ALOAD, 3);
                         mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "debug", "(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V");
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
@@ -367,23 +372,25 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         mv.visitLdcInsn("");
                         mv.visitInsn(AASTORE);
                         mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/UriBuilder", "build", "([Ljava/lang/Object;)Ljava/net/URI;");
-                        mv.visitVarInsn(ASTORE, 3);
+                        mv.visitVarInsn(ASTORE, 5);
                         mv.visitVarInsn(ALOAD, 0);
                         mv.visitLdcInsn("put");
-                        mv.visitVarInsn(ALOAD, 1);
                         mv.visitVarInsn(ALOAD, 2);
-                        mv.visitInsn(ACONST_NULL);
-                        mv.visitInsn(ACONST_NULL);
-                        mv.visitMethodInsn(INVOKESPECIAL, className, "invokeAction", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljavax/ws/rs/core/MultivaluedMap;Ljava/lang/Object;)Ljava/lang/Object;");
-                        mv.visitVarInsn(ASTORE, 4);
                         mv.visitVarInsn(ALOAD, 3);
-                        mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "created", "(Ljava/net/URI;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                        mv.visitVarInsn(ALOAD, 1);
+                        mv.visitMethodInsn(INVOKEINTERFACE, "javax/ws/rs/core/UriInfo", "getQueryParameters", "()Ljavax/ws/rs/core/MultivaluedMap;");
                         mv.visitVarInsn(ALOAD, 4);
+                        mv.visitMethodInsn(INVOKESPECIAL, className, "invokeAction", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljavax/ws/rs/core/MultivaluedMap;Ljava/lang/Object;)Ljava/lang/Object;");
+                        mv.visitVarInsn(ASTORE, 6);
+                        mv.visitVarInsn(ALOAD, 5);
+                        mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "created", "(Ljava/net/URI;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+                        mv.visitVarInsn(ALOAD, 6);
                         mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
                         mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
                         mv.visitInsn(ARETURN);
-                        mv.visitMaxs(6, 5);
+                        mv.visitMaxs(6, 7);
                         mv.visitEnd();
+
                         continue;
                     }
                 }

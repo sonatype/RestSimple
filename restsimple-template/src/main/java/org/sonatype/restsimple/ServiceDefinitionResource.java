@@ -78,10 +78,13 @@ public class ServiceDefinitionResource {
     }
 
     @PUT
-    public Response put(@PathParam("method") String service, @PathParam("id") String value) {
-        logger.debug("HTTP PUT: Generated Resource invocation for method {} with id {}", service, value);
+        @Consumes("application/vnd.org.sonatype.rest+json")
+    @Produces("application/vnd.org.sonatype.rest+json")
+    public Response put(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Object jacksonObject) {
+        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and id {} ", service, value);
+
         URI location = UriBuilder.fromResource(getClass()).build(new String[]{"", "", ""});
-        Object response = invokeAction("put", service, value, null, null);
+        Object response = invokeAction("put", service, value, uriInfo.getQueryParameters(), jacksonObject);
         return Response.created(location).entity(response).build();
     }
 
