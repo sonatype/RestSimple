@@ -22,7 +22,7 @@ public class HeadServiceHandler extends ServiceHandler {
      * @param action an {@link Action} implementation
      */
     public HeadServiceHandler(Action action) {
-        this(null, action);
+        this("/", action);
     }
 
     /**

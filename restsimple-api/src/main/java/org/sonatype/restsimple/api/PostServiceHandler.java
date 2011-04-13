@@ -29,7 +29,7 @@ public class PostServiceHandler extends ServiceHandler {
      * @param action an {@link Action} implementation
      */
     public PostServiceHandler(Action action) {
-        this(null, action);
+        this("/", action);
     }
 
     /**

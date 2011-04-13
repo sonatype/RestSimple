@@ -24,6 +24,7 @@ public class PetstoreAction implements Action<Pet, Pet> {
     public final static String APPLICATION = "application";
     public final static String JSON = "vnd.org.sonatype.rest+json";
     public final static String XML = "vnd.org.sonatype.rest+xml";
+    public final static String TEXT = "vnd.org.sonatype.rest+txt";    
     public final static String PET_EXTRA_NAME = "petType";
 
     private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();

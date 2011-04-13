@@ -23,7 +23,7 @@ public class GetServiceHandler extends ServiceHandler {
      * @param action an {@link Action} implementation
      */
     public GetServiceHandler(Action action) {
-        this(null, action);
+        this("/", action);
     }
 
     /**

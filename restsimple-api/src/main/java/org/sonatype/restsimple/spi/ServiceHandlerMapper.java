@@ -40,6 +40,10 @@ public class ServiceHandlerMapper {
     }
 
     private String convert(String path) {
+        if (path.equals("/")) {
+            return path;
+        }
+
         StringTokenizer st = new StringTokenizer(path, "/");
         StringBuilder newPath = new StringBuilder();
 

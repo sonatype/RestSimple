@@ -32,6 +32,8 @@ abstract public class BaseTest {
 
     protected final static MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 
+    protected final static MediaType TEXT = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.TEXT);    
+
     protected String targetUrl;
 
     protected String acceptHeader;

@@ -23,13 +23,13 @@ public class PutServiceHandler extends ServiceHandler {
      * @param action an {@link Action} implementation
      */
     public PutServiceHandler(Action action) {
-        this(null, action);
+        this("/", action);
     }
 
     /**
      * Create a new {@link ServiceHandler}
      *
-     * @param path    a uri used to map the resource to this {@link ServiceHandler}
+     * @param path   a uri used to map the resource to this {@link ServiceHandler}
      * @param action an {@link Action} implementation
      */
     public PutServiceHandler(String path, Action action) {
