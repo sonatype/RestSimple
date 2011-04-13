@@ -14,6 +14,7 @@ package org.sonatype.restsimple.api;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -22,6 +23,7 @@ import java.util.Map;
  */
 public class ActionContext<T> {
 
+    private final Map<String, Collection<String>> matrixStrings;
     private final Map<String, Collection<String>> paramsStrings;
     private final Map<String, Collection<String>> headers;
     private final InputStream inputStream;
@@ -30,7 +32,7 @@ public class ActionContext<T> {
     private final String pathValue;
     private final T object;
 
-    public ActionContext(ServiceDefinition.METHOD methodName,
+     public ActionContext(ServiceDefinition.METHOD methodName,
                          Map<String, Collection<String>> headers,
                          Map<String, Collection<String>> paramsStrings,
                          InputStream inputStream,
@@ -45,6 +47,35 @@ public class ActionContext<T> {
         this.pathName = pathName;
         this.pathValue = pathValue;
         this.object = object;
+        this.matrixStrings = Collections.emptyMap();
+    }
+    
+    public ActionContext(ServiceDefinition.METHOD methodName,
+                         Map<String, Collection<String>> headers,
+                         Map<String, Collection<String>> paramsStrings,
+                         Map<String,Collection<String>> matrixStrings,
+                         InputStream inputStream,
+                         String pathName,
+                         String pathValue,
+                         T object) {
+
+        this.paramsStrings = paramsStrings;
+        this.methodName = methodName;
+        this.inputStream = inputStream;
+        this.headers = headers;
+        this.pathName = pathName;
+        this.pathValue = pathValue;
+        this.object = object;
+        this.matrixStrings = matrixStrings;
+    }
+
+    /**
+     * Return the matrix if they were specified.
+     * @return a {@link Map} of parameters.
+     */
+    public Map<String, Collection<String>> matrixString() {
+        return matrixStrings;
+
     }
 
     /**

@@ -28,32 +28,27 @@ import java.net.URI;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-/**
- * Disabled as Sitebricks isn't supporting it.
- */
 public abstract class MatrixProxyTest extends BaseTest {
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000, enabled = true)
     public void testBasicPostGenerate() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testBasicPostGenerate");
         ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
         Pet pet = client.post("myPet", "chatchien", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
         assertEquals(pet.getName(), "pouetpouet--chatchien");
     }
 
-    @Test(timeOut = 20000, enabled = false)
+    @Test(timeOut = 20000, enabled = true)
     public void testBasicGetGenerate() throws Throwable {
-        logger.info("running test: testPut");
+        logger.info("running test: testBasicGetGenerate");
         ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create(targetUrl));
         Pet pet = client.post("myPet", "chatchien", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
 
         pet = client.get("myPet");
         assertNotNull(pet);
-
-        String petString = client.getString("myPet");
-        assertEquals(petString, "{\"name\":\"pouetpouet--chatchien\"}");
+        assertEquals(pet.getName(), "pouetpouet--chatchien");
     }
 
     public static interface ProxyClient {
@@ -63,12 +58,6 @@ public abstract class MatrixProxyTest extends BaseTest {
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
-
-        @Get
-        @Path("getPetString")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        @Consumes("text/plain")
-        public String getString(@PathParam("myPet") String path);
 
         @Post
         @Path("addPet")

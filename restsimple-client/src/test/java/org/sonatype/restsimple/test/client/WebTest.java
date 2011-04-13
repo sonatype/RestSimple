@@ -63,7 +63,7 @@ public abstract class WebTest extends BaseTest {
 
         pet = (Pet) webClient.clientOf(targetUrl + "/deletePet/myPet")
                 .headers(m)
-                .delete();
+                .delete(new Pet("pouetpouet"));
 
         assertNotNull(pet);
 

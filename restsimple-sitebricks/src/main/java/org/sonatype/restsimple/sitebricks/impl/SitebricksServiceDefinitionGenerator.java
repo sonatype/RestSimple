@@ -333,7 +333,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         org.sonatype.restsimple.api.Action action = serviceHandler.getAction();
         try {
             ActionContext<T> actionContext = new ActionContext<T>(mapMethod(methodName), mapHeaders(request.headers()),
-                    mapFormParams(request.params()), new ByteArrayInputStream(body.toString().getBytes()), pathName, pathValue, body);
+                    mapFormParams(request.params()), mapMatrixParams(request.matrix()), new ByteArrayInputStream(body.toString().getBytes()), pathName, pathValue, body);
             response = action.action(actionContext);
         } catch (Throwable e) {
             logger.debug("ActionContext error", e);
@@ -361,6 +361,18 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         return false;
     }
 
+    private static Map<String, Collection<String>> mapMatrixParams(Multimap<String, String> matrixParams) {
+        Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
+        if (matrixParams != null) {
+            for (Map.Entry<String, String> e : matrixParams.entries()) {
+                ArrayList<String> list = new ArrayList<String>();
+                list.add(e.getValue());
+                map.put(e.getKey(), list);
+            }
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
     private static Map<String, Collection<String>> mapFormParams(Multimap<String, String> formParams) {
         Map<String, Collection<String>> map = new HashMap<String, Collection<String>>();
         if (formParams != null) {
@@ -369,9 +381,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                 list.add(e.getValue());
                 map.put(e.getKey(), list);
             }
-            return Collections.unmodifiableMap(map);
         }
-        return map;
+        return Collections.unmodifiableMap(map);
     }
 
     private static ServiceDefinition.METHOD mapMethod(String method) {

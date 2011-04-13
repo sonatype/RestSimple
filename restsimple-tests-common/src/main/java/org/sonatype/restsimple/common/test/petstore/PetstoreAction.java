@@ -30,12 +30,12 @@ public class PetstoreAction implements Action<Pet, Pet> {
 
     @Override
     public Pet action(ActionContext<Pet> actionContext) throws ActionException {
+        Map<String, Collection<String>> headers = actionContext.headers();
+        Map<String, Collection<String>> queryStrings = actionContext.paramsString();
+        Map<String, Collection<String>> matrixParams = actionContext.matrixString();
 
         switch (actionContext.method()) {
             case GET:
-
-                Map<String, Collection<String>> headers = actionContext.headers();
-
                 Pet pet = pets.get(actionContext.pathValue());
                 if (pet != null) {
 
@@ -52,8 +52,6 @@ public class PetstoreAction implements Action<Pet, Pet> {
             case DELETE:
                 return pets.remove(actionContext.pathValue());
             case POST:
-                headers = actionContext.headers();
-                Map<String, Collection<String>> queryStrings = actionContext.paramsString();
 
                 pet = actionContext.get();
                 if (headers.size() > 0) {
@@ -74,7 +72,22 @@ public class PetstoreAction implements Action<Pet, Pet> {
                     }
                 }
 
-                pets.put(actionContext.pathValue(), pet);
+                if (matrixParams.size() > 0) {
+                    for (Map.Entry<String, Collection<String>> e : matrixParams.entrySet()) {
+                        if (e.getKey().equals(PET_EXTRA_NAME)) {
+                            pet.setName(pet.getName() + "--" + e.getValue().iterator().next());
+                            break;
+                        }
+                    }
+                }
+
+                String value = actionContext.pathValue();
+                int matrixPos = value.indexOf(";");
+                if (matrixPos > 0) {
+                    value = actionContext.pathValue().substring(0, matrixPos);
+                }
+
+                pets.put(value, pet);
                 return pet;
             default:
                 throw new ActionException(405);

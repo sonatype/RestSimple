@@ -12,7 +12,6 @@
 package org.sonatype.restsimple.test.client.jaxrs;
 
 import org.sonatype.restsimple.WebDriver;
-import org.sonatype.restsimple.test.client.SimpleProxyTest;
 
 public class JaxrsSimpleProxyTest extends org.sonatype.restsimple.test.client.SimpleProxyTest {
     @Override

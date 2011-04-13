@@ -56,7 +56,7 @@ public abstract class SimpleProxyTest extends BaseTest {
         @Path("deletePet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)                
-        public Pet delete(@PathParam("myPet") String path);
+        public Pet delete(Pet pet, @PathParam("myPet") String petName);
 
     }
 
@@ -109,7 +109,7 @@ public abstract class SimpleProxyTest extends BaseTest {
         Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
         assertNotNull(pet);
 
-        pet = client.delete("myPet");
+        pet = client.delete(new Pet("pouetpouet"), "myPet");
         assertNotNull(pet);
 
         try {

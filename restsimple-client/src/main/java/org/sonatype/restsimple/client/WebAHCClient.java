@@ -261,7 +261,7 @@ public class WebAHCClient implements WebClient {
     public Object delete(Object o) {
         try {
             WebResource r = buildRequest();
-            return headers(r, TYPE.DELETE).post(findEntity(r, TYPE.DELETE), o);
+            return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE), o);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(o);
@@ -310,7 +310,6 @@ public class WebAHCClient implements WebClient {
     @Override
     public <T> T delete(Object o, Class<T> t) {
         try {
-
             WebResource r = buildRequest();
             return headers(r, TYPE.DELETE).delete(t, o);
         } catch (UniformInterfaceException u) {
