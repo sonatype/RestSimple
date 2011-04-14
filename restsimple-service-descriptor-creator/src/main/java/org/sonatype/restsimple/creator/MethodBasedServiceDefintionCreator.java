@@ -135,9 +135,9 @@ public class MethodBasedServiceDefintionCreator
                 mv.visitEnd();
             }
             {
-                mv = cw.visitMethod(ACC_PUBLIC, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)L"
-                        + returnType
-                        + ";", "(Lorg/sonatype/restsimple/api/ActionContext <L" + parameterType + ";>;)L" + returnType + ";", new String[]{"org/sonatype/restsimple/api/ActionException"});
+                mv = cw.visitMethod(ACC_PUBLIC, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";",
+                        "(Lorg/sonatype/restsimple/api/ActionContext<L" + parameterType + ";>;)L" + returnType + ";",
+                        new String[]{"org/sonatype/restsimple/api/ActionException"});
                 mv.visitCode();
                 Label l0 = new Label();
                 Label l1 = new Label();
