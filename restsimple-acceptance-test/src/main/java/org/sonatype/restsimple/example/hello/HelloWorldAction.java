@@ -15,7 +15,7 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
-public class HelloWorldAction implements Action {
+public class HelloWorldAction implements Action<Object, String> {
     public final static String APPLICATION = "application";
     public final static String TXT = "vnd.org.sonatype.rest+txt";
     public final static String XML = "vnd.org.sonatype.rest+xml";
@@ -40,7 +40,7 @@ public class HelloWorldAction implements Action {
     }
 
     @Override
-    public Object action(ActionContext actionContext) throws ActionException {
+    public Object action(ActionContext<String> actionContext) throws ActionException {
 
         if (actionContext.pathName().equalsIgnoreCase("sayPlainTextHello")) {
             return sayPlainTextHello(actionContext.pathValue());

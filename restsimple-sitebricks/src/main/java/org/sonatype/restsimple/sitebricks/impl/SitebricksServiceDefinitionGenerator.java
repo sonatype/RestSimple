@@ -188,7 +188,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            ServiceHandler serviceHandler = mapper.map(convertToJaxRs(map.get("method")));
+            ServiceHandler serviceHandler = mapper.map("post", convertToJaxRs(map.get("method")));
+
+            if (serviceHandler == null) {
+                return Reply.with("Method not allowed").status(405);
+            }
+                        
             Class<? extends Transport> transport = Text.class;
             String subType = serviceHandler.consumeMediaType() == null ? null : serviceHandler.consumeMediaType().subType();
             if (subType != null && subType.endsWith("json")) {
@@ -307,10 +312,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     }
 
     private static <T> Object createResponse(NegotiationTokenGenerator tokenGenerator, String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
-        ServiceHandler serviceHandler = mapper.map(convertToJaxRs(pathName));
+        ServiceHandler serviceHandler = mapper.map(methodName, convertToJaxRs(pathName));
 
         if (serviceHandler == null) {
-            return Reply.with("No ServiceHandler defined for service " + pathName).error();
+            return Reply.with("Method not allowed").status(405);
         }
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {

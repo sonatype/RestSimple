@@ -38,6 +38,17 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this.serviceHandlerMapper = serviceHandlerMapper;
     }
 
+    @Override
+    public String toString() {
+        return "DefaultServiceDefinition{" +
+                "basePath='" + basePath + '\'' +
+                ", mediaTypeToProduce=" + mediaTypeToProduce +
+                ", mediaTypeToConsume=" + mediaTypeToConsume +
+                ", serviceHandlers=" + serviceHandlers +
+                ", serviceHandlerMapper=" + serviceHandlerMapper +
+                '}';
+    }
+
     /**
      * {@inheritDoc}
      */

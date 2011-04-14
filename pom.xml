@@ -10,7 +10,8 @@
  ~ You may elect to redistribute this code under either of these licenses.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.sonatype.forge</groupId>
         <artifactId>forge-parent</artifactId>
@@ -68,6 +69,7 @@
         <module>restsimple-template</module>
         <module>restsimple-webdriver</module>
         <module>restsimple-acceptance-test</module>
+        <module>restsimple-service-descriptor-creator</module>
     </modules>
 
     <dependencyManagement>
@@ -115,6 +117,13 @@
                 <artifactId>restsimple-webdriver</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>org.sonatype.restsimple</groupId>
+                <artifactId>restsimple-template</artifactId>
+                <version>${project.version}</version>                
+            </dependency>
+
             <dependency>
                 <groupId>com.ning</groupId>
                 <artifactId>async-http-client</artifactId>

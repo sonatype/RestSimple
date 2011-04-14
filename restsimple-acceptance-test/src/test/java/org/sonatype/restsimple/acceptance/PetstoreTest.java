@@ -35,7 +35,6 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.AssertJUnit.assertNull;
 import static org.testng.FileAssert.fail;
 
 public class PetstoreTest {

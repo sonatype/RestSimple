@@ -20,6 +20,14 @@ public final class MediaType {
         this(type, "*");
     }
 
+    @Override
+    public String toString() {
+        return "MediaType{" +
+                "type='" + type + '\'' +
+                ", subType='" + subType + '\'' +
+                '}';
+    }
+
     public MediaType(String type, String subType) {
         this.type = type;
         this.subType = subType;

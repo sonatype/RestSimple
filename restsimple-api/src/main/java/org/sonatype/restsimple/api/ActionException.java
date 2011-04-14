@@ -20,6 +20,12 @@ public class ActionException extends RuntimeException {
     private final int statusCode;
     private final String reasonPhrase;
 
+    public ActionException(Throwable t) {
+        super(t);
+        this.statusCode = 500;
+        this.reasonPhrase = "";
+    }
+
     /**
      * Create a RuntimeException with a status code. The reason phrase will be empty.
      * @param statusCode the status code

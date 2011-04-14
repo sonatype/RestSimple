@@ -8,10 +8,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.restsimple</groupId>
-    <artifactId>restsimple-webdriver</artifactId>
+    <artifactId>restsimple-service-descriptor-creator</artifactId>
     <packaging>jar</packaging>
     <version>0.3-SNAPSHOT</version>
-    <name>restsimple-webdriver</name>
+    <name>restsimple-service-descriptor-creator</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
         <dependency>
@@ -20,12 +20,18 @@
         </dependency>
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
-            <artifactId>restsimple-jaxrs</artifactId>
+            <artifactId>restsimple-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
-            <artifactId>restsimple-sitebricks</artifactId>
+            <artifactId>restsimple-tests-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.sonatype.restsimple</groupId>
+            <artifactId>restsimple-webdriver</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -39,6 +45,37 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <scope>compile</scope>
+        </dependency>
+
+        <!-- ASM -->
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>asm</groupId>
+            <artifactId>asm-util</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+
+        <!-- AOP -->
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

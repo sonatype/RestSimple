@@ -76,7 +76,7 @@ public class ContentNegotiationFilter implements Filter {
         HttpServletRequest hreq = HttpServletRequest.class.cast(request);
         String pathName = hreq.getServletPath().split("/")[1];
 
-        ServiceHandler serviceHandler = mapper.map(pathName);
+        ServiceHandler serviceHandler = mapper.map(hreq.getMethod(), pathName);
         // TODO: Must add a special header in Jersey generation so we don't add the header for all request.
         if (serviceHandler != null) {
             HttpServletResponse hres = HttpServletResponse.class.cast(response);

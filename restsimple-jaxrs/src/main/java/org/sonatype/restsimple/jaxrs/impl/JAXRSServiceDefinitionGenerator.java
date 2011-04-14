@@ -676,26 +676,21 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Throwable");
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, className, "mapper", "Lorg/sonatype/restsimple/spi/ServiceHandlerMapper;");
+            mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/spi/ServiceHandlerMapper", "map", "(Ljava/lang/String;)Lorg/sonatype/restsimple/api/ServiceHandler;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/spi/ServiceHandlerMapper", "map", "(Ljava/lang/String;Ljava/lang/String;)Lorg/sonatype/restsimple/api/ServiceHandler;");
             mv.visitVarInsn(ASTORE, 7);
             mv.visitVarInsn(ALOAD, 7);
             Label l3 = new Label();
             mv.visitJumpInsn(IFNONNULL, l3);
             mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
             mv.visitInsn(DUP);
-            mv.visitTypeInsn(NEW, "java/lang/IllegalStateException");
-            mv.visitInsn(DUP);
-            mv.visitTypeInsn(NEW, "java/lang/StringBuilder");
-            mv.visitInsn(DUP);
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/StringBuilder", "<init>", "()V");
-            mv.visitLdcInsn("No ServiceHandler defined for service ");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
-            mv.visitVarInsn(ALOAD, 2);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;");
-            mv.visitMethodInsn(INVOKESPECIAL, "java/lang/IllegalStateException", "<init>", "(Ljava/lang/String;)V");
-            mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljava/lang/Throwable;)V");
+            mv.visitIntInsn(SIPUSH, 405);
+            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "status", "(I)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+            mv.visitLdcInsn("Method not allowed");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
+            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
+            mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljavax/ws/rs/core/Response;)V");
             mv.visitInsn(ATHROW);
             mv.visitLabel(l3);
             mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"org/sonatype/restsimple/api/ServiceHandler"}, 0, null);
@@ -1028,22 +1023,14 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
         byte[] bytes = cw.toByteArray();
 
-        try
-
-        {
+        try  {
             String classToLoad = className.replace("/", ".");
             ClassLoader cl = new ByteClassloader(bytes, this.getClass().getClassLoader(), classToLoad);
             Class<?> clazz = cl.loadClass(classToLoad);
 
             moduleConfig.bind(clazz);
             moduleConfig.bind(GenericMessageBodyWriter.class);
-        }
-
-        catch (
-                Throwable e
-                )
-
-        {
+        }catch (Throwable e ){
             logger.error("generate", e);
         }
     }

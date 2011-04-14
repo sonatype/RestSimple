@@ -134,9 +134,9 @@ public class ServiceDefinitionResource {
                                     Map<String, Collection<String>> matrixParams,
                                     T body) {
 
-        ServiceHandler serviceHandler = mapper.map(pathName);
+        ServiceHandler serviceHandler = mapper.map(methodName, pathName);
         if (serviceHandler == null) {
-            throw new WebApplicationException(new IllegalStateException("No ServiceHandler defined for service " + pathName));
+            throw new WebApplicationException(Response.status(405).entity("Method not allowed").build());
         }
 
         if (!serviceHandler.getHttpMethod().name().equalsIgnoreCase(methodName)) {

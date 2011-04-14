@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
  */
 public class ServiceHandlerMapper {
 
-    private final HashMap<String, ServiceHandler> maps = new HashMap<String, ServiceHandler>();
+    private final HashMap<ServiceHandlerInfo, ServiceHandler> maps = new HashMap<ServiceHandlerInfo, ServiceHandler>();
 
     public ServiceHandlerMapper() {
     }
@@ -35,7 +35,7 @@ public class ServiceHandlerMapper {
      * @return this
      */
     public ServiceHandlerMapper addServiceHandler(ServiceHandler serviceHandler) {
-        maps.put(convert(serviceHandler.path()), serviceHandler);
+        maps.put(new ServiceHandlerInfo(serviceHandler.getHttpMethod().name().toLowerCase(), convert(serviceHandler.path())), serviceHandler);
         return this;
     }
 
@@ -70,10 +70,11 @@ public class ServiceHandlerMapper {
 
     /**
      * Map the current resource method to its's associated {@link ServiceHandler}
+     * @param method The HTTP metod name
      * @param path The current request's path
      * @return a {@link ServiceHandler}, or null if not mapped.
      */
-    public ServiceHandler map(String path) {
+    public ServiceHandler map(String method, String path) {
 
         // JAXRS remove the / for PathParam, where Sitebricks don't
         if (!path.startsWith("/")) {
@@ -81,13 +82,45 @@ public class ServiceHandlerMapper {
         }
 
         final Map<String, String> m = new HashMap<String, String>();
-        for (Map.Entry<String, ServiceHandler> e : maps.entrySet()) {
-            UriTemplate t = new UriTemplate(e.getKey());
-            if (t.match(path, m)) {
+        for (Map.Entry<ServiceHandlerInfo, ServiceHandler> e : maps.entrySet()) {
+            UriTemplate t = new UriTemplate(e.getKey().path);
+            if (t.match(path, m) && e.getKey().method.equalsIgnoreCase(method)) {
                 return e.getValue();
             }
         }
         return null;
+    }
+
+    private final static class ServiceHandlerInfo {
+
+        public final String method;
+        public final String path;
+
+
+        public ServiceHandlerInfo(String method, String path) {
+            this.method = method;
+            this.path = path;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ServiceHandlerInfo that = (ServiceHandlerInfo) o;
+
+            if (method != null ? !method.equals(that.method) : that.method != null) return false;
+            if (path != null ? !path.equals(that.path) : that.path != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = method != null ? method.hashCode() : 0;
+            result = 31 * result + (path != null ? path.hashCode() : 0);
+            return result;
+        }
     }
 
 }

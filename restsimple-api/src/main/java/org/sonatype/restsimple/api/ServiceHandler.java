@@ -80,6 +80,17 @@ abstract public class ServiceHandler {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "ServiceHandler{" +
+                "path='" + path + '\'' +
+                ", action=" + action +
+                ", mediaTypeToProduce=" + mediaTypeToProduce +
+                ", consumerClazz=" + consumerClazz +
+                ", consumerMediaType=" + consumerMediaType +
+                '}';
+    }
+
     /**
      *  Unmarshall the request's body into an Object of type T.
      */
