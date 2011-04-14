@@ -32,7 +32,6 @@ import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

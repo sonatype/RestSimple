@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.sonatype.restsimple.client;
 
-import com.google.sitebricks.http.Put;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.annotation.Consumes;
@@ -25,7 +24,9 @@ import org.sonatype.restsimple.annotation.Path;
 import org.sonatype.restsimple.annotation.PathParam;
 import org.sonatype.restsimple.annotation.Post;
 import org.sonatype.restsimple.annotation.Produces;
+import org.sonatype.restsimple.annotation.Put;
 import org.sonatype.restsimple.annotation.QueryParam;
+import org.sonatype.restsimple.annotation.Timeout;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
@@ -52,30 +53,27 @@ import java.util.Map;
  * A simple proxy that generates RestSimple client from an annotated interface. jsr 311 annotations are all supported.
  * As simple as {code
  * {@code
-    public static interface ProxyClient {
-
-        @Get
-        @Path("getPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet get(@PathParam("myPet") String path);
-
-        @Get
-        @Path("getPetString")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public String getString(@PathParam("myPet") String path);
-
-        @Post
-        @Path("addPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet post(@PathParam("myPet") String myPet, String body);
-
-        @Delete
-        @Path("deletePet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet delete(@PathParam("myPet") String path);
-
-    }
-   }
+ * public static interface ProxyClient {
+ *
+ * @Get
+ * @Path("getPet")
+ * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+ * public Pet get(@PathParam("myPet") String path);
+ * @Get
+ * @Path("getPetString")
+ * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+ * public String getString(@PathParam("myPet") String path);
+ * @Post
+ * @Path("addPet")
+ * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+ * public Pet post(@PathParam("myPet") String myPet, String body);
+ * @Delete
+ * @Path("deletePet")
+ * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+ * public Pet delete(@PathParam("myPet") String path);
+ * <p/>
+ * }
+ * }
  * <p/>
  * }
  * <p/>
@@ -86,33 +84,37 @@ import java.util.Map;
  */
 public class WebProxy {
 
+    /**
+     * TODO: Refactor using the visitor pattern the annotation processing part..
+     */
+
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
 
     /**
      * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
-     * @param clazz A class an interface annotated with jaxrs annotations.
-     * @param uri the based uri.
+     *
+     * @param clazz  A class an interface annotated with jaxrs annotations.
+     * @param uri    the based uri.
      * @param config an instance of {@link DefaultAhcConfig} which allow configuring the {@link org.sonatype.spice.jersey.client.ahc.AhcHttpClient}
      * @param <T>
      * @return an instance of T
      */
-    public static final <T> T createProxy(Class<T> clazz, URI uri, DefaultAhcConfig config ) {
-
+    public static final <T> T createProxy(Class<T> clazz, URI uri, DefaultAhcConfig config) {
+        configureAhcConfig(clazz, config);
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
                 new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), config));
     }
 
     /**
      * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
+     *
      * @param clazz A class an interface annotated with jaxrs annotations.
-     * @param uri the based uri.
+     * @param uri   the based uri.
      * @param <T>
      * @return an instance of T
      */
     public static final <T> T createProxy(Class<T> clazz, URI uri) {
-
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz)));
+        return createProxy(clazz, uri, new DefaultAhcConfig());
     }
 
     private static class WebProxyHandler implements InvocationHandler {
@@ -120,10 +122,7 @@ public class WebProxy {
         private final ServiceDefinitionInfo serviceDefinitionInfo;
         private final URI uri;
         private final WebClient webClient;
-
-        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo) {
-            this(uri,serviceDefinitionInfo, new DefaultAhcConfig());
-        }
+        private final DefaultAhcConfig ahcConfig = new DefaultAhcConfig();
 
         public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, DefaultAhcConfig config) {
             this.serviceDefinitionInfo = serviceDefinitionInfo;
@@ -193,7 +192,7 @@ public class WebProxy {
                     return webClient.clientOf(builder.toString())
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
-                            .matrixParams(constructMatrix(inf.getMethod(), args))                            
+                            .matrixParams(constructMatrix(inf.getMethod(), args))
                             .put(body, inf.getReturnClassType());
                 default:
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
@@ -298,6 +297,14 @@ public class WebProxy {
 
     }
 
+    private static void configureAhcConfig(Class<?> clazz, DefaultAhcConfig config) {
+        Timeout timeout =  clazz.getAnnotation(Timeout.class);
+        if (timeout != null) {
+            config.getAsyncHttpClientConfigBuilder().setConnectionTimeoutInMs(timeout.connectTimeout() * 1000);
+            config.getAsyncHttpClientConfigBuilder().setConnectionTimeoutInMs(timeout.connectTimeout() * 1000);
+        }
+    }
+
     private static ServiceDefinitionInfo createServiceDefinitionInfo(Class<?> clazz) {
 
         Path rootPath = clazz.getAnnotation(Path.class);
@@ -306,7 +313,7 @@ public class WebProxy {
         if (rootPath != null) {
             sd.withPath(rootPath.value());
             rootPathString = rootPath.value();
-        } 
+        }
 
         Consumes topLevelConsumes = clazz.getAnnotation(Consumes.class);
         if (topLevelConsumes != null) {
@@ -366,7 +373,7 @@ public class WebProxy {
                     sh = new DeleteServiceHandler(pathValue, new DummyAction());
                     httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.DELETE,
                             pathValue,
-                            m, 
+                            m,
                             rootPathString);
                     found = true;
                 }

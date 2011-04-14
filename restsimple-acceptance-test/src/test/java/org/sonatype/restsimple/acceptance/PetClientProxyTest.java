@@ -21,6 +21,7 @@ import org.sonatype.restsimple.annotation.Path;
 import org.sonatype.restsimple.annotation.PathParam;
 import org.sonatype.restsimple.annotation.Post;
 import org.sonatype.restsimple.annotation.Produces;
+import org.sonatype.restsimple.annotation.Timeout;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -118,6 +119,7 @@ public class PetClientProxyTest {
         }
     }
 
+    @Timeout(requestTimeout = 10, connectTimeout = 10)
     public static interface ProxyClient {
 
         @Get
