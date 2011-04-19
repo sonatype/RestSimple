@@ -21,15 +21,16 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
+import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.api.ServiceHandler;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 
 // ------------------------------
 // Method   URL        Action
@@ -45,45 +46,53 @@ import java.lang.reflect.Type;
 public class MethodBasedServiceDefintionCreator
         implements org.sonatype.restsimple.creator.ServiceDefinitionCreator {
 
+    public final static String APPLICATION = "application";
+    public final static String JSON = "json";
+    public final static String XML = "xml";
+
+    private final MediaType APPLICATION_JSON = new MediaType(APPLICATION, JSON);
+
     public ServiceDefinition create(Class<?> application) throws Exception {
         ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
 
         Method[] methods = application.getDeclaredMethods();
 
         for (Method method : methods) {
+            ServiceHandler serviceHandler = null;
+            Class[] types = method.getParameterTypes();
+
             if (method.getName().startsWith("create")) {
-                serviceDefinition.withHandler(new PostServiceHandler("/users", GenericActionDump.generate(application, method)));
+                serviceHandler = new PostServiceHandler("/users", GenericActionDump.generate(application, method));
             }
 
             if (method.getName().startsWith("read")) {
-                Type[] types = method.getGenericParameterTypes();
 
                 if (types.length == 0) {
-                    serviceDefinition.withHandler(new GetServiceHandler("/users", GenericActionDump.generate(application, method)));
+                    serviceHandler = new GetServiceHandler("/users", GenericActionDump.generate(application, method));
                 } else if (types.length == 1) {
-                    serviceDefinition.withHandler(new GetServiceHandler("/user", GenericActionDump.generate(application, method)));
+                    serviceHandler = new GetServiceHandler("/user", GenericActionDump.generate(application, method));
                 }
             }
 
             if (method.getName().startsWith("update")) {
-                serviceDefinition.withHandler(new PutServiceHandler("/users", GenericActionDump.generate(application, method)));
+                serviceHandler = new PutServiceHandler("/users", GenericActionDump.generate(application, method));
             }
 
             if (method.getName().startsWith("delete")) {
-                serviceDefinition.withHandler(new DeleteServiceHandler("/user", GenericActionDump.generate(application, method)));
+                serviceHandler = new DeleteServiceHandler("/user", GenericActionDump.generate(application, method));
             }
+
+            if (serviceHandler == null) {
+                throw new IllegalStateException("Unable to map a service");
+            }
+
+            if (types.length == 0) {
+                serviceHandler.producing(APPLICATION_JSON);
+            } else if (types.length == 1) {
+                serviceHandler.consumeWith(APPLICATION_JSON, types[0]).producing(APPLICATION_JSON);
+            }
+            serviceDefinition.withHandler(serviceHandler);
         }
-
-        //
-        // Are we really going to produce one media type and not consume it?
-        //
-//
-//        serviceDefinition.producing(new MediaType(AddressBook.APPLICATION, AddressBook.JSON));
-//        serviceDefinition.producing(new MediaType(AddressBook.APPLICATION, AddressBook.XML));
-//
-//        serviceDefinition.consuming(MediaType.JSON);
-//        serviceDefinition.consuming(MediaType.XML);
-
         return serviceDefinition;
     }
 
@@ -106,10 +115,8 @@ public class MethodBasedServiceDefintionCreator
             }
 
             cw.visit(V1_6, ACC_PUBLIC + ACC_SUPER, className, "Ljava/lang/Object;Lorg/sonatype/restsimple/api/Action<L"
-                    + returnType
-                    + ";L"
-                    + parameterType
-                    + ";>;", "java/lang/Object", new String[]{"org/sonatype/restsimple/api/Action"});
+                    + returnType + ";L"
+                    + parameterType + ";>;", "java/lang/Object", new String[]{"org/sonatype/restsimple/api/Action"});
 
             {
                 fv = cw.visitField(ACC_PRIVATE + ACC_FINAL, "object", "Ljava/lang/Object;", null, null);
@@ -136,8 +143,7 @@ public class MethodBasedServiceDefintionCreator
             }
             {
                 mv = cw.visitMethod(ACC_PUBLIC, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";",
-                        "(Lorg/sonatype/restsimple/api/ActionContext<L" + parameterType + ";>;)L" + returnType + ";",
-                        new String[]{"org/sonatype/restsimple/api/ActionException"});
+                        "(Lorg/sonatype/restsimple/api/ActionContext<L" + parameterType + ";>;)L" + returnType + ";", new String[]{"org/sonatype/restsimple/api/ActionException"});
                 mv.visitCode();
                 Label l0 = new Label();
                 Label l1 = new Label();
@@ -156,14 +162,14 @@ public class MethodBasedServiceDefintionCreator
                     mv.visitInsn(DUP);
                     mv.visitInsn(ICONST_0);
                     mv.visitVarInsn(ALOAD, 1);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get", "()L" + parameterType + ";");
+                    mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get", "()Ljava/lang/Object;");
                     mv.visitInsn(AASTORE);
                 } else {
                     mv.visitInsn(ICONST_0);
                     mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
                 }
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;");
-                mv.visitTypeInsn(CHECKCAST, returnType);
+                mv.visitTypeInsn(CHECKCAST, "" + returnType + "");
                 mv.visitLabel(l1);
                 mv.visitInsn(ARETURN);
                 mv.visitLabel(l2);
@@ -185,16 +191,27 @@ public class MethodBasedServiceDefintionCreator
                 mv.visitMaxs(6, 3);
                 mv.visitEnd();
             }
+            {
+                mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", null, new String[]{"org/sonatype/restsimple/api/ActionException"});
+                mv.visitCode();
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKEVIRTUAL, className, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";");
+                mv.visitInsn(ARETURN);
+                mv.visitMaxs(2, 2);
+                mv.visitEnd();
+            }
             cw.visitEnd();
+
 
             byte[] bytes = cw.toByteArray();
 
             try {
                 String classToLoad = className.replace("/", ".");
                 ClassLoader cl = new ByteClassloader(bytes, GenericActionDump.class.getClassLoader(), classToLoad);
-                Class<Action> newClazz = (Class<Action>) cl.loadClass(classToLoad);
+                Class<? extends Action> newClazz = (Class<? extends Action>) cl.loadClass(classToLoad);
 
-                Constructor<Action> c = newClazz.getConstructor(new Class[]{Object.class, Method.class});
+                Constructor<? extends Action> c = newClazz.getConstructor(new Class[]{Object.class, Method.class});
                 return c.newInstance(new Object[]{instance, method});
             } catch (Throwable e) {
                 e.printStackTrace();

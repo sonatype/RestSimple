@@ -96,7 +96,7 @@ public class ServiceDefinitionCreatorTest {
 
     }
 
-    @Test (enabled = false)
+    @Test (enabled = true)
     public void testServiceDefinitionCreator()
             throws Exception {
         System.out.println(serviceDefinition);

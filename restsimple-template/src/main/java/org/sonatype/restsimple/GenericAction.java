@@ -29,9 +29,9 @@ public class GenericAction implements Action<String,Integer> {
     }
 
     @Override
-    public String action(ActionContext<Integer> objectActionContext) throws ActionException {
+    public String action(final ActionContext<Integer> objectActionContext) throws ActionException {
         try {
-            return (String) method.invoke(object, new Object[] {});
+            return (String) method.invoke(object, new Object[] {objectActionContext.get()});
         } catch (IllegalAccessException e) {
             throw new ActionException(e);
         } catch (InvocationTargetException e) {
