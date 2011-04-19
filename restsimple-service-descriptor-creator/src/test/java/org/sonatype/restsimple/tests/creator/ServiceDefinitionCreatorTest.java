@@ -23,6 +23,7 @@ import org.sonatype.restsimple.annotation.Post;
 import org.sonatype.restsimple.annotation.Produces;
 import org.sonatype.restsimple.annotation.Put;
 import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.creator.MethodBasedServiceDefinitionCreator;
 import org.sonatype.restsimple.tests.creator.model.Person;
@@ -43,11 +44,7 @@ public class ServiceDefinitionCreatorTest {
     private static final Logger logger = LoggerFactory.getLogger(ServiceDefinitionCreatorTest.class);
 
     public String targetUrl;
-
-    public String acceptHeader;
-
     private WebDriver webDriver;
-
     private ServiceDefinition serviceDefinition;
 
     @BeforeClass(alwaysRun = true)
@@ -69,7 +66,7 @@ public class ServiceDefinitionCreatorTest {
         @Post
         @Produces("application/json")
         @Consumes("application/json")
-        public Person createPerson(@PathParam("aUser") String user, Person person);
+        public Person createPerson(@PathParam("id") String user, Person person);
 
         @Path("/" + MethodBasedServiceDefinitionCreator.READ)
         @Get
@@ -87,13 +84,13 @@ public class ServiceDefinitionCreatorTest {
         @Put
         @Produces("application/json")                                             
         @Consumes("application/json")
-        public Person updatePerson(@PathParam("aUser") String user, Person person);
+        public Person updatePerson(@PathParam("id") String id, Person person);
 
-        @Path("/" + MethodBasedServiceDefinitionCreator.CREATE)
+        @Path("/" + MethodBasedServiceDefinitionCreator.DELETE)
         @Delete
         @Produces("text/plain")
         @Consumes("application/json")
-        public Person deletePerson(@PathParam("aUser") String user, String id);
+        public Person deletePerson(@PathParam("id") String id);
 
 
     }
@@ -114,6 +111,17 @@ public class ServiceDefinitionCreatorTest {
 
         assertNotNull(person);
         assertEquals(person.getFirstName(), "jf");
+
+        person = client.deletePerson("me");
+
+        assertNotNull(person);
+        assertEquals(person.getFirstName(), "jf");
+
+        try {
+            person = client.readPerson("me");
+        } catch (WebException ex) {
+            assertEquals(ex.getStatusCode(), 404);
+        }
 
     }
 

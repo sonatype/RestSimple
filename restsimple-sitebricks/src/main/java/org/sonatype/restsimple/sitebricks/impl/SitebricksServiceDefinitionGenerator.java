@@ -271,7 +271,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             Object response = createResponse(tokenGenerator, "delete", map.get("method"), map.get("id"), null, request, mapper);
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
+            } else if (Reply.class.isAssignableFrom(response.getClass())) {
+                return Reply.class.cast(response);
             }
+                       
             return serializeResponse(request, response);
         }
     }
