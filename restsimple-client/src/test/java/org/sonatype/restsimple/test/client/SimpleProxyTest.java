@@ -76,7 +76,7 @@ public abstract class SimpleProxyTest extends BaseTest {
         @Path("addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet post(Pet body, @PathParam("myPet") String myPety);
+        public Pet post(Pet body, @PathParam("myPet") String myPet);
 
     }
 

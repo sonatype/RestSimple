@@ -24,7 +24,7 @@ import java.util.List;
  *
  */
 public class DefaultServiceDefinition implements ServiceDefinition {
-    private String basePath = "";
+    private String path = "";
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
     private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
@@ -41,7 +41,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     @Override
     public String toString() {
         return "DefaultServiceDefinition{" +
-                "basePath='" + basePath + '\'' +
+                "path='" + path + '\'' +
                 ", mediaTypeToProduce=" + mediaTypeToProduce +
                 ", mediaTypeToConsume=" + mediaTypeToConsume +
                 ", serviceHandlers=" + serviceHandlers +
@@ -54,7 +54,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      */
     @Override    
     public ServiceDefinition withPath(String path) {
-        this.basePath = path;
+        this.path = path;
         return this;
     }
 
@@ -90,7 +90,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      */
     @Override
     public String path() {
-        return basePath;
+        return path;
     }
 
     /**

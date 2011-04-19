@@ -26,6 +26,7 @@ import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.api.WebClient;
+import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
@@ -462,38 +463,41 @@ public class WebAHCClient implements WebClient {
 
     private WebResource.Builder headers(WebResource r, TYPE type, boolean formEncoded) {
         WebResource.Builder builder = r.getRequestBuilder();
-        for (ServiceHandler s : serviceDefinition.serviceHandlers()) {
+        ServiceHandlerMapper mapper = new ServiceHandlerMapper(serviceDefinition.serviceHandlers());
 
-            // TODO: not optimal
-            boolean mapUri = r.getURI().getPath().contains(s.path());
+        String urlPath = r.getURI().getPath();
+        String path = serviceDefinition.path();
+        if (!path.equals("") || !path.equals("/")) {
+            urlPath = urlPath.substring(urlPath.indexOf(path) + path.length());
+        }
+        ServiceHandler sh = null;
 
-            List<MediaType> list;
-            if (mapUri && type == TYPE.GET && GetServiceHandler.class.isAssignableFrom(s.getClass())) {
-                list = s.mediaToProduce();
-            } else if (mapUri &&  type == TYPE.POST && PostServiceHandler.class.isAssignableFrom(s.getClass())) {
-                list = s.mediaToProduce();
-            } else if (mapUri &&  type == TYPE.PUT && PutServiceHandler.class.isAssignableFrom(s.getClass())) {
-                list = s.mediaToProduce();
-            } else if (mapUri && type == TYPE.DELETE && DeleteServiceHandler.class.isAssignableFrom(s.getClass())) {
-                list = s.mediaToProduce();
-            } else {
-                list = new ArrayList<MediaType>();
-                if (mapUri && serviceDefinition != null) {
-                    list = serviceDefinition.mediaToProduce();
+        for(String p: urlPath.split("/")) {
+            sh = mapper.map(type.name().toLowerCase(), p);
+            if (sh != null) break;
+        }
+
+        if (sh == null) {
+            sh = mapper.map(type.name().toLowerCase(), urlPath);
+        }
+
+        List<MediaType> list;
+        if (sh != null) {
+           list = sh.mediaToProduce();
+        } else {
+            list = new ArrayList<MediaType>();
+            list = serviceDefinition.mediaToProduce();
+        }
+
+        if (sh != null && sh.consumeMediaType() !=  null ) {
+            builder.header("Accept", sh.consumeMediaType().toMediaType());
+        }
+
+        if (list.size() > 0) {
+            for (MediaType m : list) {
+                if (headers.get("Content-Type") == null && !formEncoded) {
+                    builder.header("Content-Type", m.toMediaType());
                 }
-            }
-            
-            if (mapUri && s.consumeMediaType() !=  null ) {
-                builder.header("Accept", s.consumeMediaType().toMediaType());
-            }
-
-            if (list.size() > 0) {
-                for (MediaType m : list) {
-                    if (headers.get("Content-Type") == null && !formEncoded) {
-                        builder.header("Content-Type", m.toMediaType());
-                    }
-                }
-                break;
             }
         }
 
@@ -504,5 +508,4 @@ public class WebAHCClient implements WebClient {
         }
         return builder;
     }
-
 }

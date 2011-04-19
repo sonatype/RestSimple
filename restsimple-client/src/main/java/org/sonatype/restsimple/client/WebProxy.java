@@ -155,7 +155,7 @@ public class WebProxy {
                     builder.append(rootPath);
                 }
 
-                if (!rootPath.endsWith("/")) {
+                if (!rootPath.endsWith("/")) {                                                         
                     builder.append("/");
                 }
             }
@@ -167,6 +167,8 @@ public class WebProxy {
                     builder.append(path);
                 }
             }
+
+            builder.append(constructPath(inf.getMethod(), args));
 
             Object body = retrieveBody(inf.getMethod(), args);
             switch (m) {
@@ -197,6 +199,22 @@ public class WebProxy {
                 default:
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
             }
+        }
+
+        private String constructPath(Method m, Object params[]) {
+            StringBuilder pathBuilder = new StringBuilder();
+            Annotation[][] ans = m.getParameterAnnotations();
+
+            int position = 0;            
+            for (Annotation[] annotations : ans) {
+                for (Annotation a : annotations) {
+                    if (PathParam.class.isAssignableFrom(a.getClass())) {
+                        pathBuilder.append("/").append(params[position]);
+                    }
+                }
+                position++;                
+            }
+            return pathBuilder.toString();
         }
 
         private Object retrieveBody(Method m, Object params[]) {
@@ -346,7 +364,7 @@ public class WebProxy {
                 }
 
                 HttpMethodInfo httpMethodInfo = null;
-                String pathValue = constructPath(m, path.value());
+                String pathValue = path.value();
 
                 if (Get.class.isAssignableFrom(a.getClass())) {
                     sh = new GetServiceHandler(pathValue, new DummyAction());
@@ -407,21 +425,6 @@ public class WebProxy {
             }
         }
         return new ServiceDefinitionInfo(sd, methodsMap);
-    }
-
-    private final static String constructPath(Method m, String path) {
-        StringBuilder pathBuilder = new StringBuilder(path);
-        Annotation[][] ans = m.getParameterAnnotations();
-
-        for (Annotation[] annotations : ans) {
-            for (Annotation a : annotations) {
-                if (PathParam.class.isAssignableFrom(a.getClass())) {
-                    logger.debug("Processing @PathParam {}", a);
-                    pathBuilder.append("/").append(PathParam.class.cast(a).value());
-                }
-            }
-        }
-        return pathBuilder.toString();
     }
 
     private static final String getType(String mediaType) {

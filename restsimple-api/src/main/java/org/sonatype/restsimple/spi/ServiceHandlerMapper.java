@@ -16,6 +16,7 @@ import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.uri.UriTemplate;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -27,6 +28,12 @@ public class ServiceHandlerMapper {
     private final HashMap<ServiceHandlerInfo, ServiceHandler> maps = new HashMap<ServiceHandlerInfo, ServiceHandler>();
 
     public ServiceHandlerMapper() {
+    }
+
+    public ServiceHandlerMapper(List<ServiceHandler> serviceHandlers) {
+        for (ServiceHandler s: serviceHandlers) {
+            addServiceHandler(s);
+        }
     }
 
     /**
@@ -120,6 +127,14 @@ public class ServiceHandlerMapper {
             int result = method != null ? method.hashCode() : 0;
             result = 31 * result + (path != null ? path.hashCode() : 0);
             return result;
+        }
+
+        @Override
+        public String toString() {
+            return "ServiceHandlerInfo{" +
+                    "method='" + method + '\'' +
+                    ", path='" + path + '\'' +
+                    '}';
         }
     }
 
