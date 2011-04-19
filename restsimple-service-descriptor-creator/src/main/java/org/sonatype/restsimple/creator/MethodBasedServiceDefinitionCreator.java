@@ -32,23 +32,18 @@ import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-// ------------------------------
-// Method   URL        Action
-// ------------------------------
-// POST     /users     create
-// GET      /users     read
-// GET      /users/23  read
-// PUT      /users/23  update
-// DESTROY  /users/23  delete
-
 @Named
 @Singleton
-public class MethodBasedServiceDefintionCreator
-        implements org.sonatype.restsimple.creator.ServiceDefinitionCreator {
+public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCreator {
 
     public final static String APPLICATION = "application";
     public final static String JSON = "json";
     public final static String XML = "xml";
+    public final static String CREATE = "create";
+    public final static String CREATES = "creates";    
+    public final static String READ = "read";
+    public final static String UPDATE = "update";
+    public final static String DELETE = "delete";
 
     private final MediaType APPLICATION_JSON = new MediaType(APPLICATION, JSON);
 
@@ -61,25 +56,25 @@ public class MethodBasedServiceDefintionCreator
             ServiceHandler serviceHandler = null;
             Class[] types = method.getParameterTypes();
 
-            if (method.getName().startsWith("create")) {
-                serviceHandler = new PostServiceHandler("/users", GenericActionDump.generate(application, method));
+            if (method.getName().startsWith(CREATE)) {
+                serviceHandler = new PostServiceHandler("/" + CREATE, GenericActionDump.generate(application, method));
             }
 
-            if (method.getName().startsWith("read")) {
+            if (method.getName().startsWith(READ)) {
 
                 if (types.length == 0) {
-                    serviceHandler = new GetServiceHandler("/users", GenericActionDump.generate(application, method));
+                    serviceHandler = new GetServiceHandler("/" + CREATES, GenericActionDump.generate(application, method));
                 } else if (types.length == 1) {
-                    serviceHandler = new GetServiceHandler("/user", GenericActionDump.generate(application, method));
+                    serviceHandler = new GetServiceHandler("/" + CREATE, GenericActionDump.generate(application, method));
                 }
             }
 
-            if (method.getName().startsWith("update")) {
-                serviceHandler = new PutServiceHandler("/users", GenericActionDump.generate(application, method));
+            if (method.getName().startsWith(UPDATE)) {
+                serviceHandler = new PutServiceHandler("/" + CREATES, GenericActionDump.generate(application, method));
             }
 
-            if (method.getName().startsWith("delete")) {
-                serviceHandler = new DeleteServiceHandler("/user", GenericActionDump.generate(application, method));
+            if (method.getName().startsWith(DELETE)) {
+                serviceHandler = new DeleteServiceHandler("/" + CREATE, GenericActionDump.generate(application, method));
             }
 
             if (serviceHandler == null) {

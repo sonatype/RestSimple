@@ -17,12 +17,12 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class DefaultAddressBook  {
+public class AddressBook {
     private Map<String, Person> people;
 
     private static int idx = 4;
 
-    public DefaultAddressBook() {
+    public AddressBook() {
         people = new LinkedHashMap<String, Person>();
 
         people.put("1", new Person("1", "jason@maven.org", "Jason", "van Zyl"));

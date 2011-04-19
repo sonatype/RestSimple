@@ -13,7 +13,7 @@ import org.sonatype.restsimple.annotation.Produces;
 import org.sonatype.restsimple.annotation.Put;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.WebProxy;
-import org.sonatype.restsimple.creator.MethodBasedServiceDefintionCreator;
+import org.sonatype.restsimple.creator.MethodBasedServiceDefinitionCreator;
 import org.sonatype.restsimple.tests.creator.model.Person;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -36,7 +36,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 public class ServiceDefinitionCreatorTest {
 
-    private MethodBasedServiceDefintionCreator creator = new MethodBasedServiceDefintionCreator();
+    private MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceDefinitionCreatorTest.class);
 
@@ -50,7 +50,7 @@ public class ServiceDefinitionCreatorTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        serviceDefinition = creator.create(DefaultAddressBook.class);
+        serviceDefinition = creator.create(AddressBook.class);
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
@@ -63,31 +63,31 @@ public class ServiceDefinitionCreatorTest {
 
     public interface AddressBookClient {
 
-        @Path("/users")
+        @Path("/" + MethodBasedServiceDefinitionCreator.CREATE)
         @Post
         @Produces("application/json")
         @Consumes("application/json")
         public Person createPerson(@PathParam("aUser") String user, Person person);
 
-        @Path("/user")
+        @Path("/" + MethodBasedServiceDefinitionCreator.CREATE)
         @Get
         @Produces("text/plain")
         @Consumes("application/json")
         public Person readPerson(@PathParam("aUser") String user, String id);
 
-        @Path("/users")
+        @Path("/" + MethodBasedServiceDefinitionCreator.CREATES)
         @Get
         @Produces("text/plain")
         @Consumes("application/json")
         public Collection<Person> readPeoples(@PathParam("allUsers") String user);
 
-        @Path("/users")
+        @Path("/" + MethodBasedServiceDefinitionCreator.CREATES)
         @Put
         @Produces("application/json")                                             
         @Consumes("application/json")
         public Person updatePerson(@PathParam("aUser") String user, Person person);
 
-        @Path("/user")
+        @Path("/" + MethodBasedServiceDefinitionCreator.CREATE)
         @Delete
         @Produces("text/plain")
         @Consumes("application/json")
@@ -103,7 +103,7 @@ public class ServiceDefinitionCreatorTest {
         assertNotNull(serviceDefinition);
 
         AddressBookClient client = WebProxy.createProxy(AddressBookClient.class, URI.create(targetUrl));
-        Person person = client.createPerson("/users/", new Person("me", "jfarcand@apache.org", "jf", "arcand"));
+        Person person = client.createPerson("/" + MethodBasedServiceDefinitionCreator.CREATES, new Person("me", "jfarcand@apache.org", "jf", "arcand"));
 
         assertNotNull(person);
 
