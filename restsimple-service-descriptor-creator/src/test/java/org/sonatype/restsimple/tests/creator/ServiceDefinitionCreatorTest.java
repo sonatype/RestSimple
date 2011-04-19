@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.util.Collection;
+
 import static org.testng.AssertJUnit.assertNotNull;
 
 public class ServiceDefinitionCreatorTest {
