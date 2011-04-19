@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 import java.net.URI;
 import java.util.Collection;
 
+import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
 public class ServiceDefinitionCreatorTest {
@@ -70,11 +71,11 @@ public class ServiceDefinitionCreatorTest {
         @Consumes("application/json")
         public Person createPerson(@PathParam("aUser") String user, Person person);
 
-        @Path("/" + MethodBasedServiceDefinitionCreator.CREATE)
+        @Path("/" + MethodBasedServiceDefinitionCreator.READ)
         @Get
         @Produces("text/plain")
         @Consumes("application/json")
-        public Person readPerson(@PathParam("aUser") String user, String id);
+        public Person readPerson(@PathParam("id") String id);
 
         @Path("/" + MethodBasedServiceDefinitionCreator.CREATES)
         @Get
@@ -104,10 +105,18 @@ public class ServiceDefinitionCreatorTest {
         assertNotNull(serviceDefinition);
 
         AddressBookClient client = WebProxy.createProxy(AddressBookClient.class, URI.create(targetUrl));
-        Person person = client.createPerson("/" + MethodBasedServiceDefinitionCreator.CREATES, new Person("me", "jfarcand@apache.org", "jf", "arcand"));
+        Person person = client.createPerson("me", new Person("me", "jfarcand@apache.org", "jf", "arcand"));
 
         assertNotNull(person);
+        assertEquals(person.getFirstName(), "jf");
+
+        person = client.readPerson("me");
+
+        assertNotNull(person);
+        assertEquals(person.getFirstName(), "jf");
 
     }
+
+
 }
 

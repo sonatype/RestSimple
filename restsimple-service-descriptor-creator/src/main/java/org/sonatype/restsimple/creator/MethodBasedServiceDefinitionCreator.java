@@ -12,11 +12,11 @@
 package org.sonatype.restsimple.creator;
 
 import com.sun.xml.internal.ws.org.objectweb.asm.Opcodes;
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -40,9 +40,11 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
     public final static String JSON = "json";
     public final static String XML = "xml";
     public final static String CREATE = "create";
-    public final static String CREATES = "creates";    
+    public final static String CREATES = "creates";
+    public final static String READS = "reads";
     public final static String READ = "read";
     public final static String UPDATE = "update";
+    public final static String UPDATES = "updates";
     public final static String DELETE = "delete";
 
     private final MediaType APPLICATION_JSON = new MediaType(APPLICATION, JSON);
@@ -51,30 +53,30 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
         ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
 
         Method[] methods = application.getDeclaredMethods();
-
+        Object instance = application.newInstance();
         for (Method method : methods) {
             ServiceHandler serviceHandler = null;
             Class[] types = method.getParameterTypes();
 
             if (method.getName().startsWith(CREATE)) {
-                serviceHandler = new PostServiceHandler("/" + CREATE, GenericActionDump.generate(application, method));
+                serviceHandler = new PostServiceHandler("/" + CREATE, ActionGenerator.generate(instance, application, method));
             }
 
             if (method.getName().startsWith(READ)) {
 
-                if (types.length == 0) {
-                    serviceHandler = new GetServiceHandler("/" + CREATES, GenericActionDump.generate(application, method));
-                } else if (types.length == 1) {
-                    serviceHandler = new GetServiceHandler("/" + CREATE, GenericActionDump.generate(application, method));
+                if (types.length == 1) {
+                    serviceHandler = new GetServiceHandler("/" + READ, ActionGenerator.generate(instance, application, method));
+                } else {
+                    serviceHandler = new GetServiceHandler("/" + READS, ActionGenerator.generate(instance, application, method));
                 }
             }
 
             if (method.getName().startsWith(UPDATE)) {
-                serviceHandler = new PutServiceHandler("/" + CREATES, GenericActionDump.generate(application, method));
+                serviceHandler = new PutServiceHandler("/" + UPDATE, ActionGenerator.generate(instance, application, method));
             }
 
             if (method.getName().startsWith(DELETE)) {
-                serviceHandler = new DeleteServiceHandler("/" + CREATE, GenericActionDump.generate(application, method));
+                serviceHandler = new DeleteServiceHandler("/" + DELETE, ActionGenerator.generate(instance, application, method));
             }
 
             if (serviceHandler == null) {
@@ -92,15 +94,13 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
     }
 
 
-    public final static class GenericActionDump implements Opcodes {
+    public final static class ActionGenerator implements Opcodes {
 
-        public static <T> Action generate(Class<T> clazz, Method method) throws Exception {
+        public static <T> Action generate(Object instance, Class<T> clazz, Method method) throws Exception {
 
             ClassWriter cw = new ClassWriter(0);
             FieldVisitor fv;
             MethodVisitor mv;
-            AnnotationVisitor av0;
-            Object instance = clazz.newInstance();
             String className = clazz.getName().replace(".", "/") + "Action";
 
             String returnType = method.getReturnType().getName().replace(".", "/");
@@ -157,7 +157,7 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
                     mv.visitInsn(DUP);
                     mv.visitInsn(ICONST_0);
                     mv.visitVarInsn(ALOAD, 1);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get", "()Ljava/lang/Object;");
+                    mv.visitMethodInsn(INVOKESTATIC, className, "getActionType", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;");
                     mv.visitInsn(AASTORE);
                 } else {
                     mv.visitInsn(ICONST_0);
@@ -187,6 +187,35 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
                 mv.visitEnd();
             }
             {
+                mv = cw.visitMethod(ACC_PRIVATE + ACC_FINAL + ACC_STATIC, "getActionType", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", "(Lorg/sonatype/restsimple/api/ActionContext<Ljava/lang/Integer;>;)Ljava/lang/Object;", null);
+                mv.visitCode();
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get", "()Ljava/lang/Object;");
+                mv.visitVarInsn(ASTORE, 1);
+                mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z");
+                Label l0 = new Label();
+                mv.visitJumpInsn(IFEQ, l0);
+                mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;");
+                mv.visitTypeInsn(CHECKCAST, "java/lang/String");
+                mv.visitLdcInsn("");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z");
+                mv.visitJumpInsn(IFEQ, l0);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "pathValue", "()Ljava/lang/String;");
+                mv.visitVarInsn(ASTORE, 1);
+                mv.visitLabel(l0);
+                mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Object"}, 0, null);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitInsn(ARETURN);
+                mv.visitMaxs(2, 2);
+                mv.visitEnd();
+            }
+            {
                 mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", null, new String[]{"org/sonatype/restsimple/api/ActionException"});
                 mv.visitCode();
                 mv.visitVarInsn(ALOAD, 0);
@@ -203,7 +232,7 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
 
             try {
                 String classToLoad = className.replace("/", ".");
-                ClassLoader cl = new ByteClassloader(bytes, GenericActionDump.class.getClassLoader(), classToLoad);
+                ClassLoader cl = new ByteClassloader(bytes, ActionGenerator.class.getClassLoader(), classToLoad);
                 Class<? extends Action> newClazz = (Class<? extends Action>) cl.loadClass(classToLoad);
 
                 Constructor<? extends Action> c = newClazz.getConstructor(new Class[]{Object.class, Method.class});

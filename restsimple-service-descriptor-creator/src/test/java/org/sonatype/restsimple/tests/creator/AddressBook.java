@@ -18,41 +18,37 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AddressBook {
-    private Map<String, Person> people;
+    private final Map<String, Person> peoplea = new LinkedHashMap<String, Person>();;
 
     private static int idx = 4;
 
     public AddressBook() {
-        people = new LinkedHashMap<String, Person>();
-
-        people.put("1", new Person("1", "jason@maven.org", "Jason", "van Zyl"));
-        people.put("2", new Person("2", "bob@maven.org", "Bob", "McWhirter"));
-        people.put("3", new Person("3", "james@maven.org", "James", "Strachan"));
+        peoplea.put("1", new Person("1", "jason@maven.org", "Jason", "van Zyl"));
+        peoplea.put("2", new Person("2", "bob@maven.org", "Bob", "McWhirter"));
+        peoplea.put("3", new Person("3", "james@maven.org", "James", "Strachan"));
     }
 
     public Person createPerson(Person person) {
-        System.out.println("adding person: " + person);
-        person.id = Integer.toString(idx++);
-        people.put(person.id, person);
+        peoplea.put(person.id, person);
         return person;
     }
 
     public Person readPerson(String id) {
-        return people.get(id);
+        return peoplea.get(id);
     }
 
     public Collection<Person> readPeople() {
-        return people.values();
+        return peoplea.values();
     }
 
     public Person updatePerson(Person person) {
         System.out.println(person);
-        people.put(person.id, person);
+        peoplea.put(person.id, person);
 
         return person;
     }
 
     public Person deletePerson(String id) {
-        return people.remove(id);
+        return peoplea.remove(id);
     }
 }

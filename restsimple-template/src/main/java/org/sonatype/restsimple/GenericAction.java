@@ -31,11 +31,19 @@ public class GenericAction implements Action<String,Integer> {
     @Override
     public String action(final ActionContext<Integer> objectActionContext) throws ActionException {
         try {
-            return (String) method.invoke(object, new Object[] {objectActionContext.get()});
+            return (String) method.invoke(object, new Object[] {getActionType(objectActionContext)});
         } catch (IllegalAccessException e) {
             throw new ActionException(e);
         } catch (InvocationTargetException e) {
             throw new ActionException(e);
         }
+    }
+
+    private final static Object getActionType(ActionContext<Integer> objectActionContext) {
+        Object o = objectActionContext.get();
+        if (String.class.isAssignableFrom(o.getClass()) && String.class.cast(o).equalsIgnoreCase("")) {
+            o = objectActionContext.pathValue();
+        }
+        return o;
     }
 }
