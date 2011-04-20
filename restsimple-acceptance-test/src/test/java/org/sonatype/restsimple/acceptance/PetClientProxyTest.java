@@ -64,10 +64,10 @@ public class PetClientProxyTest {
         Action action = new PetstoreAction();
         serviceDefinition = new DefaultServiceDefinition();
         serviceDefinition
-                .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new GetServiceHandler("getPetString", action).consumeWith(JSON, Pet.class).producing(new MediaType("text", "plain")))
-                .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+                .withHandler(new GetServiceHandler("/getPet/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new GetServiceHandler("/getPetString/:pet", action).consumeWith(JSON, Pet.class).producing(new MediaType("text", "plain")))
+                .withHandler(new DeleteServiceHandler("/deletePet/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                .withHandler(new PostServiceHandler("/addPet/:pet", action).consumeWith(JSON, Pet.class).producing(JSON));
 
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();

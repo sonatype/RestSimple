@@ -69,6 +69,7 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
          
         HashMap<String, String> initParams = new HashMap<String, String>();
         initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+        //initParams.put("com.sun.jersey.config.feature.Trace", "true");
 
         filter("/*").through(ContentNegotiationFilter.class);
         serve("/*").with(GuiceContainer.class, initParams);

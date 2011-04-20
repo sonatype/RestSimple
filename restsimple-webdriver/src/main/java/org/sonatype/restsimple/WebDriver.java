@@ -128,14 +128,15 @@ public class WebDriver {
                         // list of ServiceHandler as more than one instance of ServiceHandlerMapper exist
                         ServiceHandlerMapper mapper = injector.getInstance(ServiceHandlerMapper.class);
                         for (ServiceHandler handler : serviceDefinition.serviceHandlers()) {
-                            mapper.addServiceHandler(handler);
+                            mapper.addServiceHandler(serviceDefinition.path(), handler);
                         }
 
                         if (provider.equals(PROVIDER.JAXRS)) {
                             injector.getInstance(JAXRSServiceDefinitionGenerator.class).generate(serviceDefinition);
                             HashMap<String, String> initParams = new HashMap<String, String>();
                             initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
-
+                            //initParams.put("com.sun.jersey.config.feature.Trace", "true");
+                            
                             filter("/*").through(ContentNegotiationFilter.class);
                             serve("/*").with(GuiceContainer.class, initParams);
                         } else {

@@ -87,7 +87,6 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         try {
             final String path = serviceDefinition.path().contains("/{") ? convert(serviceDefinition.path()) : serviceDefinition.path();
 
-
             if (module == null) {
                 module = new com.google.sitebricks.SitebricksModule() {
                     @Override
@@ -105,9 +104,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     }
 
     private void bind(SitebricksModule module, String path, ServiceDefinition serviceDefinition) {
-        PageBinder.ShowBinder showBinder = module.at(path.equals("/") ? "/:method/:id" : path + "/:method/:id");
 
         for (ServiceHandler handler : serviceDefinition.serviceHandlers()) {
+            PageBinder.ShowBinder showBinder = module.at(path.equals("/") ? handler.path() : path + handler.path());
 
             PageBinder.ActionBinder actionBinder = showBinder.perform(mapAction(handler));
 
@@ -139,25 +138,36 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     }
 
-    public static class PutAction implements Action {
+    public abstract static class ActionBase implements Action {
+        @Inject
+        protected ServiceHandlerMapper mapper;
 
         @Inject
-        private ServiceHandlerMapper mapper;
+        protected Provider<Request> requestProvider;
 
         @Inject
-        private Provider<Request> requestProvider;
+        protected NegotiationTokenGenerator tokenGenerator;
 
-        @Inject
-        NegotiationTokenGenerator tokenGenerator;
+        protected HttpServletRequest hreq;
 
         @Override
         public boolean shouldCall(HttpServletRequest request) {
+            hreq = request;
             return true;
         }
 
+        abstract public Object call(Object page, Map<String, String> map);
+
+    }
+
+
+    public static class PutAction extends ActionBase {
+
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            Object response = createResponse(tokenGenerator, "put", map.get("method"), map.get("id"), null, request, mapper);
+            String[] pathParam = hreq.getServletPath().split("/");            
+            Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
+                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -169,26 +179,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
     }
 
-    public static class PostAction implements Action {
-
-        @Inject
-        ServiceHandlerMapper mapper;
-
-        @Inject
-        Provider<Request> requestProvider;
-
-        @Inject
-        NegotiationTokenGenerator tokenGenerator;
-
-        @Override
-        public boolean shouldCall(HttpServletRequest request) {
-            return true;
-        }
+    public static class PostAction extends ActionBase {
 
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            ServiceHandler serviceHandler = mapper.map("post", convertToJaxRs(map.get("method")));
+            ServiceHandler serviceHandler = mapper.map("post", hreq.getServletPath());
 
             if (serviceHandler == null) {
                 return Reply.with("Method not allowed").status(405);
@@ -207,7 +203,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             if (serviceHandler.consumeClass() != null) {
                 body = request.read(serviceHandler.consumeClass()).as(transport);
             }
-            Object response = createResponse(tokenGenerator, "post", map.get("method"), map.get("id"), body, request, mapper);
+            String[] pathParam = hreq.getServletPath().split("/");
+            Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
+                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", body, request, mapper);
 
             if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
@@ -216,27 +214,15 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
     }
 
-    public static class GetAction implements Action {
-
-        @Inject
-        ServiceHandlerMapper mapper;
-
-        @Inject
-        Provider<Request> requestProvider;
-
-        @Inject
-        NegotiationTokenGenerator tokenGenerator;
-
-        @Override
-        public boolean shouldCall(HttpServletRequest request) {
-            return true;
-        }
+    public static class GetAction extends ActionBase {
 
         @Override
         public Object call(Object page, Map<String, String> map) {
 
             Request request = requestProvider.get();
-            Object response = createResponse(tokenGenerator, "get", map.get("method"), map.get("id"), null, request, mapper);
+            String[] pathParam = hreq.getServletPath().split("/");
+            Object response = createResponse(tokenGenerator, "get", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
+                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -248,27 +234,15 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
     }
 
-    public static class DeleteAction implements Action {
-
-        @Inject
-        ServiceHandlerMapper mapper;
-
-        @Inject
-        Provider<Request> requestProvider;
-
-        @Inject
-        NegotiationTokenGenerator tokenGenerator;
-
-        @Override
-        public boolean shouldCall(HttpServletRequest request) {
-            return true;
-        }
+    public static class DeleteAction extends ActionBase {
 
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
+            String[] pathParam = hreq.getServletPath().split("/");
 
-            Object response = createResponse(tokenGenerator, "delete", map.get("method"), map.get("id"), null, request, mapper);
+            Object response = createResponse(tokenGenerator, "delete", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
+                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", null, request, mapper);
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
             } else if (Reply.class.isAssignableFrom(response.getClass())) {
@@ -314,8 +288,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         return Reply.with(response.toString()).as(Text.class);
     }
 
-    private static <T> Object createResponse(NegotiationTokenGenerator tokenGenerator, String methodName, String pathName, String pathValue, T body, Request request, ServiceHandlerMapper mapper) {
-        ServiceHandler serviceHandler = mapper.map(methodName, convertToJaxRs(pathName));
+    private static <T> Object createResponse(NegotiationTokenGenerator tokenGenerator,
+                                             String methodName,
+                                             String servletPath,
+                                             String pathName,
+                                             String pathValue,
+                                             T body,
+                                             Request request,
+                                             ServiceHandlerMapper mapper) {
+
+        ServiceHandler serviceHandler = mapper.map(methodName, convertToJaxRs(servletPath));
 
         if (serviceHandler == null) {
             return Reply.with("Method not allowed").status(405);
@@ -324,7 +306,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
             Map<String, String> m = new HashMap<String, String>();
             m.put(tokenGenerator.challengedHeaderName(),
-                  tokenGenerator.generateNegotiationHeader(pathName + "/" + pathValue, serviceHandler.mediaToProduce()));
+                  tokenGenerator.generateNegotiationHeader(servletPath, serviceHandler.mediaToProduce()));
             
             return Reply.with("Not Acceptable").headers(m).status(406);
         }
@@ -340,8 +322,15 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         Object response = null;
         org.sonatype.restsimple.api.Action action = serviceHandler.getAction();
         try {
-            ActionContext<T> actionContext = new ActionContext<T>(mapMethod(methodName), mapHeaders(request.headers()),
-                    mapFormParams(request.params()), mapMatrixParams(request.matrix()), new ByteArrayInputStream(body.toString().getBytes()), pathName, pathValue, body);
+            ActionContext<T> actionContext = new ActionContext<T>(mapMethod(methodName),
+                    mapHeaders(request.headers()),
+                    mapFormParams(request.params()),
+                    mapMatrixParams(request.matrix()),
+                    new ByteArrayInputStream(body.toString().getBytes()),
+                    pathName,
+                    pathValue,
+                    body);
+            
             response = action.action(actionContext);
         } catch (Throwable e) {
             logger.debug("ActionContext error", e);

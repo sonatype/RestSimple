@@ -64,40 +64,39 @@ public class ServiceDefinitionResource {
     @Inject
     ServiceHandlerMapper mapper;
 
+    @Path("something")
     @GET
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Object get(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value) {
-        logger.debug("HTTP GET: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = invokeAction("get", service, value, null, mapMatrixParam(uriInfo), null);
+    public Object get(@Context UriInfo uriInfo) {
+        Object response = invokeAction("get", uriInfo, null, mapMatrixParam(uriInfo), null);
         return response;
     }
 
+    @Path("something")
     @HEAD
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Response head(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value) {
-        logger.debug("HTTP HEAD: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = invokeAction("head", service, value, null, mapMatrixParam(uriInfo), null);
+    public Response head(@Context UriInfo uriInfo) {
+        Object response = invokeAction("head", uriInfo, null, mapMatrixParam(uriInfo), null);
         return Response.ok().build();
     }
 
+    @Path("something")
     @PUT
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Response put(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Object jacksonObject) {
-        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and id {} ", service, value);
-
+    public Response put(@Context UriInfo uriInfo, Object jacksonObject) {
         URI location = UriBuilder.fromResource(getClass()).build(new String[]{"", "", ""});
-        Object response = invokeAction("put", service, value, uriInfo.getQueryParameters(), mapMatrixParam(uriInfo), jacksonObject);
+        Object response = invokeAction("put", uriInfo, uriInfo.getQueryParameters(), mapMatrixParam(uriInfo), jacksonObject);
         return Response.created(location).entity(response).build();
     }
 
+    @Path("something")
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response post(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, MultivaluedMap<String, String> formParams) {
-        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and update {}", service, value);
-        Object response = invokeAction("post", service, value, formParams, mapMatrixParam(uriInfo), null);
+    public Response post(@Context UriInfo uriInfo, MultivaluedMap<String, String> formParams) {
+        Object response = invokeAction("post", uriInfo, formParams, mapMatrixParam(uriInfo), null);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
@@ -105,13 +104,12 @@ public class ServiceDefinitionResource {
         }
     }
 
+    @Path("something")
     @POST
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Response postWithBody(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Object jacksonObject) {
-        logger.debug("HTTP POST: Generated Resource invocation for method {} with id {} and id {} ", service, value);
-
-        Object response = invokeAction("post", service, value, uriInfo.getQueryParameters(), mapMatrixParam(uriInfo), jacksonObject);
+    public Response postWithBody(@Context UriInfo uriInfo, Object jacksonObject) {
+        Object response = invokeAction("post", uriInfo, uriInfo.getQueryParameters(), mapMatrixParam(uriInfo), jacksonObject);
         if (response == null) {
             return Response.status(Response.Status.NO_CONTENT).build();
         } else {
@@ -119,22 +117,22 @@ public class ServiceDefinitionResource {
         }
     }
 
+    @Path("something")    
     @DELETE
     @Consumes("application/vnd.org.sonatype.rest+json")
     @Produces("application/vnd.org.sonatype.rest+json")
-    public Response delete(@Context UriInfo uriInfo, @PathParam("method") String service, @PathParam("id") String value, Object jacksonObject) {
-        logger.debug("HTTP DELETE: Generated Resource invocation for method {} with id {}", service, value);
-        Object response = invokeAction("delete", service, value, null, mapMatrixParam(uriInfo), jacksonObject);
+    public Response delete(@Context UriInfo uriInfo, Object jacksonObject) {
+        Object response = invokeAction("delete", uriInfo, null, mapMatrixParam(uriInfo), jacksonObject);
         return Response.ok(response).build();
     }
 
-    private <T> Object invokeAction(String methodName, String pathName,
-                                    String pathValue,
+    private <T> Object invokeAction(String methodName,
+                                    UriInfo uriInfo,
                                     MultivaluedMap<String, String> formParams,
                                     Map<String, Collection<String>> matrixParams,
                                     T body) {
 
-        ServiceHandler serviceHandler = mapper.map(methodName, pathName);
+        ServiceHandler serviceHandler = mapper.map(methodName, uriInfo.getPath());
         if (serviceHandler == null) {
             throw new WebApplicationException(Response.status(405).entity("Method not allowed").build());
         }
@@ -145,6 +143,17 @@ public class ServiceDefinitionResource {
 
         Object response = null;
         Action action = serviceHandler.getAction();
+
+
+        String pathName = "";
+        String pathValue = "";
+
+        // TODO: Add support for multiple pathParam support.
+        for (Map.Entry<String,List<String>> l : uriInfo.getPathParameters().entrySet()) {
+            pathName = l.getKey();
+            pathValue = l.getValue().get(0);
+        }
+
         try {
             ActionContext<T> actionContext = new ActionContext<T>(mapMethod(request.getMethod()), mapHeaders(),
                     mapFormParams(formParams), matrixParams, request.getInputStream(), pathName, pathValue, body);

@@ -24,4 +24,10 @@ public class HelloWorld {
         this.helloWorld = helloWorld;
     }
 
+    @Override
+    public String toString() {
+        return "HelloWorld{" +
+                "helloWorld='" + helloWorld + '\'' +
+                '}';
+    }
 }

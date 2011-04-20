@@ -86,7 +86,7 @@ public class PetstoreSitebricksTest {
         logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePost(targetUrl + "/echo/myPets").setBody("{\"name\":\"pouetpouet\"}").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePost(targetUrl + "/create/myPets").setBody("{\"name\":\"pouetpouet\"}").addHeader("Accept", acceptHeader).execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 200);

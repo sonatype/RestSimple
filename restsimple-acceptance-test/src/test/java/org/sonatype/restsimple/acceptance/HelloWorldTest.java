@@ -49,13 +49,13 @@ public class HelloWorldTest {
         Action action = new HelloWorldAction();
         ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
         serviceDefinition
-                .withHandler(new GetServiceHandler("sayPlainTextHello", action).producing(
+                .withHandler(new GetServiceHandler("/sayPlainTextHello/:name", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.TXT)))
-                .withHandler(new GetServiceHandler("sayPlainXmlHello", action).producing(
+                .withHandler(new GetServiceHandler("/sayPlainXmlHello/:name", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.XML)))
-                .withHandler(new GetServiceHandler("sayPlainHtmlHello", action).producing(
+                .withHandler(new GetServiceHandler("/sayPlainHtmlHello/:name", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.HTML)))
-                .withHandler(new GetServiceHandler("sayPlainJsonHello", action).producing(
+                .withHandler(new GetServiceHandler("/sayPlainJsonHello/:name", action).producing(
                         new MediaType(HelloWorldAction.APPLICATION, HelloWorldAction.JSON)));
 
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);

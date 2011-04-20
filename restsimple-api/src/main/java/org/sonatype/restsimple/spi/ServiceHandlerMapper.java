@@ -32,7 +32,7 @@ public class ServiceHandlerMapper {
 
     public ServiceHandlerMapper(List<ServiceHandler> serviceHandlers) {
         for (ServiceHandler s: serviceHandlers) {
-            addServiceHandler(s);
+            addServiceHandler("", s);
         }
     }
 
@@ -41,8 +41,13 @@ public class ServiceHandlerMapper {
      * @param serviceHandler {@link ServiceHandler}
      * @return this
      */
-    public ServiceHandlerMapper addServiceHandler(ServiceHandler serviceHandler) {
-        maps.put(new ServiceHandlerInfo(serviceHandler.getHttpMethod().name().toLowerCase(), convert(serviceHandler.path())), serviceHandler);
+    public ServiceHandlerMapper addServiceHandler(String path, ServiceHandler serviceHandler) {
+        String realPath = serviceHandler.path();
+        if (!path.equals("")) {
+            realPath = path + (serviceHandler.path().startsWith("/") ? serviceHandler.path() : "/" + serviceHandler.path());
+        }
+        
+        maps.put(new ServiceHandlerInfo(serviceHandler.getHttpMethod().name().toLowerCase(), convert(realPath)), serviceHandler);
         return this;
     }
 
@@ -82,6 +87,8 @@ public class ServiceHandlerMapper {
      * @return a {@link ServiceHandler}, or null if not mapped.
      */
     public ServiceHandler map(String method, String path) {
+
+        if (path == null) return null;
 
         // JAXRS remove the / for PathParam, where Sitebricks don't
         if (!path.startsWith("/")) {

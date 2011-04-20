@@ -18,6 +18,7 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A default {@link ServiceDefinition} which can be injected or created directly.
@@ -29,6 +30,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
     private final ServiceHandlerMapper serviceHandlerMapper;
+    private final AtomicBoolean configured = new AtomicBoolean(false);
 
     public DefaultServiceDefinition() {
         this.serviceHandlerMapper = new ServiceHandlerMapper();
@@ -64,7 +66,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     @Override
     public ServiceDefinition withHandler(ServiceHandler serviceHandler) {
         serviceHandlers.add(serviceHandler);
-        serviceHandlerMapper.addServiceHandler(serviceHandler);
+        serviceHandlerMapper.addServiceHandler(path, serviceHandler);
         return this;
     }
 
@@ -98,6 +100,22 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      */
     @Override
     public List<ServiceHandler> serviceHandlers() {
+
+        if (!configured.getAndSet(true)) {
+            for (ServiceHandler serviceHandler: serviceHandlers) {
+
+                if (serviceHandler.mediaToProduce().size() == 0) {
+                    for(MediaType p: mediaTypeToProduce) {
+                        serviceHandler.producing(p);
+                    }
+                }
+
+                //TODO: Could have several
+                if (serviceHandler.consumeMediaType() == null && mediaTypeToConsume.size() > 0) {
+                    serviceHandler.consumeWith(mediaTypeToConsume.get(0), null);
+                }
+            }
+        }
         return Collections.unmodifiableList(serviceHandlers);
     }
 

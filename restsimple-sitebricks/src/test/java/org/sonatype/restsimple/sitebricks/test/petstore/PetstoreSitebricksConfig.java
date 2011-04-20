@@ -41,8 +41,8 @@ public class PetstoreSitebricksConfig extends GuiceServletContextListener {
 
                 ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
                 serviceDefinition
-                        .withHandler(new GetServiceHandler("/:echo", action).consumeWith(JSON, Pet.class).producing(JSON))
-                        .withHandler(new PostServiceHandler("/:echo", action).consumeWith(JSON, Pet.class).producing(JSON));
+                        .withHandler(new GetServiceHandler("/get/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON));
                 list.add(serviceDefinition);
                 return list;
             }

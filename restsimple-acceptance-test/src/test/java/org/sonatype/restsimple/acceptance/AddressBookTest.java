@@ -57,7 +57,7 @@ public class AddressBookTest {
         acceptHeader = AddressBookAction.APPLICATION + "/" + AddressBookAction.JSON;
 
         Action action = new AddressBookAction();
-        PostServiceHandler postServiceHandler = new PostServiceHandler("updateAddressBook", action);
+        PostServiceHandler postServiceHandler = new PostServiceHandler("/updateAddressBook/:ad", action);
         postServiceHandler.addFormParam("update");
         postServiceHandler.addFormParam("update2");
 
@@ -67,10 +67,10 @@ public class AddressBookTest {
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                 .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                 .consuming(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
-                .withHandler(new PutServiceHandler("createAddressBook", action))
-                .withHandler(new GetServiceHandler("getAddressBook", action))
+                .withHandler(new PutServiceHandler("/createAddressBook/:ad", action))
+                .withHandler(new GetServiceHandler("/getAddressBook/:ad", action))
                 .withHandler(postServiceHandler)
-                .withHandler(new DeleteServiceHandler("deleteAddressBook", action));
+                .withHandler(new DeleteServiceHandler("/deleteAddressBook/:ad", action));
 
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
