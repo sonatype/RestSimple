@@ -52,8 +52,6 @@ public class WebDriver {
 
     private final ServletContextHandler context;
 
-    private ServiceDefinition serviceDefinition;
-
     private final String targetUrl;
 
     private PROVIDER provider = PROVIDER.JAXRS;
@@ -147,7 +145,6 @@ public class WebDriver {
             }
         });
 
-        this.serviceDefinition = serviceDefinition;
         server.start();
         return this;
     }
