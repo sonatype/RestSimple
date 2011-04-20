@@ -65,7 +65,7 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
             if (method.getName().startsWith(READ)) {
 
                 if (types.length == 1) {
-                    serviceHandler = new GetServiceHandler("/" + READ, ActionGenerator.generate(instance, application, method));
+                    serviceHandler = new GetServiceHandler("/" + READ + "/:id", ActionGenerator.generate(instance, application, method));
                 } else {
                     serviceHandler = new GetServiceHandler("/" + READS, ActionGenerator.generate(instance, application, method));
                 }
@@ -76,7 +76,7 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
             }
 
             if (method.getName().startsWith(DELETE)) {
-                serviceHandler = new DeleteServiceHandler("/" + DELETE, ActionGenerator.generate(instance, application, method));
+                serviceHandler = new DeleteServiceHandler("/" + DELETE + "/:id", ActionGenerator.generate(instance, application, method));
             }
 
             if (serviceHandler == null) {
