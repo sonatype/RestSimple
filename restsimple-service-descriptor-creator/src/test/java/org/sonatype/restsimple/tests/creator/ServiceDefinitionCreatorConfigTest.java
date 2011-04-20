@@ -21,7 +21,6 @@ import org.sonatype.restsimple.annotation.Path;
 import org.sonatype.restsimple.annotation.PathParam;
 import org.sonatype.restsimple.annotation.Post;
 import org.sonatype.restsimple.annotation.Produces;
-import org.sonatype.restsimple.annotation.Put;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
@@ -34,15 +33,17 @@ import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
-public class ServiceDefinitionCreatorTest {
+public class ServiceDefinitionCreatorConfigTest {
 
     private MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
 
-    private static final Logger logger = LoggerFactory.getLogger(ServiceDefinitionCreatorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDefinitionCreatorConfigTest.class);
 
     public String targetUrl;
     private WebDriver webDriver;
@@ -50,7 +51,15 @@ public class ServiceDefinitionCreatorTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        serviceDefinition = creator.create(AddressBook.class);
+
+        ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
+
+        config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
+              .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
+              .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
+
+
+        serviceDefinition = creator.create(AddressFooBook.class, config);
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
@@ -61,33 +70,44 @@ public class ServiceDefinitionCreatorTest {
         webDriver.shutdown();
     }
 
+    public static class AddressFooBook {
+        private final Map<String, Person> peoplea = new LinkedHashMap<String, Person>();
+        ;
+
+        private static int idx = 4;
+
+        public AddressFooBook() {
+        }
+
+        public Person foo(Person person) {
+            peoplea.put(person.id, person);
+            return person;
+        }
+
+        public Person bar(String id) {
+            return peoplea.get(id);
+        }
+
+        public Person pong(String id) {
+            return peoplea.remove(id);
+        }
+    }
+
     public interface AddressBookClient {
 
-        @Path("/" + ServiceDefinitionCreatorConfig.CREATE)
+        @Path("/foo")
         @Post
         @Produces("application/json")
         @Consumes("application/json")
         public Person createPerson(Person person);
 
-        @Path("/" + ServiceDefinitionCreatorConfig.READ)
+        @Path("/bar")
         @Get
         @Produces("text/plain")
         @Consumes("application/json")
         public Person readPerson(@PathParam("id") String id);
 
-        @Path("/" + ServiceDefinitionCreatorConfig.CREATES)
-        @Get
-        @Produces("text/plain")
-        @Consumes("application/json")
-        public Collection<Person> readPeoples(@PathParam("allUsers") String user);
-
-        @Path("/" + ServiceDefinitionCreatorConfig.CREATES)
-        @Put
-        @Produces("application/json")                                             
-        @Consumes("application/json")
-        public Person updatePerson(@PathParam("id") String id, Person person);
-
-        @Path("/" + ServiceDefinitionCreatorConfig.DELETE)
+        @Path("/pong")
         @Delete
         @Produces("text/plain")
         @Consumes("application/json")
@@ -96,7 +116,7 @@ public class ServiceDefinitionCreatorTest {
 
     }
 
-    @Test (enabled = true)
+    @Test(enabled = true)
     public void testServiceDefinitionCreator()
             throws Exception {
         System.out.println(serviceDefinition);

@@ -17,6 +17,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
@@ -32,24 +34,50 @@ import javax.inject.Singleton;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+/**
+ * A {@link ServiceDefinitionCreator} that generate on the fly {@link ServiceDefinition} from a class that follow the {@link ServiceDefinition} convention.
+ * The {@link ServiceDefinition} convention is defined as:
+ * <p/>
+ * The following table described how a class' methods are mapped to {@link ServiceHandler} and {@link ServiceDefinition}
+ * <p/>
+ * Method starts with name       Mapped to             URI
+ * =============================================================================
+ * create                  PostServiceHandler     POST /create
+ * read                    GetServiceHandler      GET /read/{anything}
+ * reads                   GetServiceHandler      GET /reads
+ * update                  PutServiceHandler      UPDATE /update
+ * delete                  DELETEServiceHandler   DELETE /delete/{anything}
+ */
 @Named
 @Singleton
 public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCreator {
 
-    public final static String APPLICATION = "application";
-    public final static String JSON = "json";
-    public final static String XML = "xml";
-    public final static String CREATE = "create";
-    public final static String CREATES = "creates";
-    public final static String READS = "reads";
-    public final static String READ = "read";
-    public final static String UPDATE = "update";
-    public final static String UPDATES = "updates";
-    public final static String DELETE = "delete";
+    private final static Logger logger = LoggerFactory.getLogger(MethodBasedServiceDefinitionCreator.class);
 
-    private final MediaType APPLICATION_JSON = new MediaType(APPLICATION, JSON);
+    private final MediaType APPLICATION_JSON = new MediaType(ServiceDefinitionCreatorConfig.APPLICATION, ServiceDefinitionCreatorConfig.JSON);
 
+    /**
+     * Create a {@link ServiceDefinition} from a Class. The mapping between the class methods and {@link ServiceHandler}
+     * will be determined by the default's {@link ServiceDefinitionCreatorConfig} value.
+     *
+     * @param application a class
+     * @return {@link ServiceDefinition}
+     * @throws Exception
+     */
     public ServiceDefinition create(Class<?> application) throws Exception {
+        return create(application, new ServiceDefinitionCreatorConfig());
+    }
+
+    /**
+     * Create a {@link ServiceDefinition} from a Class by using the {@link ServiceDefinitionCreatorConfig} to get some hints about
+     * how uri are generated.
+     *
+     * @param application a class
+     * @param config {@link ServiceDefinitionCreatorConfig}
+     * @return {@link ServiceDefinition}
+     * @throws Exception
+     */
+    public ServiceDefinition create(Class<?> application, ServiceDefinitionCreatorConfig config) throws Exception {
         ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
 
         Method[] methods = application.getDeclaredMethods();
@@ -58,43 +86,48 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
             ServiceHandler serviceHandler = null;
             Class[] types = method.getParameterTypes();
 
-            if (method.getName().startsWith(CREATE)) {
-                serviceHandler = new PostServiceHandler("/" + CREATE, ActionGenerator.generate(instance, application, method));
+            ServiceDefinitionCreatorConfig.MethodMapper methodMapper = config.map(method.getName());
+
+            if (methodMapper == null) {
+                logger.warn("Unmapped method {}", method.getName());
+                continue;
             }
 
-            if (method.getName().startsWith(READ)) {
-
-                if (types.length == 1) {
-                    serviceHandler = new GetServiceHandler("/" + READ + "/:id", ActionGenerator.generate(instance, application, method));
-                } else {
-                    serviceHandler = new GetServiceHandler("/" + READS, ActionGenerator.generate(instance, application, method));
-                }
-            }
-
-            if (method.getName().startsWith(UPDATE)) {
-                serviceHandler = new PutServiceHandler("/" + UPDATE, ActionGenerator.generate(instance, application, method));
-            }
-
-            if (method.getName().startsWith(DELETE)) {
-                serviceHandler = new DeleteServiceHandler("/" + DELETE + "/:id", ActionGenerator.generate(instance, application, method));
-            }
-
-            if (serviceHandler == null) {
-                throw new IllegalStateException("Unable to map a service");
+            switch (methodMapper.getMethod()) {
+                case GET:
+                    if (types.length == 1) {
+                        serviceHandler = new GetServiceHandler("/" + methodMapper.getMethodMappedTo() + "/:id", ActionGenerator.generate(instance, application, method));
+                    } else {
+                        serviceHandler = new GetServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, application, method));
+                    }
+                    break;
+                case POST:
+                    serviceHandler = new PostServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, application, method));
+                    break;
+                case DELETE:
+                    serviceHandler = new DeleteServiceHandler("/" + methodMapper.getMethodMappedTo() + "/:id", ActionGenerator.generate(instance, application, method));
+                    break;
+                case PUT:
+                    serviceHandler = new PutServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, application, method));
+                    break;
+                default:
+                    throw new IllegalStateException();
             }
 
             if (types.length == 0) {
-                serviceHandler.producing(APPLICATION_JSON);
+                serviceHandler.producing(methodMapper.getProduceMediaType());
             } else if (types.length == 1) {
-                serviceHandler.consumeWith(APPLICATION_JSON, types[0]).producing(APPLICATION_JSON);
+                serviceHandler.consumeWith(methodMapper.getConsumeMediaType(), types[0]).producing(methodMapper.getProduceMediaType());
             }
+            logger.debug("Created ServiceHandler {}\n to MethodMapper {}\n", serviceHandler, methodMapper);
+
             serviceDefinition.withHandler(serviceHandler);
         }
         return serviceDefinition;
     }
 
 
-    public final static class ActionGenerator implements Opcodes {
+    private final static class ActionGenerator implements Opcodes {
 
         public static <T> Action generate(Object instance, Class<T> clazz, Method method) throws Exception {
 
