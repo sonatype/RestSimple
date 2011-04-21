@@ -70,6 +70,7 @@
         <module>restsimple-webdriver</module>
         <module>restsimple-acceptance-test</module>
         <module>restsimple-service-descriptor-creator</module>
+        <module>restsimple-templating</module>
     </modules>
 
     <dependencyManagement>
