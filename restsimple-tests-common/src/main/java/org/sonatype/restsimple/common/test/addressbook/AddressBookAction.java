@@ -15,6 +15,10 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -29,6 +33,11 @@ public class AddressBookAction implements Action<AddressBook, String> {
     private final ConcurrentHashMap<String, Collection<String>> book = new ConcurrentHashMap<String, Collection<String>>();
 
     public AddressBookAction() {
+    }
+
+    @Override
+    public String toString() {
+        return "AddressBookAction";
     }
 
     @Override
