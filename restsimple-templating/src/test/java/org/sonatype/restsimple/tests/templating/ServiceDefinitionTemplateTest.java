@@ -178,8 +178,6 @@ public class ServiceDefinitionTemplateTest {
 
         HtmlTemplateGenerator generator = new HtmlTemplateGenerator(new VelocityTemplater());
         String sdString = generator.generateTemplate(serviceDefinition);
-        System.out.println(sdString);
-
         assertEquals(sdString, SD);
     }
 }
