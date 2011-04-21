@@ -24,7 +24,7 @@ abstract public class ServiceHandler {
     private final String path;
     private final Action action;
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
-    private Class consumerClazz;
+    private Class<?> consumerClazz;
     private MediaType consumerMediaType;
     
     /**
@@ -112,7 +112,7 @@ abstract public class ServiceHandler {
      * Return the class that will be used to unmarshall the request's body.
      * @return the class that will be used to unmarshall the request's body.
      */
-    public Class consumeClass(){
+    public Class<?> consumeClass(){
        return consumerClazz;
     }
 
