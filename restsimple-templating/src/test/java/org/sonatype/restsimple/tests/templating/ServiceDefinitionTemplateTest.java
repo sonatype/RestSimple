@@ -37,34 +37,34 @@ public class ServiceDefinitionTemplateTest {
             "<body>\n" +
             "<h1>ServiceDefinition</h1>\n" +
             "\n" +
-            "<div>\n" +
-            "    <p>\n" +
+            "<div name=\"ServiceDefinition\">\n" +
+            "    <p class=\"rooturi\">\n" +
             "        ROOT URI: /serviceDefinition\n" +
             "    </p>\n" +
             "\n" +
-            "    <p>\n" +
+            "    <p class=\"consuming\">\n" +
             "        Consuming:\n" +
             "    <ul>\n" +
             "                    <li>application/vnd.org.sonatype.rest+json</li>\n" +
             "            </ul>\n" +
             "    </p>\n" +
-            "    <p>\n" +
+            "    <p class=\"producing\">\n" +
             "        Producing:\n" +
-            "    <ul>\n" +
-            "                    <li>application/vnd.org.sonatype.rest+json</li>\n" +
-            "                    <li>application/vnd.org.sonatype.rest+xml</li>\n" +
+            "    <ul class=\"ul-producing\">\n" +
+            "                    <li class=\"li-producing\">application/vnd.org.sonatype.rest+json</li>\n" +
+            "                    <li class=\"li-producing\">application/vnd.org.sonatype.rest+xml</li>\n" +
             "            </ul>\n" +
             "    </p>\n" +
             "\n" +
             "</div>\n" +
             "        <h2> ServiceHandler </h2>\n" +
             "\n" +
-            "    <div>\n" +
-            "        <p>\n" +
+            "    <div class=\"ServiceHandler\">\n" +
+            "        <p class=\"uri\">\n" +
             "            URI: /serviceDefinition/createAddressBook/:ad\n" +
             "        </p>\n" +
             "\n" +
-            "        <p>\n" +
+            "        <p class=\"method\">\n" +
             "            Method: PUT\n" +
             "        </p>\n" +
             "\n" +
@@ -72,23 +72,23 @@ public class ServiceDefinitionTemplateTest {
             "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
-            "        <p>\n" +
+            "        <p class=\"sh-producing\">\n" +
             "            Producing:\n" +
             "        <ul>\n" +
             "                    </ul>\n" +
             "        </p>\n" +
-            "        <p>\n" +
+            "        <p class=\"action\">\n" +
             "            Action: AddressBookAction\n" +
             "        </p>\n" +
             "    </div>\n" +
             "        <h2> ServiceHandler </h2>\n" +
             "\n" +
-            "    <div>\n" +
-            "        <p>\n" +
+            "    <div class=\"ServiceHandler\">\n" +
+            "        <p class=\"uri\">\n" +
             "            URI: /serviceDefinition/getAddressBook/:ad\n" +
             "        </p>\n" +
             "\n" +
-            "        <p>\n" +
+            "        <p class=\"method\">\n" +
             "            Method: GET\n" +
             "        </p>\n" +
             "\n" +
@@ -96,23 +96,23 @@ public class ServiceDefinitionTemplateTest {
             "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
-            "        <p>\n" +
+            "        <p class=\"sh-producing\">\n" +
             "            Producing:\n" +
             "        <ul>\n" +
             "                    </ul>\n" +
             "        </p>\n" +
-            "        <p>\n" +
+            "        <p class=\"action\">\n" +
             "            Action: AddressBookAction\n" +
             "        </p>\n" +
             "    </div>\n" +
             "        <h2> ServiceHandler </h2>\n" +
             "\n" +
-            "    <div>\n" +
-            "        <p>\n" +
+            "    <div class=\"ServiceHandler\">\n" +
+            "        <p class=\"uri\">\n" +
             "            URI: /serviceDefinition/updateAddressBook/:ad\n" +
             "        </p>\n" +
             "\n" +
-            "        <p>\n" +
+            "        <p class=\"method\">\n" +
             "            Method: POST\n" +
             "        </p>\n" +
             "\n" +
@@ -120,23 +120,23 @@ public class ServiceDefinitionTemplateTest {
             "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
-            "        <p>\n" +
+            "        <p class=\"sh-producing\">\n" +
             "            Producing:\n" +
             "        <ul>\n" +
             "                    </ul>\n" +
             "        </p>\n" +
-            "        <p>\n" +
+            "        <p class=\"action\">\n" +
             "            Action: AddressBookAction\n" +
             "        </p>\n" +
             "    </div>\n" +
             "        <h2> ServiceHandler </h2>\n" +
             "\n" +
-            "    <div>\n" +
-            "        <p>\n" +
+            "    <div class=\"ServiceHandler\">\n" +
+            "        <p class=\"uri\">\n" +
             "            URI: /serviceDefinition/deleteAddressBook/:ad\n" +
             "        </p>\n" +
             "\n" +
-            "        <p>\n" +
+            "        <p class=\"method\">\n" +
             "            Method: DELETE\n" +
             "        </p>\n" +
             "\n" +
@@ -144,12 +144,12 @@ public class ServiceDefinitionTemplateTest {
             "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
-            "        <p>\n" +
+            "        <p class=\"sh-producing\">\n" +
             "            Producing:\n" +
             "        <ul>\n" +
             "                    </ul>\n" +
             "        </p>\n" +
-            "        <p>\n" +
+            "        <p class=\"action\">\n" +
             "            Action: AddressBookAction\n" +
             "        </p>\n" +
             "    </div>\n" +
@@ -178,6 +178,8 @@ public class ServiceDefinitionTemplateTest {
 
         HtmlTemplateGenerator generator = new HtmlTemplateGenerator(new VelocityTemplater());
         String sdString = generator.generateTemplate(serviceDefinition);
+        System.out.println(sdString);
+
         assertEquals(sdString, SD);
     }
 }

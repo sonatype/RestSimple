@@ -7,12 +7,12 @@
 <body>
 <h1>ServiceDefinition</h1>
 
-<div>
-    <p>
+<div name="ServiceDefinition">
+    <p class="rooturi">
         ROOT URI: $sd.path()
     </p>
 
-    <p>
+    <p class="consuming">
         Consuming:
     <ul>
         #foreach( $p in $sd.mediaToConsume() )
@@ -20,11 +20,11 @@
         #end
     </ul>
     </p>
-    <p>
+    <p class="producing">
         Producing:
-    <ul>
+    <ul class="ul-producing">
         #foreach( $p in $sd.mediaToProduce() )
-            <li>$p</li>
+            <li class="li-producing">$p</li>
         #end
     </ul>
     </p>
@@ -33,17 +33,17 @@
     #foreach( $sh in $sd.serviceHandlers() )
     <h2> ServiceHandler </h2>
 
-    <div>
-        <p>
+    <div class="ServiceHandler">
+        <p class="uri">
             URI: $sd.path()${sh.path()}
         </p>
 
-        <p>
+        <p class="method">
             Method: ${sh.getHttpMethod()}
         </p>
 
         #if($sh.consumeClass())
-        <p>
+        <p class="sh-consuming">
             Consuming: $sh.consumeMediaType() using class $sh.consumeClass()
         </p>
         #else
@@ -52,7 +52,7 @@
             </p>
         #end
 
-        <p>
+        <p class="sh-producing">
             Producing:
         <ul>
             #foreach( $p in $sh.produceMediaType() )
@@ -60,7 +60,7 @@
             #end
         </ul>
         </p>
-        <p>
+        <p class="action">
             Action: $sh.action
         </p>
     </div>
