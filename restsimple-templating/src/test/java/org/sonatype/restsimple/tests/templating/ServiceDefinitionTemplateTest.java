@@ -45,11 +45,14 @@ public class ServiceDefinitionTemplateTest {
             "    <p>\n" +
             "        Consuming:\n" +
             "    <ul>\n" +
+            "                    <li>application/vnd.org.sonatype.rest+json</li>\n" +
             "            </ul>\n" +
             "    </p>\n" +
             "    <p>\n" +
             "        Producing:\n" +
             "    <ul>\n" +
+            "                    <li>application/vnd.org.sonatype.rest+json</li>\n" +
+            "                    <li>application/vnd.org.sonatype.rest+xml</li>\n" +
             "            </ul>\n" +
             "    </p>\n" +
             "\n" +
@@ -66,7 +69,7 @@ public class ServiceDefinitionTemplateTest {
             "        </p>\n" +
             "\n" +
             "                    <p>\n" +
-            "            Consuming: MediaType{type='application', subType='vnd.org.sonatype.rest+json'}\n" +
+            "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
             "        <p>\n" +
@@ -90,7 +93,7 @@ public class ServiceDefinitionTemplateTest {
             "        </p>\n" +
             "\n" +
             "                    <p>\n" +
-            "            Consuming: MediaType{type='application', subType='vnd.org.sonatype.rest+json'}\n" +
+            "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
             "        <p>\n" +
@@ -114,7 +117,7 @@ public class ServiceDefinitionTemplateTest {
             "        </p>\n" +
             "\n" +
             "                    <p>\n" +
-            "            Consuming: MediaType{type='application', subType='vnd.org.sonatype.rest+json'}\n" +
+            "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
             "        <p>\n" +
@@ -138,7 +141,7 @@ public class ServiceDefinitionTemplateTest {
             "        </p>\n" +
             "\n" +
             "                    <p>\n" +
-            "            Consuming: MediaType{type='application', subType='vnd.org.sonatype.rest+json'}\n" +
+            "            Consuming: application/vnd.org.sonatype.rest+json\n" +
             "            </p>\n" +
             "        \n" +
             "        <p>\n" +
@@ -155,6 +158,7 @@ public class ServiceDefinitionTemplateTest {
 
     @Test
     public void basicServiceDefinitionTest() throws Exception {
+
         Action action = new AddressBookAction();
         PostServiceHandler postServiceHandler = new PostServiceHandler("/updateAddressBook/:ad", action);
         postServiceHandler.addFormParam("update");
@@ -173,7 +177,7 @@ public class ServiceDefinitionTemplateTest {
 
 
         HtmlTemplateGenerator generator = new HtmlTemplateGenerator(new VelocityTemplater());
-        String sdString = generator.generateTemplate(serviceDefinition);        
+        String sdString = generator.generateTemplate(serviceDefinition);
         assertEquals(sdString, SD);
     }
 }

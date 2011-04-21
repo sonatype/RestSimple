@@ -15,16 +15,16 @@
     <p>
         Consuming:
     <ul>
-        #foreach( $p in $sd.consumeMediaType() )
-            <li>${p}</li>
+        #foreach( $p in $sd.mediaToConsume() )
+            <li>$p</li>
         #end
     </ul>
     </p>
     <p>
         Producing:
     <ul>
-        #foreach( $p in $sd.produceMediaType() )
-            <li>${p}</li>
+        #foreach( $p in $sd.mediaToProduce() )
+            <li>$p</li>
         #end
     </ul>
     </p>

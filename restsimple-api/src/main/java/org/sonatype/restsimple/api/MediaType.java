@@ -22,10 +22,7 @@ public final class MediaType {
 
     @Override
     public String toString() {
-        return "MediaType{" +
-                "type='" + type + '\'' +
-                ", subType='" + subType + '\'' +
-                '}';
+        return toMediaType();
     }
 
     public MediaType(String type, String subType) {
