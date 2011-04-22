@@ -17,6 +17,10 @@ import java.util.Map;
  * A Web client for RestSimple. 
  */
 public interface WebClient {
+
+    public enum AuthScheme { BASIC, DIGEST, KERBEROS, SPNEGO }
+
+
     WebClient headers(Map<String, String> headers);
 
     WebClient queryString(Map<String, String> queryString);
@@ -54,6 +58,8 @@ public interface WebClient {
     Object put(Object o);
 
     WebClient supportedContentType(MediaType mediaType);
+
+    WebClient auth(AuthScheme scheme, String user, String password);
 
     public static enum TYPE {
         POST, PUT, DELETE, GET

@@ -12,6 +12,8 @@
 package org.sonatype.restsimple.client;
 
 import com.ning.http.client.AsyncHttpClientConfig;
+import com.ning.http.client.Realm;
+import com.ning.http.client.Realm.RealmBuilder;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -490,6 +492,31 @@ public class WebAHCClient implements WebClient {
     public WebClient supportedContentType(MediaType mediaType) {
         supportedContentType.add(mediaType);
         return this;
+    }
+
+    @Override
+    public WebClient auth(final AuthScheme scheme, final String user, final String password) {
+
+        ahcConfig.getAsyncHttpClientConfigBuilder().setRealm(
+                new RealmBuilder().setPrincipal(user).setPrincipal(password).setScheme(mapScheme(scheme)).build());
+
+        return this;
+    }
+
+    private Realm.AuthScheme mapScheme(AuthScheme scheme) {
+
+        switch (scheme) {
+            case BASIC:
+                return Realm.AuthScheme.BASIC;
+            case DIGEST:
+                return Realm.AuthScheme.DIGEST;
+            case KERBEROS:
+                return Realm.AuthScheme.KERBEROS;
+            case SPNEGO:
+                return Realm.AuthScheme.SPNEGO;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     private String negotiate(UniformInterfaceException u) {
