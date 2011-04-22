@@ -49,8 +49,6 @@ public interface WebClient {
 
     WebClient supportedContentType(MediaType mediaType);
 
-    void close();
-
     public static enum TYPE {
         POST, PUT, DELETE, GET
     }

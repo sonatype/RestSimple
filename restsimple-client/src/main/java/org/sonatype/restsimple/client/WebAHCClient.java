@@ -214,6 +214,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(formParams, t);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -233,6 +235,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(o, t);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -249,6 +253,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(o);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -265,6 +271,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(o);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -281,6 +289,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(t);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -297,6 +307,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete();
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -315,6 +327,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(o, t);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -332,6 +346,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return get(t);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -347,6 +363,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return get();
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -366,6 +384,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return put(o, t);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -383,6 +403,8 @@ public class WebAHCClient implements WebClient {
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return put(o);
+        } finally {
+            asyncClient.destroy();
         }
     }
 
@@ -397,11 +419,6 @@ public class WebAHCClient implements WebClient {
     public WebClient supportedContentType(MediaType mediaType) {
         supportedContentType.add(mediaType);
         return this;
-    }
-
-    @Override
-    public void close() {
-        asyncClient.destroy();
     }
 
     private String negotiate(UniformInterfaceException u) {
