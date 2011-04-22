@@ -29,6 +29,8 @@ public interface WebClient {
 
     <T> T post(Object o, Class<T> t);
 
+    <T> T post(Object o, Class<?> requestEntity, Class<T> responseEntity);
+
     Object post(Object o);
 
     Object delete(Object o);
@@ -39,11 +41,15 @@ public interface WebClient {
 
     <T> T delete(Object o, Class<T> t);
 
+    <T> T delete(Object o, Class<?> requestEntity, Class<T> responseEntity);
+
     <T> T get(Class<T> t);
 
     Object get();
 
     <T> T put(Object o, Class<T> t);
+
+    <T> T put(Object o, Class<?> requestEntity, Class<T> responseEntity);
 
     Object put(Object o);
 

@@ -121,4 +121,25 @@ public abstract class WebTest extends BaseTest {
         assertNotNull(pet);
     }
 
+    @Test(timeOut = 20000)
+    public void testPostSerializeDeserialize() throws Throwable {
+        logger.info("running test: testPost");
+
+        WebClient webClient = new WebAHCClient(serviceDefinition);
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("Content-Type", acceptHeader);
+
+        Pet pet = (Pet) webClient.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .post("{\"name\":\"pouetpouetpouetpouet\"}", String.class,  Pet.class);
+
+        assertNotNull(pet);
+
+        pet = webClient.clientOf(targetUrl + "/getPet/myPet")
+                .headers(m)
+                .get(Pet.class);
+
+        assertNotNull(pet);
+    }
+
 }
