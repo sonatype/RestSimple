@@ -399,6 +399,11 @@ public class WebAHCClient implements WebClient {
         return this;
     }
 
+    @Override
+    public void close() {
+        asyncClient.destroy();
+    }
+
     private String negotiate(UniformInterfaceException u) {
         return negotiateHandler.negotiate(supportedContentType, u.getResponse().getHeaders(), u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
     }
