@@ -22,7 +22,7 @@ import org.sonatype.restsimple.annotation.PathParam;
 import org.sonatype.restsimple.annotation.Post;
 import org.sonatype.restsimple.annotation.Produces;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.client.WebException;
+import org.sonatype.restsimple.api.WebException;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.creator.MethodBasedServiceDefinitionCreator;
 import org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig;
@@ -32,7 +32,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.net.URI;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

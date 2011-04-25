@@ -12,8 +12,8 @@
 package org.sonatype.restsimple.test.client;
 
 import org.sonatype.restsimple.api.WebClient;
+import org.sonatype.restsimple.api.WebException;
 import org.sonatype.restsimple.client.WebAHCClient;
-import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.testng.annotations.Test;
 

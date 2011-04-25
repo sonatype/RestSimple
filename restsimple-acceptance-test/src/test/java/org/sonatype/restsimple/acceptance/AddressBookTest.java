@@ -24,7 +24,7 @@ import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.WebClient;
 import org.sonatype.restsimple.client.WebAHCClient;
-import org.sonatype.restsimple.client.WebException;
+import org.sonatype.restsimple.api.WebException;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;

@@ -14,54 +14,193 @@ package org.sonatype.restsimple.api;
 import java.util.Map;
 
 /**
- * A Web client for RestSimple. 
+ * A Web WebClient for RestSimple. 
  */
 public interface WebClient {
 
-    public enum AuthScheme { BASIC, DIGEST, KERBEROS, SPNEGO }
-
-
-    WebClient headers(Map<String, String> headers);
-
-    WebClient queryString(Map<String, String> queryString);
-
-    WebClient matrixParams(Map<String, String> matrixParams);
-
-    WebClient clientOf(String uri);
-
-    <T> T post(Map<String, String> formParams, Class<T> t);
-
-    <T> T post(Object o, Class<T> t);
-
-    <T> T post(Object o, Class<?> requestEntity, Class<T> responseEntity);
-
-    Object post(Object o);
-
-    Object delete(Object o);
-
-    <T> T delete(Class<T> t);
-
-    Object delete();
-
-    <T> T delete(Object o, Class<T> t);
-
-    <T> T delete(Object o, Class<?> requestEntity, Class<T> responseEntity);
-
-    <T> T get(Class<T> t);
-
-    Object get();
-
-    <T> T put(Object o, Class<T> t);
-
-    <T> T put(Object o, Class<?> requestEntity, Class<T> responseEntity);
-
-    Object put(Object o);
-
-    WebClient supportedContentType(MediaType mediaType);
-
-    WebClient auth(AuthScheme scheme, String user, String password);
-
-    public static enum TYPE {
+      public static enum TYPE {
         POST, PUT, DELETE, GET
     }
+
+    public enum AuthScheme {
+        BASIC, DIGEST, KERBEROS, SPNEGO
+    }
+
+    /**
+     * Configure the headers of the request.
+     *
+     * @param headers a {@link Map} of request's headers.
+     * @return this
+     */
+    WebClient headers(Map<String, String> headers);
+
+    /**
+     * Configure the query string of the request.
+     *
+     * @param queryString a {@link Map} of request's query string.
+     * @return this
+     */
+    WebClient queryString(Map<String, String> queryString);
+
+    /**
+     * Configure the matrix parameters of the request.
+     *
+     * @param matrixParams a {@link Map} of request's matrix parameters
+     * @return this
+     */
+    WebClient matrixParams(Map<String, String> matrixParams);
+
+    /**
+     * Set the request URI.
+     *
+     * @param uri the request URI.
+     * @return this
+     */
+    WebClient clientOf(String uri);
+
+    /**
+     * Execute a POST operation
+     *
+     * @param formParams A Map of forms parameters
+     * @param t          A class of type T that will be used when serializing/deserializing the request/response body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T post(Map<String, String> formParams, Class<T> t);
+
+    /**
+     * Execute a POST operation
+     *
+     * @param o   An object that will be serialized as the request body
+     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T post(Object o, Class<T> t);
+
+    /**
+     * Execute a POST operation
+     *
+     * @param o              An object that will be serialized as the request body
+     * @param requestEntity  A class of type T that will be used when serializing the request's body.
+     * @param responseEntity A class of type T that will be used when serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T post(Object o, Class<?> requestEntity, Class<T> responseEntity);
+
+    /**
+     * Execute a POST operation
+     *
+     * @param o An object that will be serialized as the request body
+     * @return An Object representing the response's body
+     */
+    Object post(Object o);
+
+    /**
+     * Execute a DELETE operation
+     *
+     * @param o An object that will be serialized as the request body
+     * @return An Object representing the response's body
+     */
+    Object delete(Object o);
+
+    /**
+     * Execute a DELETE operation
+     *
+     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
+     * @return A T representing the response's body
+     */
+    <T> T delete(Class<T> t);
+
+    /**
+     * Execute a DELETE operation
+     *
+     * @return An Object representing the response's body
+     */
+    Object delete();
+
+    /**
+     * Execute a DELETE operation
+     *
+     * @param o   An object that will be serialized as the request body
+     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T delete(Object o, Class<T> t);
+
+    /**
+     * Execute a DELETE operation
+     *
+     * @param o              An object that will be serialized as the request body
+     * @param requestEntity  A class that will be used when serializing the request's body.
+     * @param responseEntity A class of type T that will be used when serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T delete(Object o, Class<?> requestEntity, Class<T> responseEntity);
+
+    /**
+     * Execute a GET operation
+     *
+     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
+     * @return An T representing the response's body
+     */
+    <T> T get(Class<T> t);
+
+    /**
+     * Execute a GET operation
+     *
+     * @return An Object representing the response's body
+     */
+    Object get();
+
+    /**
+     * Execute a PUT operation
+     *
+     * @param o   An object that will be serialized as the request body
+     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T put(Object o, Class<T> t);
+
+    /**
+     * Execute a PUT operation
+     *
+     * @param o              An object that will be serialized as the request body
+     * @param requestEntity  A class that will be used when serializing the request's body.
+     * @param responseEntity A class of type T that will be used when serializing the response's body.
+     * @param <T>
+     * @return An instance of t
+     */
+    <T> T put(Object o, Class<?> requestEntity, Class<T> responseEntity);
+
+    /**
+     * Execute a PUT operation
+     *
+     * @param o An object that will be serialized as the request body
+     * @return A T representing the response's body
+     */
+    Object put(Object o);
+
+    /**
+     * Add a {@link MediaType} to the list of supported content-type. The list of supported content-type
+     * is used when the server returns a http statis code of 206.
+     *
+     * @param mediaType
+     * @return this
+     */
+    WebClient supportedContentType(MediaType mediaType);
+
+    /**
+     * Set the authentication user and password as well as the scheme to use.
+     *
+     * @param scheme   the AuthScheme
+     * @param user     the user
+     * @param password the passwrod
+     * @return this
+     */
+    WebClient auth(AuthScheme scheme, String user, String password);
 }

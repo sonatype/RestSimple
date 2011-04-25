@@ -12,6 +12,8 @@
 package org.sonatype.restsimple.client;
 
 import org.sonatype.restsimple.api.MediaType;
+import org.sonatype.restsimple.api.NegotiationHandler;
+import org.sonatype.restsimple.api.WebException;
 
 import java.util.List;
 import java.util.Map;

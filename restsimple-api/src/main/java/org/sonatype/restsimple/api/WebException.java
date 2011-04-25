@@ -1,4 +1,4 @@
-package org.sonatype.restsimple.client;
+package org.sonatype.restsimple.api;
 
 /**
  * An exception thrown when an unexpected exception
