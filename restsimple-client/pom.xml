@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>org.sonatype.restsimple</groupId>
         <artifactId>restsimple-parent</artifactId>
@@ -24,25 +25,20 @@
             <artifactId>guice-servlet</artifactId>
             <version>2.9.5</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
             <artifactId>restsimple-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.sonatype.restsimple</groupId>
-            <artifactId>restsimple-webdriver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sonatype.restsimple</groupId>
-            <artifactId>restsimple-tests-common</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.sonatype.spice</groupId>
             <artifactId>jersey-ahc-client</artifactId>
             <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>1.5</version>
         </dependency>
         
         <dependency>
@@ -50,7 +46,16 @@
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.sonatype.restsimple</groupId>
+            <artifactId>restsimple-webdriver</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.restsimple</groupId>
+            <artifactId>restsimple-tests-common</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
