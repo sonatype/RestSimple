@@ -475,7 +475,7 @@ public class WebAHCClient implements WebClient {
         try {
             WebResource r = buildRequest();
             r.entity(requestEntity);
-            ClientResponse response = headers(r, TYPE.DELETE).post(ClientResponse.class, o);
+            ClientResponse response = headers(r, TYPE.PUT).post(ClientResponse.class, o);
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
