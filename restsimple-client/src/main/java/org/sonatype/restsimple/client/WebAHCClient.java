@@ -20,6 +20,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.representation.Form;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
@@ -130,6 +131,7 @@ public class WebAHCClient implements WebClient {
         this.ahcConfig = ahcConfig;
 
         ahcConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+        ahcConfig.getClasses().add(JacksonJsonProvider.class);
         
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
@@ -560,7 +562,7 @@ public class WebAHCClient implements WebClient {
                 return clazz;
             } 
         }
-        return null;
+        return String.class;
     }
 
     private WebResource.Builder headers(WebResource r, TYPE type) {
@@ -585,7 +587,7 @@ public class WebAHCClient implements WebClient {
     private WebResource.Builder headers(WebResource r, TYPE type, boolean formEncoded) {
         WebResource.Builder builder = r.getRequestBuilder();
         ServiceHandlerMapper mapper = new ServiceHandlerMapper(serviceDefinition.serviceHandlers());
-
+        boolean contentTypeSet = false;
         String urlPath = r.getURI().getPath();
         String path = serviceDefinition.path();
         if (!path.equals("") || !path.equals("/")) {
@@ -618,6 +620,7 @@ public class WebAHCClient implements WebClient {
             for (MediaType m : list) {
                 if (headers.get("Content-Type") == null && !formEncoded) {
                     builder.header("Content-Type", m.toMediaType());
+                    contentTypeSet = true;
                 }
             }
         }
@@ -625,8 +628,16 @@ public class WebAHCClient implements WebClient {
         if (headers.size() > 0) {
             for (Map.Entry<String, String> e : headers.entrySet()) {
                 builder.header(e.getKey(), e.getValue());
+                if (e.getKey().equalsIgnoreCase("Content-Type")) {
+                    contentTypeSet = true;
+                }
             }
         }
+
+        if (!contentTypeSet) {
+            builder.header("Content-Type", "application/json");    
+        }
+
         return builder;
     }
 }
