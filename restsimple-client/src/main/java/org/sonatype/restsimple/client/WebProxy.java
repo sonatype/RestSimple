@@ -38,7 +38,6 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.api.WebClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
 import java.lang.annotation.Annotation;

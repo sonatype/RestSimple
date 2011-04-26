@@ -9,7 +9,9 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.api;
+package org.sonatype.restsimple.client;
+
+import org.sonatype.restsimple.api.MediaType;
 
 import java.util.List;
 import java.util.Map;

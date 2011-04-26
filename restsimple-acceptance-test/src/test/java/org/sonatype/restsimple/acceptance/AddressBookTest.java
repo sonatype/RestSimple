@@ -22,9 +22,9 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.api.WebClient;
+import org.sonatype.restsimple.client.WebClient;
 import org.sonatype.restsimple.client.WebAHCClient;
-import org.sonatype.restsimple.api.WebException;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -112,6 +112,7 @@ public class AddressBookTest {
     public void testGet() throws Throwable {
         logger.info("running test: testGet");
         Map<String, String> m = new HashMap<String, String>();
+
         String s = webClient.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
         assertNotNull(s);
 
@@ -132,12 +133,13 @@ public class AddressBookTest {
     public void testDelete() throws Throwable {
         logger.info("running test: testDelete");
         Map<String, String> m = new HashMap<String, String>();
+
         String s = webClient.clientOf(targetUrl + "/createAddressBook/myBook").headers(m).put("myBook", String.class);
         assertNotNull(s);
 
         m = new HashMap<String, String>();
         m.put("update", "foo");
-        m.put("Accept", "application/json");                
+        m.put("Accept", "application/json");
         s = webClient.clientOf(targetUrl + "/updateAddressBook/myBook").post(m, String.class);
 
         assertNotNull(s);

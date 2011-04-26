@@ -9,16 +9,20 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.api;
+package org.sonatype.restsimple.client;
+
+import com.google.inject.ImplementedBy;
+import org.sonatype.restsimple.api.MediaType;
 
 import java.util.Map;
 
 /**
  * A Web WebClient for RestSimple. 
  */
+@ImplementedBy(WebAHCClient.class)
 public interface WebClient {
 
-      public static enum TYPE {
+    public static enum TYPE {
         POST, PUT, DELETE, GET
     }
 
@@ -186,7 +190,7 @@ public interface WebClient {
     Object put(Object o);
 
     /**
-     * Add a {@link MediaType} to the list of supported content-type. The list of supported content-type
+     * Add a {@link org.sonatype.restsimple.api.MediaType} to the list of supported content-type. The list of supported content-type
      * is used when the server returns a http statis code of 206.
      *
      * @param mediaType

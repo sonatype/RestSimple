@@ -18,7 +18,7 @@ import org.sonatype.restsimple.annotation.Path;
 import org.sonatype.restsimple.annotation.PathParam;
 import org.sonatype.restsimple.annotation.Post;
 import org.sonatype.restsimple.annotation.Produces;
-import org.sonatype.restsimple.api.WebException;
+import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;

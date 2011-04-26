@@ -25,12 +25,10 @@ import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
-import org.sonatype.restsimple.api.NegotiationHandler;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.api.WebClient;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
@@ -104,6 +102,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}
+     *
      * @param serviceDefinition a {@link ServiceDefinition}
      */
     public WebAHCClient(ServiceDefinition serviceDefinition) {
@@ -113,26 +112,28 @@ public class WebAHCClient implements WebClient {
     /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
-     * @param ahcConfig An {@link DefaultAhcConfig}
+     *
+     * @param ahcConfig         An {@link DefaultAhcConfig}
      * @param serviceDefinition a {@link ServiceDefinition}
      */
     public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
         this(ahcConfig, serviceDefinition, new RFC2295NegotiationHandler());
     }
-    
+
     /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
-     * @param ahcConfig An {@link DefaultAhcConfig}
+     *
+     * @param ahcConfig         An {@link DefaultAhcConfig}
      * @param serviceDefinition a {@link ServiceDefinition}
-     * @param negotiateHandler an implementation of {@link NegotiationHandler}
+     * @param negotiateHandler  an implementation of {@link NegotiationHandler}
      */
     public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this.ahcConfig = ahcConfig;
 
         ahcConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
         ahcConfig.getClasses().add(JacksonJsonProvider.class);
-        
+
         configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
         this.serviceDefinition = serviceDefinition;
         this.negotiateHandler = negotiateHandler;
@@ -140,8 +141,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}.
+     *
      * @param serviceDefinition a {@link ServiceDefinition}
-     * @param negotiateHandler an implementation of {@link NegotiationHandler}
+     * @param negotiateHandler  an implementation of {@link NegotiationHandler}
      */
     public WebAHCClient(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
         this(new DefaultAhcConfig(), serviceDefinition, negotiateHandler);
@@ -150,7 +152,8 @@ public class WebAHCClient implements WebClient {
     /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
      * can be made using the {@link DefaultAhcConfig}
-     * @param ahcConfig An {@link DefaultAhcConfig}
+     *
+     * @param ahcConfig        An {@link DefaultAhcConfig}
      * @param negotiateHandler an implementation of {@link NegotiationHandler}
      */
     public WebAHCClient(DefaultAhcConfig ahcConfig, NegotiationHandler negotiateHandler) {
@@ -159,6 +162,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Configure the headers of the request.
+     *
      * @param headers a {@link Map} of request's headers.
      * @return this
      */
@@ -170,6 +174,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Configure the query string of the request.
+     *
      * @param queryString a {@link Map} of request's query string.
      * @return this
      */
@@ -181,7 +186,8 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Configure the matrix parameters of the request.
-     * @param matrixParams a {@link Map} of request's matrix parameters 
+     *
+     * @param matrixParams a {@link Map} of request's matrix parameters
      * @return this
      */
     @Override
@@ -192,6 +198,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Set the request URI.
+     *
      * @param uri the request URI.
      * @return this
      */
@@ -203,8 +210,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a POST operation
-     * @param formParams  A Map of forms parameters
-     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
+     *
+     * @param formParams A Map of forms parameters
+     * @param t          A class of type T that will be used when serializing/deserializing the request/response body.
      * @param <T>
      * @return An instance of t
      */
@@ -227,8 +235,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a POST operation
-     * @param o An object that will be serialized as the request body
-     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
+     *
+     * @param o   An object that will be serialized as the request body
+     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
      * @param <T>
      * @return An instance of t
      */
@@ -245,11 +254,12 @@ public class WebAHCClient implements WebClient {
             asyncClient.destroy();
         }
     }
-    
+
     /**
      * Execute a POST operation
-     * @param o An object that will be serialized as the request body
-     * @param requestEntity A class of type T that will be used when serializing the request's body.
+     *
+     * @param o              An object that will be serialized as the request body
+     * @param requestEntity  A class of type T that will be used when serializing the request's body.
      * @param responseEntity A class of type T that will be used when serializing the response's body.
      * @param <T>
      * @return An instance of t
@@ -272,6 +282,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a POST operation
+     *
      * @param o An object that will be serialized as the request body
      * @return An Object representing the response's body
      */
@@ -290,6 +301,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a DELETE operation
+     *
      * @param o An object that will be serialized as the request body
      * @return An Object representing the response's body
      */
@@ -308,6 +320,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a DELETE operation
+     *
      * @param t A class of type T that will be used when serializing/deserializing the request/response body.
      * @return A T representing the response's body
      */
@@ -326,6 +339,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a DELETE operation
+     *
      * @return An Object representing the response's body
      */
     @Override
@@ -344,8 +358,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a DELETE operation
-     * @param o An object that will be serialized as the request body
-     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
+     *
+     * @param o   An object that will be serialized as the request body
+     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
      * @param <T>
      * @return An instance of t
      */
@@ -364,8 +379,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a DELETE operation
-     * @param o An object that will be serialized as the request body
-     * @param requestEntity A class that will be used when serializing the request's body.
+     *
+     * @param o              An object that will be serialized as the request body
+     * @param requestEntity  A class that will be used when serializing the request's body.
      * @param responseEntity A class of type T that will be used when serializing the response's body.
      * @param <T>
      * @return An instance of t
@@ -387,6 +403,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a GET operation
+     *
      * @param t A class of type T that will be used when serializing/deserializing the request/response body.
      * @return An T representing the response's body
      */
@@ -406,6 +423,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a GET operation
+     *
      * @return An Object representing the response's body
      */
     @Override
@@ -423,8 +441,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a PUT operation
-     * @param o An object that will be serialized as the request body
-     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
+     *
+     * @param o   An object that will be serialized as the request body
+     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
      * @param <T>
      * @return An instance of t
      */
@@ -444,8 +463,9 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a PUT operation
-     * @param o An object that will be serialized as the request body
-     * @param requestEntity A class that will be used when serializing the request's body.
+     *
+     * @param o              An object that will be serialized as the request body
+     * @param requestEntity  A class that will be used when serializing the request's body.
      * @param responseEntity A class of type T that will be used when serializing the response's body.
      * @param <T>
      * @return An instance of t
@@ -467,6 +487,7 @@ public class WebAHCClient implements WebClient {
 
     /**
      * Execute a PUT operation
+     *
      * @param o An object that will be serialized as the request body
      * @return A T representing the response's body
      */
@@ -525,15 +546,15 @@ public class WebAHCClient implements WebClient {
     private String negotiate(UniformInterfaceException u) {
         return negotiateHandler.negotiate(supportedContentType, u.getResponse().getHeaders(), u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
     }
-    
+
     private WebResource buildRequest() {
         asyncClient = AhcHttpClient.create(ahcConfig);
         UriBuilder u = UriBuilder.fromUri(uri);
         if (matrixParams.size() > 0) {
-            for (Map.Entry<String,String> e: matrixParams.entrySet()){
+            for (Map.Entry<String, String> e : matrixParams.entrySet()) {
                 u.matrixParam(e.getKey(), e.getValue());
             }
-        }         
+        }
         WebResource r = asyncClient.resource(u.build());
 
         if (queryString != null && queryString.size() > 0) {
@@ -560,7 +581,7 @@ public class WebAHCClient implements WebClient {
                 return clazz;
             } else if (type == TYPE.DELETE && DeleteServiceHandler.class.isAssignableFrom(s.getClass())) {
                 return clazz;
-            } 
+            }
         }
         return String.class;
     }
@@ -597,7 +618,7 @@ public class WebAHCClient implements WebClient {
         }
         ServiceHandler sh = null;
 
-        for(String p: urlPath.split("/")) {
+        for (String p : urlPath.split("/")) {
             sh = mapper.map(type.name().toLowerCase(), p);
             if (sh != null) break;
         }
@@ -608,13 +629,13 @@ public class WebAHCClient implements WebClient {
 
         List<MediaType> list;
         if (sh != null) {
-           list = sh.mediaToProduce();
+            list = sh.mediaToProduce();
         } else {
             list = new ArrayList<MediaType>();
             list = serviceDefinition.mediaToProduce();
         }
 
-        if (sh != null && sh.consumeMediaType() !=  null ) {
+        if (sh != null && sh.consumeMediaType() != null) {
             builder.header("Accept", sh.consumeMediaType().toMediaType());
             acceptTypeSet = true;
         }
@@ -633,14 +654,15 @@ public class WebAHCClient implements WebClient {
                 builder.header(e.getKey(), e.getValue());
                 if (e.getKey().equalsIgnoreCase("Content-Type")) {
                     contentTypeSet = true;
-                } else if (e.getKey().equalsIgnoreCase("Accept")) {
+                }
+                else if (e.getKey().equalsIgnoreCase("Accept")) {
                     acceptTypeSet = true;
                 }
             }
         }
 
-        if (!contentTypeSet) {
-            builder.header("Content-Type", "application/json");    
+        if (!contentTypeSet && !formEncoded) {
+            builder.header("Content-Type", "application/json");
         }
 
         if (!acceptTypeSet) {
