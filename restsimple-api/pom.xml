@@ -12,13 +12,6 @@
     <version>0.3-SNAPSHOT</version>
     <name>restsimple-api</name>
     <url>http://www.sonatype.com</url>
-    <dependencies>
-        <!-- guice -->
-        <dependency>
-            <groupId>org.sonatype.sisu</groupId>
-            <artifactId>sisu-guice</artifactId>
-        </dependency>
-    </dependencies>
 
     <build>
         <defaultGoal>install</defaultGoal>

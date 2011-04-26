@@ -588,6 +588,8 @@ public class WebAHCClient implements WebClient {
         WebResource.Builder builder = r.getRequestBuilder();
         ServiceHandlerMapper mapper = new ServiceHandlerMapper(serviceDefinition.serviceHandlers());
         boolean contentTypeSet = false;
+        boolean acceptTypeSet = false;
+
         String urlPath = r.getURI().getPath();
         String path = serviceDefinition.path();
         if (!path.equals("") || !path.equals("/")) {
@@ -614,6 +616,7 @@ public class WebAHCClient implements WebClient {
 
         if (sh != null && sh.consumeMediaType() !=  null ) {
             builder.header("Accept", sh.consumeMediaType().toMediaType());
+            acceptTypeSet = true;
         }
 
         if (list.size() > 0) {
@@ -630,6 +633,8 @@ public class WebAHCClient implements WebClient {
                 builder.header(e.getKey(), e.getValue());
                 if (e.getKey().equalsIgnoreCase("Content-Type")) {
                     contentTypeSet = true;
+                } else if (e.getKey().equalsIgnoreCase("Accept")) {
+                    acceptTypeSet = true;
                 }
             }
         }
@@ -638,6 +643,9 @@ public class WebAHCClient implements WebClient {
             builder.header("Content-Type", "application/json");    
         }
 
+        if (!acceptTypeSet) {
+            builder.header("Accept", "application/json");
+        }
         return builder;
     }
 }

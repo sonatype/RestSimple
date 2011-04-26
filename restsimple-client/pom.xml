@@ -14,17 +14,6 @@
     <name>restsimple-client</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
-        <!-- guice -->
-        <dependency>
-            <groupId>org.sonatype.sisu</groupId>
-            <artifactId>sisu-guice</artifactId>
-            <version>2.9.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sonatype.sisu.inject</groupId>
-            <artifactId>guice-servlet</artifactId>
-            <version>2.9.5</version>
-        </dependency>
 
         <dependency>
             <groupId>org.sonatype.restsimple</groupId>
