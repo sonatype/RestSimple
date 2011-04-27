@@ -44,6 +44,7 @@ import java.util.Map;
  * The information contained in {@link ServiceDefinition} will be used when setting the content-type, accept, etc. and
  * will also be used to serialize and de-serialize the request/response. As an example, you can create a simple petstore
  * application by doing
+ * <pre>
  * {@code
  *
  *      Web web = new WebAHCClient(serviceDefinition);
@@ -55,8 +56,9 @@ import java.util.Map;
                 .post(new Pet("pouetpouet"), Pet.class);
 
  * }
- *
+ * </pre>
  * The class can also be used without a service definition. All the request information must be "manually" configured.
+ * <pre>
  * {@code
  *
         Web web = new WebAHCClient();
@@ -69,7 +71,7 @@ import java.util.Map;
                 .post(new Pet("pouetpouet"), Pet.class);
  *
  * }
- *
+ * </pre>
  * The client support content negotiation as defined in RFC 2295 via the
  * {@link WebAHCClient#supportedContentType(org.sonatype.restsimple.api.MediaType)}
  *
@@ -271,6 +273,9 @@ public class WebAHCClient implements WebClient {
             WebResource r = buildRequest();
             r.entity(requestEntity);
             ClientResponse response = headers(r, TYPE.POST).post(ClientResponse.class, o);
+            if (response.getStatus() > 300) {
+                throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
+            }
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -391,7 +396,10 @@ public class WebAHCClient implements WebClient {
         try {
             WebResource r = buildRequest();
             r.entity(requestEntity);
-            ClientResponse response = headers(r, TYPE.DELETE).post(ClientResponse.class, o);
+            ClientResponse response = headers(r, TYPE.DELETE).delete(ClientResponse.class, o);
+            if (response.getStatus() > 300) {
+                throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
+            }
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -475,7 +483,10 @@ public class WebAHCClient implements WebClient {
         try {
             WebResource r = buildRequest();
             r.entity(requestEntity);
-            ClientResponse response = headers(r, TYPE.PUT).post(ClientResponse.class, o);
+            ClientResponse response = headers(r, TYPE.PUT).put(ClientResponse.class, o);
+            if (response.getStatus() > 300) {
+                throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
+            }
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -654,8 +665,7 @@ public class WebAHCClient implements WebClient {
                 builder.header(e.getKey(), e.getValue());
                 if (e.getKey().equalsIgnoreCase("Content-Type")) {
                     contentTypeSet = true;
-                }
-                else if (e.getKey().equalsIgnoreCase("Accept")) {
+                } else if (e.getKey().equalsIgnoreCase("Accept")) {
                     acceptTypeSet = true;
                 }
             }
