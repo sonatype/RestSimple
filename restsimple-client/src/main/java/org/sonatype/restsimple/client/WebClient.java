@@ -85,17 +85,6 @@ public interface WebClient {
     /**
      * Execute a POST operation
      *
-     * @param o              An object that will be serialized as the request body
-     * @param requestEntity  A class of type T that will be used when serializing the request's body.
-     * @param responseEntity A class of type T that will be used when serializing the response's body.
-     * @param <T>
-     * @return An instance of t
-     */
-    <T> T post(Object o, Class<?> requestEntity, Class<T> responseEntity);
-
-    /**
-     * Execute a POST operation
-     *
      * @param o An object that will be serialized as the request body
      * @return An Object representing the response's body
      */
@@ -135,17 +124,6 @@ public interface WebClient {
     <T> T delete(Object o, Class<T> t);
 
     /**
-     * Execute a DELETE operation
-     *
-     * @param o              An object that will be serialized as the request body
-     * @param requestEntity  A class that will be used when serializing the request's body.
-     * @param responseEntity A class of type T that will be used when serializing the response's body.
-     * @param <T>
-     * @return An instance of t
-     */
-    <T> T delete(Object o, Class<?> requestEntity, Class<T> responseEntity);
-
-    /**
      * Execute a GET operation
      *
      * @param t A class of type T that will be used when serializing/deserializing the request/response body.
@@ -169,17 +147,6 @@ public interface WebClient {
      * @return An instance of t
      */
     <T> T put(Object o, Class<T> t);
-
-    /**
-     * Execute a PUT operation
-     *
-     * @param o              An object that will be serialized as the request body
-     * @param requestEntity  A class that will be used when serializing the request's body.
-     * @param responseEntity A class of type T that will be used when serializing the response's body.
-     * @param <T>
-     * @return An instance of t
-     */
-    <T> T put(Object o, Class<?> requestEntity, Class<T> responseEntity);
 
     /**
      * Execute a PUT operation

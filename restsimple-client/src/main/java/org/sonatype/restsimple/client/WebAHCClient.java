@@ -238,40 +238,16 @@ public class WebAHCClient implements WebClient {
     /**
      * Execute a POST operation
      *
-     * @param o   An object that will be serialized as the request body
-     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
-     * @param <T>
-     * @return An instance of t
-     */
-    @Override
-    public <T> T post(Object o, Class<T> t) {
-        try {
-
-            WebResource r = buildRequest();
-            return headers(r, TYPE.POST).post(t, o);
-        } catch (UniformInterfaceException u) {
-            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
-            return post(o, t);
-        } finally {
-            asyncClient.destroy();
-        }
-    }
-
-    /**
-     * Execute a POST operation
-     *
      * @param o              An object that will be serialized as the request body
-     * @param requestEntity  A class of type T that will be used when serializing the request's body.
      * @param responseEntity A class of type T that will be used when serializing the response's body.
      * @param <T>
      * @return An instance of t
      */
     @Override
-    public <T> T post(Object o, Class<?> requestEntity, Class<T> responseEntity) {
+    public <T> T post(Object o, Class<T> responseEntity) {
         try {
 
             WebResource r = buildRequest();
-            r.entity(requestEntity);
             ClientResponse response = headers(r, TYPE.POST).post(ClientResponse.class, o);
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
@@ -279,7 +255,7 @@ public class WebAHCClient implements WebClient {
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
-            return post(o, requestEntity, responseEntity);
+            return post(o, responseEntity);
         } finally {
             asyncClient.destroy();
         }
@@ -364,38 +340,15 @@ public class WebAHCClient implements WebClient {
     /**
      * Execute a DELETE operation
      *
-     * @param o   An object that will be serialized as the request body
-     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
-     * @param <T>
-     * @return An instance of t
-     */
-    @Override
-    public <T> T delete(Object o, Class<T> t) {
-        try {
-            WebResource r = buildRequest();
-            return headers(r, TYPE.DELETE).delete(t, o);
-        } catch (UniformInterfaceException u) {
-            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
-            return delete(o, t);
-        } finally {
-            asyncClient.destroy();
-        }
-    }
-
-    /**
-     * Execute a DELETE operation
-     *
      * @param o              An object that will be serialized as the request body
-     * @param requestEntity  A class that will be used when serializing the request's body.
      * @param responseEntity A class of type T that will be used when serializing the response's body.
      * @param <T>
      * @return An instance of t
      */
     @Override
-    public <T> T delete(Object o, Class<?> requestEntity, Class<T> responseEntity) {
+    public <T> T delete(Object o, Class<T> responseEntity) {
         try {
             WebResource r = buildRequest();
-            r.entity(requestEntity);
             ClientResponse response = headers(r, TYPE.DELETE).delete(ClientResponse.class, o);
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
@@ -403,7 +356,7 @@ public class WebAHCClient implements WebClient {
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
-            return delete(o, requestEntity, responseEntity);
+            return delete(o, responseEntity);
         } finally {
             asyncClient.destroy();
         }
@@ -450,39 +403,16 @@ public class WebAHCClient implements WebClient {
     /**
      * Execute a PUT operation
      *
-     * @param o   An object that will be serialized as the request body
-     * @param t   A class of type T that will be used when serializing/deserializing the request/response body.
-     * @param <T>
-     * @return An instance of t
-     */
-    @Override
-    public <T> T put(Object o, Class<T> t) {
-        try {
-
-            WebResource r = buildRequest();
-            return headers(r, TYPE.PUT).put(t, o);
-        } catch (UniformInterfaceException u) {
-            headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
-            return put(o, t);
-        } finally {
-            asyncClient.destroy();
-        }
-    }
-
-    /**
-     * Execute a PUT operation
-     *
      * @param o              An object that will be serialized as the request body
-     * @param requestEntity  A class that will be used when serializing the request's body.
      * @param responseEntity A class of type T that will be used when serializing the response's body.
      * @param <T>
      * @return An instance of t
      */
     @Override
-    public <T> T put(Object o, Class<?> requestEntity, Class<T> responseEntity) {
+    public <T> T put(Object o, Class<T> responseEntity) {
         try {
             WebResource r = buildRequest();
-            r.entity(requestEntity);
+            r.entity(o);
             ClientResponse response = headers(r, TYPE.PUT).put(ClientResponse.class, o);
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
@@ -490,7 +420,7 @@ public class WebAHCClient implements WebClient {
             return response.getEntity(responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
-            return put(o, requestEntity, responseEntity);
+            return put(o, responseEntity);
         } finally {
             asyncClient.destroy();
         }

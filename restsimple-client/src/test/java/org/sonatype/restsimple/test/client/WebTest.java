@@ -131,7 +131,7 @@ public abstract class WebTest extends BaseTest {
 
         Pet pet = (Pet) webClient.clientOf(targetUrl + "/addPet/myPet")
                 .headers(m)
-                .post("{\"name\":\"pouetpouetpouetpouet\"}", String.class,  Pet.class);
+                .post("{\"name\":\"pouetpouetpouetpouet\"}",  Pet.class);
 
         assertNotNull(pet);
 
