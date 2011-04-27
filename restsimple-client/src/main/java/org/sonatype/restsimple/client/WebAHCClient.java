@@ -14,7 +14,6 @@ package org.sonatype.restsimple.client;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Realm;
 import com.ning.http.client.Realm.RealmBuilder;
-import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
@@ -82,18 +81,13 @@ public class WebAHCClient implements WebClient {
     private String uri;
 
     private final ServiceDefinition serviceDefinition;
-
-    private Client asyncClient;
-
-    private final AsyncHttpClientConfig.Builder configBuilder;
-
-    private final DefaultAhcConfig ahcConfig;
-
     private Map<String, String> headers = Collections.emptyMap();
     private Map<String, String> queryString;
     private Map<String, String> matrixParams = Collections.emptyMap();
     private List<MediaType> supportedContentType = new ArrayList<MediaType>();
     private NegotiationHandler negotiateHandler;
+
+    private Realm realm;
 
     /**
      * Create a WebAHCClient Client
@@ -108,37 +102,7 @@ public class WebAHCClient implements WebClient {
      * @param serviceDefinition a {@link ServiceDefinition}
      */
     public WebAHCClient(ServiceDefinition serviceDefinition) {
-        this(new DefaultAhcConfig(), serviceDefinition);
-    }
-
-    /**
-     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
-     * can be made using the {@link DefaultAhcConfig}
-     *
-     * @param ahcConfig         An {@link DefaultAhcConfig}
-     * @param serviceDefinition a {@link ServiceDefinition}
-     */
-    public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition) {
-        this(ahcConfig, serviceDefinition, new RFC2295NegotiationHandler());
-    }
-
-    /**
-     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
-     * can be made using the {@link DefaultAhcConfig}
-     *
-     * @param ahcConfig         An {@link DefaultAhcConfig}
-     * @param serviceDefinition a {@link ServiceDefinition}
-     * @param negotiateHandler  an implementation of {@link NegotiationHandler}
-     */
-    public WebAHCClient(DefaultAhcConfig ahcConfig, ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
-        this.ahcConfig = ahcConfig;
-
-        ahcConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
-        ahcConfig.getClasses().add(JacksonJsonProvider.class);
-
-        configBuilder = ahcConfig.getAsyncHttpClientConfigBuilder();
-        this.serviceDefinition = serviceDefinition;
-        this.negotiateHandler = negotiateHandler;
+        this(serviceDefinition, new RFC2295NegotiationHandler());
     }
 
     /**
@@ -148,18 +112,8 @@ public class WebAHCClient implements WebClient {
      * @param negotiateHandler  an implementation of {@link NegotiationHandler}
      */
     public WebAHCClient(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
-        this(new DefaultAhcConfig(), serviceDefinition, negotiateHandler);
-    }
-
-    /**
-     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}. Custom HTTP client configuration
-     * can be made using the {@link DefaultAhcConfig}
-     *
-     * @param ahcConfig        An {@link DefaultAhcConfig}
-     * @param negotiateHandler an implementation of {@link NegotiationHandler}
-     */
-    public WebAHCClient(DefaultAhcConfig ahcConfig, NegotiationHandler negotiateHandler) {
-        this(ahcConfig, new DefaultServiceDefinition(), negotiateHandler);
+        this.serviceDefinition = serviceDefinition;
+        this.negotiateHandler = negotiateHandler;
     }
 
     /**
@@ -220,12 +174,13 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public <T> T post(Map<String, String> formParams, Class<T> t) {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
         try {
             Form form = new Form();
             for (Map.Entry<String, String> e : formParams.entrySet()) {
                 form.add(e.getKey(), e.getValue());
             }
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.POST, true).post(t, form);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -245,9 +200,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public <T> T post(Object o, Class<T> responseEntity) {
-        try {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
-            WebResource r = buildRequest();
+        try {
+            WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.POST).post(ClientResponse.class, o);
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
@@ -269,8 +225,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public Object post(Object o) {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
+
         try {
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -288,8 +246,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public Object delete(Object o) {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
+
         try {
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE), o);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -307,8 +267,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public <T> T delete(Class<T> t) {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
+
         try {
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.DELETE).delete(t);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -325,9 +287,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public Object delete() {
-        try {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
-            WebResource r = buildRequest();
+        try {
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE));
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -347,8 +310,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public <T> T delete(Object o, Class<T> responseEntity) {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
+
         try {
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.DELETE).delete(ClientResponse.class, o);
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
@@ -370,9 +335,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public <T> T get(Class<T> t) {
-        try {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
-            WebResource r = buildRequest();
+        try {
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.GET).get(t);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -381,7 +347,7 @@ public class WebAHCClient implements WebClient {
             asyncClient.destroy();
         }
     }
-
+        
     /**
      * Execute a GET operation
      *
@@ -389,8 +355,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public Object get() {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
+
         try {
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.GET).get(findEntity(r, TYPE.GET));
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -410,8 +378,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public <T> T put(Object o, Class<T> responseEntity) {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
+
         try {
-            WebResource r = buildRequest();
+            WebResource r = buildRequest(asyncClient);
             r.entity(o);
             ClientResponse response = headers(r, TYPE.PUT).put(ClientResponse.class, o);
             if (response.getStatus() > 300) {
@@ -434,9 +404,10 @@ public class WebAHCClient implements WebClient {
      */
     @Override
     public Object put(Object o) {
-        try {
+        AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
-            WebResource r = buildRequest();
+        try {
+            WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -462,10 +433,22 @@ public class WebAHCClient implements WebClient {
     @Override
     public WebClient auth(final AuthScheme scheme, final String user, final String password) {
 
-        ahcConfig.getAsyncHttpClientConfigBuilder().setRealm(
-                new RealmBuilder().setPrincipal(user).setPrincipal(password).setScheme(mapScheme(scheme)).build());
+        realm = new RealmBuilder().setPrincipal(user).setPrincipal(password).setScheme(mapScheme(scheme)).build();
 
         return this;
+    }
+
+    private DefaultAhcConfig createAhcConfig(){
+        DefaultAhcConfig ahcConfig = new DefaultAhcConfig();
+                ahcConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
+        ahcConfig.getClasses().add(JacksonJsonProvider.class);
+        ahcConfig.getAsyncHttpClientConfigBuilder().setAllowPoolingConnection(false);
+
+        if (realm != null) {
+            ahcConfig.getAsyncHttpClientConfigBuilder().setRealm(realm);
+        }
+
+        return ahcConfig;
     }
 
     private Realm.AuthScheme mapScheme(AuthScheme scheme) {
@@ -488,8 +471,7 @@ public class WebAHCClient implements WebClient {
         return negotiateHandler.negotiate(supportedContentType, u.getResponse().getHeaders(), u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
     }
 
-    private WebResource buildRequest() {
-        asyncClient = AhcHttpClient.create(ahcConfig);
+    private WebResource buildRequest(AhcHttpClient asyncClient) {
         UriBuilder u = UriBuilder.fromUri(uri);
         if (matrixParams.size() > 0) {
             for (Map.Entry<String, String> e : matrixParams.entrySet()) {
@@ -536,9 +518,6 @@ public class WebAHCClient implements WebClient {
         return "WebAHCClient{" +
                 "uri='" + uri + '\'' +
                 ", serviceDefinition=" + serviceDefinition +
-                ", asyncClient=" + asyncClient +
-                ", configBuilder=" + configBuilder +
-                ", ahcConfig=" + ahcConfig +
                 ", headers=" + headers +
                 ", queryString=" + queryString +
                 ", matrixParams=" + matrixParams +

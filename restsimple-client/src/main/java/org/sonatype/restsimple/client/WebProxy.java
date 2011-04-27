@@ -92,41 +92,25 @@ public class WebProxy {
     /**
      * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
      *
-     * @param clazz  A class an interface annotated with jaxrs annotations.
-     * @param uri    the based uri.
-     * @param config an instance of {@link DefaultAhcConfig} which allow configuring the {@link org.sonatype.spice.jersey.client.ahc.AhcHttpClient}
-     * @param <T>
-     * @return an instance of T
-     */
-    public static final <T> T createProxy(Class<T> clazz, URI uri, DefaultAhcConfig config) {
-        configureAhcConfig(clazz, config);
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), config));
-    }
-
-    /**
-     * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
-     *
      * @param clazz A class an interface annotated with jaxrs annotations.
      * @param uri   the based uri.
      * @param <T>
      * @return an instance of T
      */
     public static final <T> T createProxy(Class<T> clazz, URI uri) {
-        return createProxy(clazz, uri, new DefaultAhcConfig());
-    }
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz)));    }
 
     private static class WebProxyHandler implements InvocationHandler {
 
         private final ServiceDefinitionInfo serviceDefinitionInfo;
         private final URI uri;
         private final WebClient webClient;
-        private final DefaultAhcConfig ahcConfig = new DefaultAhcConfig();
 
-        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, DefaultAhcConfig config) {
+        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo) {
             this.serviceDefinitionInfo = serviceDefinitionInfo;
             this.uri = uri;
-            this.webClient = new WebAHCClient(config, serviceDefinitionInfo.serviceDefinition());
+            this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition());
         }
 
         @Override
