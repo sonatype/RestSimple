@@ -136,16 +136,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
             At at = clazz.getAnnotation(At.class);
             if (at == null) {
-                throw new IllegalStateException(String.format("Invalid extension %s . The clazz must be annotated with the @At annotation", clazz));
+                throw new IllegalStateException(
+                        String.format("Invalid extension %s . The clazz must be annotated with the @At annotation", clazz));
             }
             module.at(at.value()).serve(clazz);
-        }
-    }
-
-    private final static class VoidAction implements org.sonatype.restsimple.api.Action {
-        @Override
-        public Object action(ActionContext actionContext) throws ActionException {
-            return actionContext.get();
         }
     }
 

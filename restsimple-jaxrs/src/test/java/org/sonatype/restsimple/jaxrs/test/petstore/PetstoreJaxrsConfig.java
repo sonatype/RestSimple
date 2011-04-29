@@ -23,6 +23,9 @@ import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +45,21 @@ public class PetstoreJaxrsConfig extends GuiceServletContextListener {
                 ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
                 serviceDefinition
                         .withHandler(new GetServiceHandler("/get/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON));
+                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                        .extendWith(Extension.class);
+
                 list.add(serviceDefinition);
                 return list;
             }
         });
+    }
+
+    @Path("/lolipet/{myPet}")
+    public final static class Extension {
+        @GET
+        @Consumes("application/vnd.org.sonatype.rest+json")
+        public Pet lolipet(){
+            return new Pet("lolipet");
+        }
     }
 }

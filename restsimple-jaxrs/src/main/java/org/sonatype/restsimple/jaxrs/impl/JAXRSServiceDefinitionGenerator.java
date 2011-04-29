@@ -62,6 +62,13 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         return newPath.toString();
     }
 
+    private void bindExtension(ServiceDefinition serviceDefinition) {
+        List<Class<?>> extensions = serviceDefinition.extensions();
+        for (Class<?> clazz : extensions) {
+            moduleConfig.bind(clazz);
+        }
+    }
+
     @Override
     public void generate(ServiceDefinition serviceDefinition) {
 
@@ -988,6 +995,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
             moduleConfig.bind(clazz);
             moduleConfig.bind(GenericMessageBodyWriter.class);
+            bindExtension(serviceDefinition);
         } catch (Throwable e) {
             logger.error("generate", e);
         }

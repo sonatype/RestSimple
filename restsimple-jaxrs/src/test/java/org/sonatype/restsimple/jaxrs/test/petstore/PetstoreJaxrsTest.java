@@ -96,4 +96,18 @@ public class PetstoreJaxrsTest {
         c.close();
     }
 
+    @Test(timeOut = 20000)
+    public void testExtensiont() throws Throwable {
+        logger.info("running test: testPost");
+        AsyncHttpClient c = new AsyncHttpClient();
+
+        Response r = c.prepareGet(targetUrl + "/lolipet/myPet").addHeader("Accept", acceptHeader).execute().get();
+
+        assertNotNull(r);
+        assertEquals(r.getStatusCode(), 200);
+        System.out.println(r.getResponseBody());
+        assertEquals(r.getResponseBody(), "{\"name\":\"lolipet\"}");
+
+        c.close();
+    }
 }
