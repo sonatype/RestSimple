@@ -40,11 +40,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import org.sonatype.restsimple.api.Action;
-import org.sonatype.restsimple.api.DeleteServiceHandler;
-import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
-import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
@@ -64,7 +61,7 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
                 ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
                 List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
 
-                PostServiceHandler postServiceHandler = new PostServiceHandler("/updateAddressBook/{pet}", action);
+                PostServiceHandler postServiceHandler = new PostServiceHandler("/updateAddressBook/{ad}", action);
                 postServiceHandler.addFormParam("updateAddressBook");
 
                 serviceDefinition
@@ -72,13 +69,13 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
                         .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                         .consuming(MediaType.JSON)
                         .consuming(MediaType.XML)
-                        .withHandler(new PutServiceHandler("/createAddressBook/{pet}", action))
-                        .withHandler(new GetServiceHandler("/getAddressBook/{pet}", action))
+                        .handleWithPut("/createAddressBook/{ad}", action)
+                        .handleWithGet("/getAddressBook/{ad}", action)
                         .withHandler(postServiceHandler)
-                        .withHandler(new DeleteServiceHandler("/deleteAddressBook/{pet}", action));
+                        .handleWithDelete("/deleteAddressBook/{ad}", action);
                 list.add(serviceDefinition);
 
-                postServiceHandler = new PostServiceHandler("/updateAddressBook/{pet}", action);
+                postServiceHandler = new PostServiceHandler("/updateAddressBook/{ad}", action);
                 postServiceHandler.addFormParam("update");
                 postServiceHandler.addFormParam("update2");
 
@@ -89,14 +86,14 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
                         .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                         .consuming(MediaType.JSON)
                         .consuming(MediaType.XML)
-                        .withHandler(new PutServiceHandler("/createAddressBook/{pet}", action))
-                        .withHandler(new GetServiceHandler("/getAddressBook/{pet}", action))
+                        .handleWithPut("/createAddressBook/{ad}", action)
+                        .handleWithGet("/getAddressBook/{ad}", action)
                         .withHandler(postServiceHandler)
-                        .withHandler(new DeleteServiceHandler("/deleteAddressBook/{pet}", action));
+                        .handleWithDelete("/deleteAddressBook/{ad}", action);
                 list.add(serviceDefinition);
 
 
-                postServiceHandler = new PostServiceHandler("/updateAddressBook/{pet}", action);
+                postServiceHandler = new PostServiceHandler("/updateAddressBook/{ad}", action);
                 postServiceHandler
                         .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                         .consumeWith(new MediaType("text", "plain"), String.class);
@@ -104,10 +101,10 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
                 serviceDefinition = injector.getInstance(ServiceDefinition.class);
                 serviceDefinition
                         .withPath("/bar")
-                        .withHandler(new PutServiceHandler("/createAddressBook/{pet}", action))
-                        .withHandler(new GetServiceHandler("/getAddressBook/{pet}", action))
+                        .handleWithPut("/createAddressBook/{ad}", action)
+                        .handleWithGet("/getAddressBook/{ad}", action)
                         .withHandler(postServiceHandler)
-                        .withHandler(new DeleteServiceHandler("/deleteAddressBook/{pet}", action));
+                        .handleWithDelete("/deleteAddressBook/{ad}", action);
                 list.add(serviceDefinition);
 
                 return list;

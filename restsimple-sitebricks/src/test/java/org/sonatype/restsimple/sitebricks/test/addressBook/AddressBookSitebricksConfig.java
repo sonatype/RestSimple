@@ -48,10 +48,10 @@ public class AddressBookSitebricksConfig extends GuiceServletContextListener {
                         .withPath("/")
                         .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
                         .consuming(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
-                        .withHandler(new PutServiceHandler("/createAddressBook/:ad", action))
-                        .withHandler(new GetServiceHandler("/getAddressBook/:ad", action))
+                        .handleWithPut("/createAddressBook/:ad", action)
+                        .handleWithGet("/getAddressBook/:ad", action)
                         .withHandler(postServiceHandler)
-                        .withHandler(new DeleteServiceHandler("/deleteAddressBook/:ad", action));
+                        .handleWithDelete("/deleteAddressBook/:ad", action);
                 list.add(serviceDefinition);
 
                 serviceDefinition = injector.getInstance(ServiceDefinition.class);

@@ -13,6 +13,7 @@
  */
 package org.sonatype.restsimple.api;
 
+import com.google.inject.ImplementedBy;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
@@ -52,6 +53,7 @@ import java.util.List;
  * <p>
  *
  */
+@ImplementedBy(DefaultServiceDefinition.class)
 public interface ServiceDefinition {
 
     /**
@@ -126,5 +128,39 @@ public interface ServiceDefinition {
      * Return the list of REST resource extension
      * @return the list of REST resource extension
      */
-    public List<Class<?>> extensions();
+    List<Class<?>> extensions();
+
+    /**
+     * Support HTTP GET using an {@link Action}
+     * @param path  a URI
+     * @param action an {@link Action} to invoke
+     * @return this
+     */
+    ServiceDefinition handleWithGet(String path, Action action);
+
+    /**
+     * Support HTTP POST using an {@link Action}
+     * @param path  a URI
+     * @param action an {@link Action} to invoke
+     * @return this
+     */
+    ServiceDefinition handleWithPost(String path, Action action);
+
+    /**
+     * Support HTTP PUT using an {@link Action}
+     * @param path  a URI
+     * @param action an {@link Action} to invoke
+     * @return this
+     */
+    ServiceDefinition handleWithPut(String path, Action action);
+
+    /**
+     * Support HTTP DELETE using an {@link Action}
+     * @param path  a URI
+     * @param action an {@link Action} to invoke
+     * @return this
+     */
+    ServiceDefinition handleWithDelete(String path, Action action);
+
+
 }

@@ -136,14 +136,56 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         return Collections.unmodifiableList(mediaTypeToProduce);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ServiceDefinition extendWith(Class<?> clazz) {
         extensions.add(clazz);
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Class<?>> extensions(){
         return Collections.unmodifiableList(extensions);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceDefinition handleWithGet(String path, Action action) {
+        withHandler(new GetServiceHandler(path,action));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceDefinition handleWithPost(String path, Action action) {
+        withHandler(new PostServiceHandler(path,action));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceDefinition handleWithPut(String path, Action action) {
+        withHandler(new PutServiceHandler(path,action));
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ServiceDefinition handleWithDelete(String path, Action action) {
+        withHandler(new DeleteServiceHandler(path,action));
+        return this;
     }
 }
