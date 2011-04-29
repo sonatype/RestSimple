@@ -115,4 +115,16 @@ public interface ServiceDefinition {
      */
     List<MediaType> mediaToProduce();
 
+    /**
+     * Add a extension of the generated REST resource.
+     * @param clazz an extension class.
+     * @return this
+     */
+    ServiceDefinition extendWith(Class<?> clazz);
+
+    /**
+     * Return the list of REST resource extension
+     * @return the list of REST resource extension
+     */
+    public List<Class<?>> extensions();
 }

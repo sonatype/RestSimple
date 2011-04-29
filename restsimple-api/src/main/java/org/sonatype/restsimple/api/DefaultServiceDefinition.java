@@ -31,6 +31,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
     private final ServiceHandlerMapper serviceHandlerMapper;
     private final AtomicBoolean configured = new AtomicBoolean(false);
+    private final List<Class<?>> extensions = new ArrayList<Class<?>>();
 
     public DefaultServiceDefinition() {
         this.serviceHandlerMapper = new ServiceHandlerMapper();
@@ -133,5 +134,16 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     @Override
     public List<MediaType> mediaToProduce() {
         return Collections.unmodifiableList(mediaTypeToProduce);
+    }
+
+    @Override
+    public ServiceDefinition extendWith(Class<?> clazz) {
+        extensions.add(clazz);
+        return this;
+    }
+
+    @Override
+    public List<Class<?>> extensions(){
+        return Collections.unmodifiableList(extensions);
     }
 }

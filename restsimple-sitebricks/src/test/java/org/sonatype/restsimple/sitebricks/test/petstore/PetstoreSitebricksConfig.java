@@ -14,6 +14,11 @@ package org.sonatype.restsimple.sitebricks.test.petstore;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import com.google.sitebricks.At;
+import com.google.sitebricks.client.transport.Json;
+import com.google.sitebricks.headless.Reply;
+import com.google.sitebricks.http.Get;
+import com.google.sitebricks.http.negotiate.Accept;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.GetServiceHandler;
 import org.sonatype.restsimple.api.MediaType;
@@ -27,12 +32,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PetstoreSitebricksConfig extends GuiceServletContextListener {
+    private final static MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 
     @Override
     protected Injector getInjector() {
         return Guice.createInjector(new SitebricksConfig() {
 
-            private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 
             @Override
             public List<ServiceDefinition> defineServices(Injector injector) {
@@ -42,10 +47,24 @@ public class PetstoreSitebricksConfig extends GuiceServletContextListener {
                 ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
                 serviceDefinition
                         .withHandler(new GetServiceHandler("/get/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON));
+                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                        .extendWith(Extension.class);
+
                 list.add(serviceDefinition);
                 return list;
             }
         });
     }
+
+    @At("/lolipet/:myPet")  
+    public final static class Extension {
+        @Get
+        @Accept("application/vnd.org.sonatype.rest+json")
+        public Reply<?> lolipet(){
+            Pet pet = new Pet("lolipet");
+            return Reply.with(pet).as(Json.class);
+        }
+    }
+
+
 }

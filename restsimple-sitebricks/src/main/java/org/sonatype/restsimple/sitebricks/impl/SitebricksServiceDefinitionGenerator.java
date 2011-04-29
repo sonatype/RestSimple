@@ -16,6 +16,7 @@ import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import com.google.sitebricks.At;
 import com.google.sitebricks.PageBinder;
 import com.google.sitebricks.SitebricksModule;
 import com.google.sitebricks.client.Transport;
@@ -32,11 +33,12 @@ import com.google.sitebricks.routing.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.MediaType;
-import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
-import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
+import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
@@ -79,7 +81,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                 newPath.append("/").append(token);
             }
         }
-        return newPath.toString();
+
+        String s = newPath.toString();
+        if (s.isEmpty()) {
+            s = "/";
+        }
+        return s;
     }
 
     @Override
@@ -92,6 +99,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     @Override
                     protected void configureSitebricks() {
                         SitebricksServiceDefinitionGenerator.this.bind(this, path, serviceDefinition);
+                        SitebricksServiceDefinitionGenerator.this.bindExtension(module, serviceDefinition);
                     }
                 };
                 moduleConfig.install(module);
@@ -119,6 +127,25 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
 
             actionBinder.on(mapServiceToMethod(handler));
+        }
+    }
+
+    private void bindExtension(SitebricksModule module, ServiceDefinition serviceDefinition) {
+        List<Class<?>> extensions = serviceDefinition.extensions();
+        for (Class<?> clazz : extensions) {
+
+            At at = clazz.getAnnotation(At.class);
+            if (at == null) {
+                throw new IllegalStateException(String.format("Invalid extension %s . The clazz must be annotated with the @At annotation", clazz));
+            }
+            module.at(at.value()).serve(clazz);
+        }
+    }
+
+    private final static class VoidAction implements org.sonatype.restsimple.api.Action {
+        @Override
+        public Object action(ActionContext actionContext) throws ActionException {
+            return actionContext.get();
         }
     }
 
@@ -165,9 +192,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            String[] pathParam = hreq.getServletPath().split("/");            
+            String[] pathParam = hreq.getServletPath().split("/");
             Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", null, request, mapper);
+                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -189,7 +216,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             if (serviceHandler == null) {
                 return Reply.with("Method not allowed").status(405);
             }
-                        
+
             Class<? extends Transport> transport = Text.class;
             String subType = serviceHandler.consumeMediaType() == null ? null : serviceHandler.consumeMediaType().subType();
             if (subType != null && subType.endsWith("json")) {
@@ -205,7 +232,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
             String[] pathParam = hreq.getServletPath().split("/");
             Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", body, request, mapper);
+                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", body, request, mapper);
 
             if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
@@ -222,7 +249,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             Request request = requestProvider.get();
             String[] pathParam = hreq.getServletPath().split("/");
             Object response = createResponse(tokenGenerator, "get", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", null, request, mapper);
+                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -242,13 +269,13 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             String[] pathParam = hreq.getServletPath().split("/");
 
             Object response = createResponse(tokenGenerator, "delete", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length -1] : "", null, request, mapper);
+                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", null, request, mapper);
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
             } else if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
             }
-                       
+
             return serializeResponse(request, response);
         }
     }
@@ -306,8 +333,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
             Map<String, String> m = new HashMap<String, String>();
             m.put(tokenGenerator.challengedHeaderName(),
-                  tokenGenerator.generateNegotiationHeader(servletPath, serviceHandler.mediaToProduce()));
-            
+                    tokenGenerator.generateNegotiationHeader(servletPath, serviceHandler.mediaToProduce()));
+
             return Reply.with("Not Acceptable").headers(m).status(406);
         }
 
@@ -330,7 +357,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     pathName,
                     pathValue,
                     body);
-            
+
             response = action.action(actionContext);
         } catch (Throwable e) {
             logger.debug("ActionContext error", e);
