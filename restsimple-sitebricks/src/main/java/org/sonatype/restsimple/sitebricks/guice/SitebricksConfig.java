@@ -36,8 +36,10 @@
  */
 package org.sonatype.restsimple.sitebricks.guice;
 
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
@@ -53,14 +55,32 @@ import java.util.List;
  */
 public abstract class SitebricksConfig extends ServletModule implements ServiceDefinitionConfig {
 
+    private Binder binder;
+
+    public SitebricksConfig() {
+    }
+
+    public SitebricksConfig(Binder binder) {
+        this.binder = binder;
+    }
+
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
+        Injector injector;
+        if (binder != null) {
+            Module module = new RestSimpleSitebricksModule(binder, configureNegotiationTokenGenerator());
+            binder.install( module );
+            injector = Guice.createInjector( module );
+        } else {
+            injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
+        }
 
-        List<ServiceDefinition> list = defineServices(injector);
-        ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
-        for (ServiceDefinition sd : list) {
-            generator.generate(sd);
+        List<ServiceDefinition> list = defineServices( injector );
+        if (list != null && list.size() > 0) {
+            ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
+            for (ServiceDefinition sd : list) {
+                generator.generate(sd);
+            }
         }
     }
     

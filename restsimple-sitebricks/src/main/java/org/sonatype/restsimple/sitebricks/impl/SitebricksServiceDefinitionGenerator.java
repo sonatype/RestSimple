@@ -33,7 +33,6 @@ import com.google.sitebricks.routing.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ActionContext;
-import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
@@ -105,6 +104,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                 moduleConfig.install(module);
             } else {
                 bind(module, path, serviceDefinition);
+                bindExtension(module, serviceDefinition);
             }
         } catch (Throwable e) {
             logger.error("generate", e);
