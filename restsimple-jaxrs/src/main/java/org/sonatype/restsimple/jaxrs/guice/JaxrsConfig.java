@@ -36,8 +36,10 @@
  */
 package org.sonatype.restsimple.jaxrs.guice;
 
+import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.restsimple.api.ServiceDefinition;
@@ -50,15 +52,42 @@ import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
  */
 public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
 
+    private Binder binder;
+    private final Map<String,String> jaxrsProperties;
+
+    public JaxrsConfig() {
+        this(null, new HashMap<String,String>());
+    }
+
+    public JaxrsConfig(Map<String,String> jaxrsProperties) {
+        this(null, jaxrsProperties);
+    }
+
+    public JaxrsConfig(Binder binder) {
+        this(binder, new HashMap<String,String>());
+    }
+
+    public JaxrsConfig(Binder binder, Map<String,String> jaxrsProperties) {
+        this.jaxrsProperties = jaxrsProperties;
+        this.binder = binder;
+    }
+
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
+        Injector injector = null;
+        if (binder != null) {
+            Module module = new JaxrsModule(binder.withSource("[generated]"), configureNegotiationTokenGenerator());
+            injector = Guice.createInjector(module);
+        } else {
+            injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
+        }
 
         List<ServiceDefinition> list = defineServices(injector);
         if (list != null && list.size() > 0) {
@@ -67,13 +96,12 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
                 generator.generate(sd);
             }
         }
-         
-        HashMap<String, String> initParams = new HashMap<String, String>();
-        initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
+
+        jaxrsProperties.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
         //initParams.put("com.sun.jersey.config.feature.Trace", "true");
 
         filter("/*").through(ContentNegotiationFilter.class);
-        serve("/*").with(GuiceContainer.class, initParams);
+        serve("/*").with(GuiceContainer.class, jaxrsProperties);
     }
 
 
