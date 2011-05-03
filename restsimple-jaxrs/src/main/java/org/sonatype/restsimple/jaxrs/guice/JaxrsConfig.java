@@ -42,7 +42,6 @@ import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
-import org.sonatype.restsimple.jaxrs.impl.GenericMessageBodyWriter;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
@@ -62,9 +61,11 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
         Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
 
         List<ServiceDefinition> list = defineServices(injector);
-        ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
-        for (ServiceDefinition sd : list) {
-            generator.generate(sd);
+        if (list != null && list.size() > 0) {
+            ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
+            for (ServiceDefinition sd : list) {
+                generator.generate(sd);
+            }
         }
          
         HashMap<String, String> initParams = new HashMap<String, String>();
