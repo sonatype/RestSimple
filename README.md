@@ -18,7 +18,6 @@ Building a RestSimple Application.
 
 A RestSimple application consist of ServiceDefinition, ServiceHandler and Action. The main component of a RestSimple application is called a ServiceDefinition. A ServiceDefinition contains all information about path, serialization and deserialization of objects, entity to invoke (action), etc. To demonstrate how it works, let's build a really simple pet store application.
 
-
     Action action = new PetstoreAction();
     DefaultServiceDefinition serviceDefinition = new DefaultServiceDefinition();
     serviceDefinition
@@ -30,11 +29,6 @@ First, you need to define an action. An action is where the business logic resid
 
 public interface Action<T, U> {
 
-   /**
-    * Execute an action. An action can be anything.
-    * @param actionContext an {@link ActionContext}
-    * @return T a response to be serialized
-    */
    public T action(ActionContext<U> actionContext) throws ActionException;
 
 Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST request can retrieve those pets. Something as simple as:
@@ -123,32 +117,32 @@ That's it.
 Deploying your RestSimple application
 
 There is many ways to deploy a ServiceDefinition. First, you need to decide which framework you want to deploy to. Currently, RestSimple supports JAXRS and Sitebricks. Deploying a ServiceDefinition is as simple as:
-`
-public class PetstoreJaxrsConfig extends GuiceServletContextListener {
 
-    @Override
-    protected Injector getInjector() {
-        return Guice.createInjector(new JaxrsConfig() {
+    public class PetstoreJaxrsConfig extends GuiceServletContextListener {
 
-            private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
+        @Override
+        protected Injector getInjector() {
+            return Guice.createInjector(new JaxrsConfig() {
 
-            @Override
-            public List<ServiceDefinition> defineServices(Injector injector) {
+                private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 
-                Action action = new PetstoreAction();
-                ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
-                serviceDefinition
-                   .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                   .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                   .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+                @Override
+                public List<ServiceDefinition> defineServices(Injector injector) {
 
-                list.add(serviceDefinition);
-                return list;
-            }
-        });
+                    Action action = new PetstoreAction();
+                    ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
+                    serviceDefinition
+                       .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                       .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                       .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+
+                    list.add(serviceDefinition);
+                    return list;
+                }
+            });
+        }
     }
-}
-`
+
 All you need to do is to extends the appropriate ServiceDefinitionConfig: JaxrsConfig or SitebricksConfig. The abstract method _defineServices_ is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
 
 Building the client side of a RestSimple application.
@@ -185,7 +179,7 @@ Using the WebProxy class
 
 Finally, you can also generate a client implementation using the WebProxy class. First you need to define an interface and annotate methods using the RestSimple annotation set.
 
-   public static interface PetClient {
+    public static interface PetClient {
 
         @Get
         @Path("getPet")
