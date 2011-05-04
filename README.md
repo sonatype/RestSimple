@@ -13,6 +13,9 @@ The framework goal is to easy allow programmatic, embeddable and portable REST a
 * restsimple-client: a client library for RestSimple.
 * restsimple-jaxrs: an implementation of the restsimple-api using Jersey.
 * restsimple-sitebricks: an implementation of the restsimple-api using Sitebricks
+* restsimple-templating: generate HTLM file from ServiceDefinition(similar to Enunciate)
+* restsimple-service-descriptor-creator: generate ServiceDefinition from POJO object following some convention
+* restsimple-webdriver: a framework for testing RestSimple application
 
 Building a RestSimple Application.
 
@@ -36,7 +39,6 @@ First, you need to define an action. An action is where the business logic resid
        public T action(ActionContext<U> actionContext) throws ActionException;
 
 Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST request can retrieve those pets. Something as simple as:
-
 
     public class PetstoreAction implements Action<Pet, Pet> {
 
@@ -93,7 +95,7 @@ Note the type of our PetAction: <Pet,Pet>: that simply means the Action will con
 
 The serialization and deserialization of the Pet class will be handled be the RestSimple framework itself. Next step is to map our Action to some URL. With RestSimple, this is done using ServiceHandler. A ServiceHandler is a simple placeholder for defining how an Action are mapped from a URL. Simply said, you define a ServiceHandler as:
 
-   new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON);
+    new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON);
 
 The line above map an Action to an HTTP Get operation, consuming JSON and producing JSON. If you are familiar with JAXRS, the functionality would be defined as
 
@@ -112,9 +114,9 @@ Now before deploying our ServiceDefinition, let's define it completely:
     serviceDefinition = new DefaultServiceDefinition();
     serviceDefinition
            .withPath("/")
-           .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-           .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
-           .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+           .withHandler(new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+           .withHandler(new DeleteServiceHandler("/deletePet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+           .withHandler(new PostServiceHandler("/addPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON));
 
 That's it.
 
@@ -136,9 +138,9 @@ There is many ways to deploy a ServiceDefinition. First, you need to decide whic
                     Action action = new PetstoreAction();
                     ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
                     serviceDefinition
-                       .withHandler(new GetServiceHandler("getPet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                       .withHandler(new DeleteServiceHandler("deletePet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                       .withHandler(new PostServiceHandler("addPet", action).consumeWith(JSON, Pet.class).producing(JSON));
+                       .withHandler(new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                       .withHandler(new DeleteServiceHandler("/deletePet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                       .withHandler(new PostServiceHandler("/addPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON));
 
                     list.add(serviceDefinition);
                     return list;
@@ -147,7 +149,67 @@ There is many ways to deploy a ServiceDefinition. First, you need to decide whic
         }
     }
 
-All you need to do is to extends the appropriate ServiceDefinitionConfig: JaxrsConfig or SitebricksConfig. The abstract method _defineServices_ is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
+All you need to do is to extends the appropriate ServiceDefinitionConfig: JaxrsConfig or SitebricksConfig. The abstract method defineServices is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
+You can also generate ServiceDefinition on the fly from any POJO object. Let's say we have a POJO defined as:
+
+    public class AddressBook {
+        private final Map<String, Person> peoplea = new LinkedHashMap<String, Person>();;
+
+        private static int idx = 4;
+
+        public AddressBook() {
+            peoplea.put("1", new Person("1", "jason@maven.org", "Jason", "van Zyl"));
+            peoplea.put("2", new Person("2", "bob@maven.org", "Bob", "McWhirter"));
+            peoplea.put("3", new Person("3", "james@maven.org", "James", "Strachan"));
+        }
+
+        public Person createPerson(Person person) {
+            peoplea.put(person.id, person);
+            return person;
+        }
+
+        public Person readPerson(String id) {
+            return peoplea.get(id);
+        }
+
+        public Collection<Person> readPeople() {
+            return peoplea.values();
+        }
+
+        public Person updatePerson(Person person) {
+            System.out.println(person);
+            peoplea.put(person.id, person);
+
+            return person;
+        }
+
+        public Person deletePerson(String id) {
+            return peoplea.remove(id);
+        }
+    }
+
+You can generate a ServiceDefinition by doing:
+
+    MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
+    ServiceDefinition serviceDefinition = creator.create(AddressBook.class);
+
+The ServiceDefinition will be generated using the following template:
+
+   GET         readXXX
+   POST        createXXX
+   PUT         updateXXXX
+   DELETE      delete
+
+You can customize the method to HTTP method operation
+
+   ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
+
+   config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
+         .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
+         .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
+   serviceDefinition = creator.create(AddressFooBook.class, config);
+
+Hence a method starting with foo will be mapped to a POST operation etc.
 
 Building the client side of a RestSimple application.
 
@@ -162,10 +224,10 @@ Once a RestSimple application is deployed, you can simply use the AsyncHttpClien
 
     AsyncHttpClient c = new AsyncHttpClient();
     Response r = c.preparePost(targetUrl + "/addPet/myPet")
-              .setBody("{\"name\":\"pouetpouet\"}")
-              .addHeader("Content-Type", "application/json")
-              .addHeader("Accept", "application/json").execute()
-              .get();
+                  .setBody("{\"name\":\"pouetpouet\"}")
+                  .addHeader("Content-Type", "application/json")
+                  .addHeader("Accept", "application/json").execute()
+                  .get();
     Pet pet = new Pet(response.getResponseBodyAsString());
 
 
@@ -206,3 +268,4 @@ Then you can generate the client the implementation by simply doing:
 
     PetClient client = WebProxy.createProxy(PetClient.class, URI.create(targetUrl));
     Pet pet = client.post(new Pet("pouetpouet"), "myPet");
+
