@@ -167,20 +167,20 @@ You can generate a ServiceDefinition by doing:
 
 The ServiceDefinition will be generated using the following template:
 
-   GET         readXXX
-   POST        createXXX
-   PUT         updateXXXX
-   DELETE      delete
+    GET         readXXX
+    POST        createXXX
+    PUT         updateXXXX
+    DELETE      delete
 
 You can customize the method to HTTP method operation
 
-   MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
-   ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
+    MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
+    ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
 
-   config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
+    config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
          .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
          .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
-   serviceDefinition = creator.create(AddressFooBook.class, config);
+    serviceDefinition = creator.create(AddressFooBook.class, config);
 
 Hence a method starting with foo will be mapped to a POST operation etc.
 
