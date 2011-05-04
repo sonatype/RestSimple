@@ -1,4 +1,5 @@
 RestSimple Quick Start
+======================
 
 RestSimple is a framework for dramatically enhancing the building of REST based application. It's simple. You develop your REST application using RestSimple API and the framework generate and deploy your resource for you. Suddenly, your REST Application is boasting some pretty impressive features like:
 
@@ -18,6 +19,7 @@ The framework goal is to easy allow programmatic, embeddable and portable REST a
 * restsimple-webdriver: a framework for testing RestSimple application
 
 Building a RestSimple Application.
+==================================
 
 A RestSimple application consist of ServiceDefinition, ServiceHandler and Action. The main component of a RestSimple application is called a ServiceDefinition. A ServiceDefinition contains all information about path, serialization and deserialization of objects, entity to invoke (action), etc. To demonstrate how it works, let's build a really simple pet store application.
 
@@ -120,36 +122,6 @@ Now before deploying our ServiceDefinition, let's define it completely:
 
 That's it.
 
-Deploying your RestSimple application
-
-There is many ways to deploy a ServiceDefinition. First, you need to decide which framework you want to deploy to. Currently, RestSimple supports JAXRS and Sitebricks. Deploying a ServiceDefinition is as simple as:
-
-    public class PetstoreJaxrsConfig extends GuiceServletContextListener {
-
-        @Override
-        protected Injector getInjector() {
-            return Guice.createInjector(new JaxrsConfig() {
-
-                private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
-
-                @Override
-                public List<ServiceDefinition> defineServices(Injector injector) {
-
-                    Action action = new PetstoreAction();
-                    ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
-                    serviceDefinition
-                       .withHandler(new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
-                       .withHandler(new DeleteServiceHandler("/deletePet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
-                       .withHandler(new PostServiceHandler("/addPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON));
-
-                    list.add(serviceDefinition);
-                    return list;
-                }
-            });
-        }
-    }
-
-All you need to do is to extends the appropriate ServiceDefinitionConfig: JaxrsConfig or SitebricksConfig. The abstract method defineServices is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
 You can also generate ServiceDefinition on the fly from any POJO object. Let's say we have a POJO defined as:
 
     public class AddressBook {
@@ -202,6 +174,7 @@ The ServiceDefinition will be generated using the following template:
 
 You can customize the method to HTTP method operation
 
+   MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
    ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
 
    config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
@@ -211,7 +184,41 @@ You can customize the method to HTTP method operation
 
 Hence a method starting with foo will be mapped to a POST operation etc.
 
+Deploying your RestSimple application
+=====================================
+
+There is many ways to deploy a ServiceDefinition. First, you need to decide which framework you want to deploy to. Currently, RestSimple supports JAXRS and Sitebricks. Deploying a ServiceDefinition is as simple as:
+
+    public class PetstoreJaxrsConfig extends GuiceServletContextListener {
+
+        @Override
+        protected Injector getInjector() {
+            return Guice.createInjector(new JaxrsConfig() {
+
+                private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
+
+                @Override
+                public List<ServiceDefinition> defineServices(Injector injector) {
+
+                    Action action = new PetstoreAction();
+                    ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
+                    serviceDefinition
+                       .withHandler(new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                       .withHandler(new DeleteServiceHandler("/deletePet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
+                       .withHandler(new PostServiceHandler("/addPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON));
+
+                    list.add(serviceDefinition);
+                    return list;
+                }
+            });
+        }
+    }
+
+All you need to do is to extends the appropriate ServiceDefinitionConfig: JaxrsConfig or SitebricksConfig. The abstract method defineServices is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
+
+
 Building the client side of a RestSimple application.
+=====================================================
 
 There is several ways to define your RestSimple application:
 * By using the AHC library
