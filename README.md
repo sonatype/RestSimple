@@ -28,24 +28,24 @@ serviceDefinition
 First, you need to define an action. An action is where the business logic reside. The Action interface is simply defined as:
 
 
-public interface Action<T, U> {
+public interface Action\<T, U\> {
 
  /**
   * Execute an action. An action can be anything.
   * @param actionContext an {@link ActionContext}
   * @return T a response to be serialized
   */
- public T action(ActionContext<U> actionContext) throws ActionException;
+ public T action(ActionContext\<U\> actionContext) throws ActionException;
 
 Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST request can retrieve those pets. Something as simple as:
 
 
-public class PetstoreAction implements Action<Pet, Pet> {
+public class PetstoreAction implements Action\<Pet, Pet\> {
 
-    private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();
+    private final ConcurrentHashMap\<String, Pet\> pets = new ConcurrentHashMap<String, Pet>();
 
     @Override
-    public Pet action(ActionContext<Pet> actionContext) throws ActionException {
+    public Pet action(ActionContext\<Pet\> actionContext) throws ActionException {
 
         switch (actionContext.method()) {
             case GET:
@@ -66,8 +66,6 @@ public class PetstoreAction implements Action<Pet, Pet> {
 
 Note the type of our PetAction: <Pet,Pet>: that simply means the Action will consume Pet instance, and also produce Pet. The ActionContext.get() operation will return a Pet object. This object is automatically de-serialized by the framework by using the information contained in the ServiceDefinition (more on that later). The Pet object can simply be defined as:
 
-
-@XmlRootElement
 public class Pet {
 
     private String name;
@@ -135,7 +133,7 @@ public class PetstoreJaxrsConfig extends GuiceServletContextListener {
             private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 
             @Override
-            public List<ServiceDefinition> defineServices(Injector injector) {
+            public List\<ServiceDefinition\> defineServices(Injector injector) {
 
                 Action action = new PetstoreAction();
                 ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
