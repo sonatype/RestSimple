@@ -26,38 +26,42 @@ A RestSimple application consist of ServiceDefinition, ServiceHandler and Action
 
 First, you need to define an action. An action is where the business logic reside. The Action interface is simply defined as:
 
+    public interface Action<T, U> {
 
-public interface Action<T, U> {
-
-   public T action(ActionContext<U> actionContext) throws ActionException;
+       /**
+        * Execute an action. An action can be anything.
+        * @param actionContext an {@link ActionContext}
+        * @return T a response to be serialized
+        */
+       public T action(ActionContext<U> actionContext) throws ActionException;
 
 Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST request can retrieve those pets. Something as simple as:
 
-`
-public class PetstoreAction implements Action<Pet, Pet> {
 
-    private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();
+    public class PetstoreAction implements Action<Pet, Pet> {
 
-    @Override
-    public Pet action(ActionContext<Pet> actionContext) throws ActionException {
+        private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();
 
-        switch (actionContext.method()) {
-            case GET:
-                Pet pet = pets.get(actionContext.pathValue());
+        @Override
+        public Pet action(ActionContext<Pet> actionContext) throws ActionException {
 
-                return pet;
-            case DELETE:
-                return pets.remove(actionContext.pathValue());
-            case POST:
-                pet = actionContext.get();
+            switch (actionContext.method()) {
+                case GET:
+                    Pet pet = pets.get(actionContext.pathValue());
 
-                pets.put(actionContext.pathValue(), pet);
-                return pet;
-            default:
-                throw new ActionException(405);
-        }
+                    return pet;
+                case DELETE:
+                    return pets.remove(actionContext.pathValue());
+                case POST:
+                    pet = actionContext.get();
+
+                    pets.put(actionContext.pathValue(), pet);
+                    return pet;
+                default:
+                    throw new ActionException(405);
+            }
     }
-`
+
 Note the type of our PetAction: <Pet,Pet>: that simply means the Action will consume Pet instance, and also produce Pet. The ActionContext.get() operation will return a Pet object. This object is automatically de-serialized by the framework by using the information contained in the ServiceDefinition (more on that later). The Pet object can simply be defined as:
 
     public class Pet {
