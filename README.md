@@ -184,6 +184,42 @@ You can customize the method to HTTP method operation
 
 Hence a method starting with foo will be mapped to a POST operation etc.
 
+Currently RestSimple supports Sitebricks and Jaxrs. It is possible to extend a ServiceDefinition with Sitebricks or Jaxrs annotation invoking the extendedWith:
+
+
+    @Override
+    protected Injector getInjector() {
+        return Guice.createInjector(new SitebricksConfig() {
+
+
+            @Override
+            public List<ServiceDefinition> defineServices(Injector injector) {
+                Action action = new PetstoreAction();
+                List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
+
+                ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
+                serviceDefinition
+                        .withHandler(new GetServiceHandler("/get/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
+                        .extendWith(Extension.class);
+
+                list.add(serviceDefinition);
+                return list;
+            }
+        });
+    }
+
+    @At("/lolipet/:myPet")
+    public final static class Extension {
+        @Get
+        @Accept("application/vnd.org.sonatype.rest+json")
+        public Reply<?> lolipet(){
+            Pet pet = new Pet("lolipet");
+            return Reply.with(pet).as(Json.class);
+        }
+    }
+
+
 Deploying your RestSimple application
 =====================================
 
