@@ -5,7 +5,7 @@ RestSimple is a framework for dramatically enhancing the building of REST based 
 
 * Automatic generation of the client side
 * Version/Content Negotiation support
-* Use DLS to write REST application
+* Use DSL to write REST application
 * Extremely simple to deploy
 
 The framework goal is to easy allow programmatic, embeddable and portable REST applications. The framework is composed by the following module
