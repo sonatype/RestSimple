@@ -34,7 +34,7 @@ First, you need to define an action. An action is where the business logic resid
     public interface Action<T, U> {
 
        /**
-        * Execute an action. An action can be anything.
+        * Execute an action. Actions is HTTP Method Verb executed on HTTP Path Noun.
         * @param actionContext an {@link ActionContext}
         * @return T a response to be serialized
         */
