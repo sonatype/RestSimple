@@ -7,10 +7,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.restsimple</groupId>
-    <artifactId>restsimple-template</artifactId>
+    <artifactId>restsimple-asmtemplate</artifactId>
     <packaging>jar</packaging>
     <version>0.3-SNAPSHOT</version>
-    <name>restsimple-template</name>
+    <name>restsimple-asmtemplate</name>
     <url>http://www.sonatype.com</url>
     <dependencies>
 
