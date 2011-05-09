@@ -64,14 +64,8 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
 
     @Override
     protected final void configureServlets() {
-        Injector injector;
-        if (parent != null) {
-            injector = parent.createChildInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
-        } else {
-            injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
-        }
-
-        List<ServiceDefinition> list = defineServices( injector );
+        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
+        List<ServiceDefinition> list = defineServices( parent != null ? parent : injector );
         if (list != null && list.size() > 0) {
             ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
             for (ServiceDefinition sd : list) {
