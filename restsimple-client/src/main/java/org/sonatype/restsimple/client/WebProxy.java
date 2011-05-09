@@ -40,6 +40,10 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -116,7 +120,7 @@ public class WebProxy {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            HttpMethodInfo inf = serviceDefinitionInfo.methodsMap.get(method.getName());
+            HttpMethodInfo inf = serviceDefinitionInfo.methodsMap.get(constructMethodSignature(method));
             ServiceDefinition.METHOD m = inf.getMethodType();
             if (m == null) {
                 throw new IllegalStateException(String.format("Unable to proxy method %s", method.getName()));
@@ -131,6 +135,10 @@ public class WebProxy {
                 builder.append("/");
             }
 
+            if (rootPath != null && rootPath.endsWith("/")) {
+                rootPath = rootPath.substring(path.length() -1);
+            }
+
             if (!rootPath.equals("")) {
                 if (rootPath.startsWith("/")) {
                     builder.append(rootPath.substring(1));
@@ -138,9 +146,13 @@ public class WebProxy {
                     builder.append(rootPath);
                 }
 
-                if (!rootPath.endsWith("/")) {                                                         
+                if (!rootPath.endsWith("/")) {
                     builder.append("/");
                 }
+            }
+
+            if (path != null && path.endsWith("/")) {
+                path = path.substring(path.length() -1);
             }
 
             if (path != null) {
@@ -149,6 +161,7 @@ public class WebProxy {
                 } else {
                     builder.append(path);
                 }
+
             }
 
             builder.append(constructPath(inf.getMethod(), args));
@@ -342,12 +355,13 @@ public class WebProxy {
                 logger.debug("Processing annotation {}", a);
 
                 Path path = m.getAnnotation(Path.class);
-                if (path == null) {
-                    throw new IllegalStateException("@Path annotation missing");
+                String pathValue = "/";
+
+                if (path != null) {
+                    pathValue = path.value();
                 }
 
                 HttpMethodInfo httpMethodInfo = null;
-                String pathValue = path.value();
 
                 if (Get.class.isAssignableFrom(a.getClass())) {
                     sh = new GetServiceHandler(pathValue, new DummyAction());
@@ -399,7 +413,7 @@ public class WebProxy {
                         }
                     }
 
-                    methodsMap.put(m.getName(), httpMethodInfo);
+                    methodsMap.put(constructMethodSignature(m), httpMethodInfo);
                     break;
                 }
             }
@@ -408,6 +422,14 @@ public class WebProxy {
             }
         }
         return new ServiceDefinitionInfo(sd, methodsMap);
+    }
+
+    private static final String constructMethodSignature(Method m) {
+        StringBuilder builder = new StringBuilder(m.getName());
+        for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
+            builder.append(t.getClass().getName());
+        }
+        return builder.toString();
     }
 
     private static final String getType(String mediaType) {
