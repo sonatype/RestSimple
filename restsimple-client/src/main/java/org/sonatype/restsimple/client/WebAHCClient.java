@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.sonatype.restsimple.client;
 
-import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.Realm;
 import com.ning.http.client.Realm.RealmBuilder;
 import com.sun.jersey.api.client.ClientResponse;
@@ -208,7 +207,7 @@ public class WebAHCClient implements WebClient {
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
             }
-            return response.getEntity(responseEntity);
+            return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return post(o, responseEntity);
@@ -318,7 +317,7 @@ public class WebAHCClient implements WebClient {
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
             }
-            return response.getEntity(responseEntity);
+            return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return delete(o, responseEntity);
@@ -387,12 +386,20 @@ public class WebAHCClient implements WebClient {
             if (response.getStatus() > 300) {
                 throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
             }
-            return response.getEntity(responseEntity);
+            return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
             return put(o, responseEntity);
         } finally {
             asyncClient.destroy();
+        }
+    }
+
+    private <T> T checkVoid(ClientResponse response, Class<T> responseEntity) {
+        if (Void.class.isAssignableFrom(responseEntity) || responseEntity.getName().equals("void")) {
+            return null;
+        } else {
+            return response.getEntity(responseEntity);
         }
     }
 
@@ -585,7 +592,7 @@ public class WebAHCClient implements WebClient {
         }
 
         if (!acceptTypeSet) {
-            builder.header("Accept", "application/json");
+            builder.header("Accept", "*/*");
         }
         return builder;
     }
