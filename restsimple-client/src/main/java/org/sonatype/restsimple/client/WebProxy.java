@@ -129,6 +129,7 @@ public class WebProxy {
             String rootPath = inf.getRootPath();
             String path = inf.getPath();
 
+            // TODO: This code needs optimization and robusness (broken)
             String uriString = uri.toURL().toString();
             StringBuilder builder = new StringBuilder(uriString);
             if (!uriString.endsWith("/") && path != null) {
@@ -161,10 +162,13 @@ public class WebProxy {
                 } else {
                     builder.append(path);
                 }
-
             }
 
-            builder.append(constructPath(inf.getMethod(), args));
+            String resourcePath = constructPath(inf.getMethod(), args);
+            if (builder.toString().endsWith("/") && resourcePath.startsWith("/")) {
+               resourcePath = resourcePath.substring(1);
+            }
+            builder.append(resourcePath);
 
             Object body = retrieveBody(inf.getMethod(), args);
             switch (m) {
