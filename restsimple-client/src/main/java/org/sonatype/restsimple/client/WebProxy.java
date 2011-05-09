@@ -40,10 +40,6 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -164,34 +160,30 @@ public class WebProxy {
                 }
             }
 
-            String resourcePath = constructPath(inf.getMethod(), args);
-            if (builder.toString().endsWith("/") && resourcePath.startsWith("/")) {
-               resourcePath = resourcePath.substring(1);
-            }
-            builder.append(resourcePath);
+            String resourcePath = constructPath(builder.toString(),inf.getMethod(), args);
 
             Object body = retrieveBody(inf.getMethod(), args);
             switch (m) {
                 case GET:
-                    return webClient.clientOf(builder.toString())
+                    return webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
                             .get(inf.getReturnClassType());
                 case POST:
-                    return webClient.clientOf(builder.toString())
+                    return webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
                             .post(body, inf.getReturnClassType());
                 case DELETE:
-                    return webClient.clientOf(builder.toString())
+                    return webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
                             .delete(body, inf.getReturnClassType());
                 case PUT:
-                    return webClient.clientOf(builder.toString())
+                    return webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
@@ -201,18 +193,41 @@ public class WebProxy {
             }
         }
 
-        private String constructPath(Method m, Object params[]) {
+        private String constructPath(String url, Method m, Object params[]) {
             StringBuilder pathBuilder = new StringBuilder();
             Annotation[][] ans = m.getParameterAnnotations();
 
-            int position = 0;            
+            int position = 0;
+            boolean added = false;
             for (Annotation[] annotations : ans) {
                 for (Annotation a : annotations) {
                     if (PathParam.class.isAssignableFrom(a.getClass())) {
-                        pathBuilder.append("/").append(params[position]);
+                        added = true;
+                        String[] tokens = url.split("/");
+                        String replace = params[position].toString();
+
+                        // If the {} or : aren't specified, let's add it at the end.
+                        boolean hackyTrick = true;
+                        for (String s : tokens) {
+                            if (s.startsWith("{") || s.startsWith(":")) {
+                                // TODO: if the method types are not in the order this will fail.
+                                s = params[position].toString();
+                                hackyTrick = false;
+                            }
+                            pathBuilder.append(s).append("/");
+                        }
+
+                        if (hackyTrick) {
+                            pathBuilder.append(replace);
+                        } else {
+                            pathBuilder.deleteCharAt(pathBuilder.length() - 1);
+                        }
                     }
                 }
-                position++;                
+                position++;
+            }
+            if (!added) {
+                pathBuilder.append(url);
             }
             return pathBuilder.toString();
         }

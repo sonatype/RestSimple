@@ -103,28 +103,28 @@ public abstract class RootResourceProxyTest extends BaseTest {
     public static interface ProxyClient {
 
         @Get
-        @Path("getPet")
+        @Path("/getPet/{id}")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet get(@PathParam("myPet") String path);
+        public Pet get(@PathParam("getPet") String path);
         
         @Get
-        @Path("getPetString")
+        @Path("/getPetString/{id}")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes("text/plain")
-        public String getString(@PathParam("myPet") String path);
+        public String getString(@PathParam("getPetString") String path);
 
         @Post
-        @Path("addPet")
+        @Path("/addPet/:id")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet post(@PathParam("myPet") String myPet, String body);
+        public Pet post(@PathParam("addPet") String myPet, String body);
 
         @Delete
-        @Path("deletePet")
+        @Path("/deletePet/:id")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)                
-        public Pet delete(@PathParam("myPet") String path);
+        public Pet delete(@PathParam("deletePet") String path);
 
     }
 

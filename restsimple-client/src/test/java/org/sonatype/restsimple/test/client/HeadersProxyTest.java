@@ -56,22 +56,22 @@ public abstract class HeadersProxyTest extends BaseTest {
     public static interface ProxyClient {
 
         @Get
-        @Path("getPet")
+        @Path("/getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet get(@PathParam("myPet") String path);
+        public Pet get(@PathParam("getPet") String path);
 
         @Get
-        @Path("getPetString")
+        @Path("/getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes("text/plain")       
-        public String getString(@PathParam("myPet") String path);
+        public String getString(@PathParam("getPetString") String path);
 
         @Post
-        @Path("addPet")
+        @Path("/addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
-        public Pet post(@PathParam("myPet") String myPet, @HeaderParam(PetstoreAction.PET_EXTRA_NAME) String petType, String body);
+        public Pet post(@PathParam("addPet") String myPet, @HeaderParam(PetstoreAction.PET_EXTRA_NAME) String petType, String body);
 
 
     }
