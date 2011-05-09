@@ -36,10 +36,8 @@
  */
 package org.sonatype.restsimple.sitebricks.guice;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
@@ -55,22 +53,20 @@ import java.util.List;
  */
 public abstract class SitebricksConfig extends ServletModule implements ServiceDefinitionConfig {
 
-    private Binder binder;
+    private Injector parent;
 
     public SitebricksConfig() {
     }
 
-    public SitebricksConfig(Binder binder) {
-        this.binder = binder;
+    public SitebricksConfig(Injector parent) {
+        this.parent = parent;
     }
 
     @Override
     protected final void configureServlets() {
         Injector injector;
-        if (binder != null) {
-            Module module = new RestSimpleSitebricksModule(binder, configureNegotiationTokenGenerator());
-            binder.install( module );
-            injector = Guice.createInjector( module );
+        if (parent != null) {
+            injector = parent.createChildInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
         } else {
             injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
         }

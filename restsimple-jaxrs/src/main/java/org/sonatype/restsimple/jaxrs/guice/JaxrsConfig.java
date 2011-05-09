@@ -36,10 +36,8 @@
  */
 package org.sonatype.restsimple.jaxrs.guice;
 
-import com.google.inject.Binder;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.sonatype.restsimple.api.ServiceDefinition;
@@ -59,7 +57,7 @@ import java.util.Map;
  */
 public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
 
-    private Binder binder;
+    private Injector parent;
     private final Map<String,String> jaxrsProperties;
 
     public JaxrsConfig() {
@@ -70,21 +68,20 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
         this(null, jaxrsProperties);
     }
 
-    public JaxrsConfig(Binder binder) {
-        this(binder, new HashMap<String,String>());
+    public JaxrsConfig(Injector parent) {
+        this(parent, new HashMap<String,String>());
     }
 
-    public JaxrsConfig(Binder binder, Map<String,String> jaxrsProperties) {
+    public JaxrsConfig(Injector parent, Map<String,String> jaxrsProperties) {
         this.jaxrsProperties = jaxrsProperties;
-        this.binder = binder;
+        this.parent = parent;
     }
 
     @Override
     protected final void configureServlets() {
         Injector injector = null;
-        if (binder != null) {
-            Module module = new JaxrsModule(binder.withSource("[generated]"), configureNegotiationTokenGenerator());
-            injector = Guice.createInjector(module);
+        if (parent != null) {
+            injector = parent.createChildInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
         } else {
             injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
         }
