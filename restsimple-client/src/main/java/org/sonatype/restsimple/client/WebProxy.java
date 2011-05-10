@@ -98,7 +98,6 @@ public class WebProxy {
 
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
 
-
     /**
      * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
      *
@@ -181,12 +180,12 @@ public class WebProxy {
                                           Map<String,String> properties ) {
 
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), clazz, objectMapper, bindings, properties));
+                new WebProxyHandler(uri, createServiceDefinition(clazz), clazz, objectMapper, bindings, properties));
     }
 
     private static class WebProxyHandler implements InvocationHandler {
 
-        private final ServiceDefinitionInfo serviceDefinitionInfo;
+        private final ServiceDefinition serviceDefinition;
         private final URI uri;
         private final WebClient webClient;
         private final Class<?> clazz;
@@ -196,21 +195,21 @@ public class WebProxy {
         private final ObjectMapper objectMapper;
         private final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
-        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, Class<?> clazz) {
-            this(uri, serviceDefinitionInfo, clazz, new ObjectMapper(), Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
+        public WebProxyHandler(URI uri, ServiceDefinition serviceDefinition, Class<?> clazz) {
+            this(uri, serviceDefinition, clazz, new ObjectMapper(), Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
         }
 
         public WebProxyHandler(URI uri,
-                               ServiceDefinitionInfo serviceDefinitionInfo,
+                               ServiceDefinition serviceDefinition,
                                Class<?> clazz,
                                ObjectMapper objectMapper,
                                Map<String,String> bindings,
                                Map<String,String> properties) {
 
-            this.serviceDefinitionInfo = serviceDefinitionInfo;
+            this.serviceDefinition = serviceDefinition;
             this.uri = uri;
             this.clazz = clazz;
-            this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition(), (properties.get(SITEBRICKS_COMPAT) != null));
+            this.webClient = new WebAHCClient(serviceDefinition, (properties.get(SITEBRICKS_COMPAT) != null));
             this.objectMapper = objectMapper;
             this.bindings = bindings;
             this.properties = properties;
@@ -219,106 +218,103 @@ public class WebProxy {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
-            HttpMethodInfo inf = serviceDefinitionInfo.methodsMap.get(constructMethodSignature(method));
-            ServiceDefinition.METHOD m = inf.getMethodType();
-            if (m == null) {
-                throw new IllegalStateException(String.format("Unable to proxy method %s", method.getName()));
-            }
+            final StringBuilder rawUrl = new StringBuilder(uri.toURL().toString());
+            final Path atClass = clazz.getAnnotation(Path.class);
 
-            String rootPath = inf.getRootPath();
-            String path = inf.getPath();
-
-            // TODO: This code needs optimization and robusness (broken)
-            String uriString = uri.toURL().toString();
-            StringBuilder builder = new StringBuilder(uriString);
-            if (!uriString.endsWith("/") && path != null) {
-                builder.append("/");
-            }
-
-            if (rootPath != null && rootPath.endsWith("/")) {
-                rootPath = rootPath.substring(path.length() -1);
-            }
-
-            if (!rootPath.equals("")) {
-                if (rootPath.startsWith("/")) {
-                    builder.append(rootPath.substring(1));
-                } else {
-                    builder.append(rootPath);
-                }
-
-                if (!rootPath.endsWith("/") && path.length() > 1) {
-                    builder.append("/");
+            if (atClass != null) {
+                rawUrl.append(atClass.value());
+            } else {
+                final Path atDeclaringClass = method.getDeclaringClass().getAnnotation(Path.class);
+                if (atDeclaringClass != null) {
+                    String path = atDeclaringClass.value();
+                    if (path.startsWith("/")) {
+                        rawUrl.append(atDeclaringClass.value());
+                    } else {
+                        rawUrl.append("/" + atDeclaringClass.value());
+                    }
                 }
             }
 
-            if (path != null && path.endsWith("/")) {
-                if (path.length() > 1) {
-                    path = path.substring(path.length() -1);
-                } else {
-                    path = "";
-                }
-            }
-
-            if (path != null) {
+            final Path atMethod = method.getAnnotation(Path.class);
+            if (atMethod != null) {
+                String path = atMethod.value();
                 if (path.startsWith("/")) {
-                    builder.append(path.substring(1));
+                    rawUrl.append(atMethod.value());
                 } else {
-                    builder.append(path);
+                    rawUrl.append("/" + atMethod.value());
                 }
             }
 
-            String resourcePath = constructPath(builder.toString(),inf.getMethod(), args);
+            if (rawUrl.toString().trim().length() == 0) {
+                throw new IllegalStateException(String.format(
+                        "Cannot calculate rest URL for [%s]. Is class and/or method annotated with @At?", method.getName()));
+            }
 
-            Object body = retrieveBody(inf.getMethod(), args);
+            String resourcePath = constructPath(rawUrl.toString(),method, args);
 
-            Class<?> returnType = inf.getReturnClassType();
+            Object body = retrieveBody(method, args);
+
+            Class<?> returnType = method.getReturnType();
 
             if (Map.class.isAssignableFrom(returnType) || Collection.class.isAssignableFrom(returnType)){
                 returnType = String.class;
             }
 
-            Object o;
-            switch (m) {
+            Object o = null;
+            switch (methodType(method)) {
                 case GET:
                     o = webClient.clientOf(resourcePath)
-                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
-                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
-                            .matrixParams(constructMatrix(inf.getMethod(), args))
+                            .headers(constructCookie(method, args, constructHeaders(method, args)))
+                            .queryString(constructFormString(method, args, constructQueryString(method, args)))
+                            .matrixParams(constructMatrix(method, args))
                             .get(returnType);
                     break;
                 case POST:
                     o = webClient.clientOf(resourcePath)
-                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
-                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
-                            .matrixParams(constructMatrix(inf.getMethod(), args))
+                            .headers(constructCookie(method, args, constructHeaders(method, args)))
+                            .queryString(constructFormString(method, args, constructQueryString(method, args)))
+                            .matrixParams(constructMatrix(method, args))
                             .post(body, returnType);
                     break;
                 case DELETE:
                     o = webClient.clientOf(resourcePath)
-                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
-                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
-                            .matrixParams(constructMatrix(inf.getMethod(), args))
+                            .headers(constructCookie(method, args, constructHeaders(method, args)))
+                            .queryString(constructFormString(method, args, constructQueryString(method, args)))
+                            .matrixParams(constructMatrix(method, args))
                             .delete(body, returnType);
                     break;
                 case PUT:
                     o = webClient.clientOf(resourcePath)
-                            .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
-                            .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
-                            .matrixParams(constructMatrix(inf.getMethod(), args))
+                            .headers(constructCookie(method, args, constructHeaders(method, args)))
+                            .queryString(constructFormString(method, args, constructQueryString(method, args)))
+                            .matrixParams(constructMatrix(method, args))
                             .put(body, returnType);
                     break;
-                default:
-                    throw new IllegalStateException(String.format("Invalid Method type %s", m));
             }
 
             // TODO: Beurk...
-            boolean sbSupport = String.class.isAssignableFrom(inf.getReturnClassType()) && properties.get(SITEBRICKS_COMPAT) != null;
-            if (sbSupport || Map.class.isAssignableFrom(inf.getReturnClassType())
-                    || Collection.class.isAssignableFrom(inf.getReturnClassType())){
+            boolean sbSupport = String.class.isAssignableFrom(method.getReturnType()) && properties.get(SITEBRICKS_COMPAT) != null;
+            if (sbSupport || Map.class.isAssignableFrom(method.getReturnType())
+                    || Collection.class.isAssignableFrom(method.getReturnType())){
                 return validateType(o.toString() , method);
             } else {
                 return o;
             }
+        }
+
+        private ServiceDefinition.METHOD methodType(Method method) {
+            for (Annotation a: method.getAnnotations()) {
+                if (Get.class.isAssignableFrom(a.getClass())) {
+                   return ServiceDefinition.METHOD.GET;
+                } else if (Post.class.isAssignableFrom(a.getClass())) {
+                    return ServiceDefinition.METHOD.POST;
+                } else if (Put.class.isAssignableFrom(a.getClass())) {
+                    return ServiceDefinition.METHOD.PUT;
+                } else if (Delete.class.isAssignableFrom(a.getClass())) {
+                    return ServiceDefinition.METHOD.DELETE;
+                }
+            }
+            throw new IllegalStateException("Method not supported");
         }
 
         private Object validateType(String responseBody, Method m) throws IOException {
@@ -483,7 +479,7 @@ public class WebProxy {
         }
     }
 
-    private static ServiceDefinitionInfo createServiceDefinitionInfo(Class<?> clazz) {
+    private static ServiceDefinition createServiceDefinition(Class<?> clazz) {
 
         Path rootPath = clazz.getAnnotation(Path.class);
         ServiceDefinition sd = new DefaultServiceDefinition();
@@ -511,7 +507,6 @@ public class WebProxy {
 
         Method[] method = clazz.getMethods();
         ServiceHandler sh = null;
-        HashMap<String, HttpMethodInfo> methodsMap = new HashMap<String, HttpMethodInfo>();
         for (Method m : method) {
             logger.debug("Processing method {}", m);
             boolean found = false;
@@ -525,35 +520,17 @@ public class WebProxy {
                     pathValue = path.value();
                 }
 
-                HttpMethodInfo httpMethodInfo = null;
-
                 if (Get.class.isAssignableFrom(a.getClass())) {
                     sh = new GetServiceHandler(pathValue, new DummyAction());
-                    httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.GET,
-                            pathValue,
-                            m,
-                            rootPathString);
                     found = true;
                 } else if (Post.class.isAssignableFrom(a.getClass())) {
                     sh = new PostServiceHandler(pathValue, new DummyAction());
-                    httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.POST,
-                            pathValue,
-                            m,
-                            rootPathString);
                     found = true;
                 } else if (Put.class.isAssignableFrom(a.getClass())) {
                     sh = new PutServiceHandler(pathValue, new DummyAction());
-                    httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.PUT,
-                            pathValue,
-                            m,
-                            rootPathString);
                     found = true;
                 } else if (Delete.class.isAssignableFrom(a.getClass())) {
                     sh = new DeleteServiceHandler(pathValue, new DummyAction());
-                    httpMethodInfo = new HttpMethodInfo(ServiceDefinition.METHOD.DELETE,
-                            pathValue,
-                            m,
-                            rootPathString);
                     found = true;
                 }
 
@@ -577,7 +554,6 @@ public class WebProxy {
                         }
                     }
 
-                    methodsMap.put(constructMethodSignature(m), httpMethodInfo);
                     break;
                 }
             }
@@ -585,7 +561,7 @@ public class WebProxy {
                 throw new IllegalStateException("Method not supported:  " + m);
             }
         }
-        return new ServiceDefinitionInfo(sd, methodsMap);
+        return sd;
     }
 
     private static final String constructMethodSignature(Method m) {
@@ -618,65 +594,6 @@ public class WebProxy {
         public Object action(ActionContext actionContext) throws ActionException {
             return null;
         }
-    }
-
-    private static final class HttpMethodInfo {
-
-        private final ServiceDefinition.METHOD methodType;
-        private final String path;
-        private final Method method;
-        private final String rootPath;
-
-        public HttpMethodInfo(ServiceDefinition.METHOD methodType,
-                              String path,
-                              Method method,
-                              String rootPath) {
-
-            this.methodType = methodType;
-            this.path = path;
-            this.method = method;
-            this.rootPath = rootPath;
-        }
-
-        public ServiceDefinition.METHOD getMethodType() {
-            return methodType;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Class<?> getReturnClassType() {
-            return method.getReturnType();
-        }
-
-        public Method getMethod() {
-            return method;
-        }
-
-        public String getRootPath() {
-            return rootPath;
-        }
-    }
-
-    private static final class ServiceDefinitionInfo {
-
-        private final ServiceDefinition serviceDefinition;
-        private final Map<String, HttpMethodInfo> methodsMap;
-
-        public ServiceDefinitionInfo(ServiceDefinition serviceDefinition, HashMap<String, HttpMethodInfo> methodsMap) {
-            this.serviceDefinition = serviceDefinition;
-            this.methodsMap = methodsMap;
-        }
-
-        public ServiceDefinition serviceDefinition() {
-            return serviceDefinition;
-        }
-
-        public Map<String, HttpMethodInfo> methodsMap() {
-            return methodsMap;
-        }
-
     }
 
 }
