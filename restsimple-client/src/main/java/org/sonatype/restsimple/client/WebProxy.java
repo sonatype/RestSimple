@@ -143,13 +143,17 @@ public class WebProxy {
                     builder.append(rootPath);
                 }
 
-                if (!rootPath.endsWith("/")) {
+                if (!rootPath.endsWith("/") && path.length() > 1) {
                     builder.append("/");
                 }
             }
 
             if (path != null && path.endsWith("/")) {
-                path = path.substring(path.length() -1);
+                if (path.length() > 1) {
+                    path = path.substring(path.length() -1);
+                } else {
+                    path = "";
+                }
             }
 
             if (path != null) {
@@ -211,7 +215,10 @@ public class WebProxy {
                         for (String s : tokens) {
                             if (s.startsWith("{") || s.startsWith(":")) {
                                 // TODO: if the method types are not in the order this will fail.
-                                s = params[position].toString();
+                                if (position + 1 > params.length) {
+                                    throw new IllegalStateException("Missing {...} value");
+                                }
+                                s = params[position++].toString();
                                 hackyTrick = false;
                             }
                             pathBuilder.append(s).append("/");
