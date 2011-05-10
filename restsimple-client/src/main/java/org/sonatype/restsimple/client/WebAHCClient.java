@@ -396,7 +396,7 @@ public class WebAHCClient implements WebClient {
     }
 
     private <T> T checkVoid(ClientResponse response, Class<T> responseEntity) {
-        if (Void.class.isAssignableFrom(responseEntity) || responseEntity.getName().equals("void")) {
+        if (Void.class.isAssignableFrom(responseEntity) || responseEntity == void.class) {
             return null;
         } else {
             return response.getEntity(responseEntity);

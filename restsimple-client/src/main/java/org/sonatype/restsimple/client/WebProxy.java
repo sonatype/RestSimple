@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.sonatype.restsimple.client;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.TypeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.annotation.Consumes;
@@ -40,16 +42,19 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A simple proxy that generates RestSimple client from an annotated interface. jsr 311 annotations are all supported.
+ * A simple proxy that generates RestSimple client from an annotated interface.
  * As simple as {code
  * {@code
  * public static interface ProxyClient {
@@ -89,28 +94,54 @@ public class WebProxy {
 
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
 
+
     /**
-     * Generate a HTTP client proxy based on an interface annotated with jaxrs annotations.
+     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
      *
-     * @param clazz A class an interface annotated with jaxrs annotations.
+     * @param clazz A class an interface annotated with RestSimple annotations.
      * @param uri   the based uri.
      * @param <T>
      * @return an instance of T
      */
     public static final <T> T createProxy(Class<T> clazz, URI uri) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz)));    }
+                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), clazz));
+    }
+
+    /**
+     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
+     *
+     * @param objectMapper The Jackson's {@link ObjectMapper}
+     * @param clazz A class an interface annotated with RestSimple annotations.
+     * @param uri   the based uri.
+     * @param <T>
+     * @return an instance of T
+     */
+    public static final <T> T createProxy(ObjectMapper objectMapper, Class<T> clazz, URI uri) {
+        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
+                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), clazz));
+    }
 
     private static class WebProxyHandler implements InvocationHandler {
 
         private final ServiceDefinitionInfo serviceDefinitionInfo;
         private final URI uri;
         private final WebClient webClient;
+        private final Class<?> clazz;
 
-        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo) {
+        private final ObjectMapper objectMapper;
+        private final TypeFactory typeFactory = TypeFactory.defaultInstance();
+
+        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, Class<?> clazz) {
+            this(uri, serviceDefinitionInfo, clazz, new ObjectMapper());
+        }
+
+        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, Class<?> clazz, ObjectMapper objectMapper) {
             this.serviceDefinitionInfo = serviceDefinitionInfo;
             this.uri = uri;
+            this.clazz = clazz;
             this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition());
+            this.objectMapper = objectMapper;
         }
 
         @Override
@@ -167,34 +198,61 @@ public class WebProxy {
             String resourcePath = constructPath(builder.toString(),inf.getMethod(), args);
 
             Object body = retrieveBody(inf.getMethod(), args);
+
+            Class<?> returnType = inf.getReturnClassType();
+
+            if (Map.class.isAssignableFrom(returnType) || Collection.class.isAssignableFrom(returnType)){
+                returnType = String.class;
+            }
+
+            Object o;
             switch (m) {
                 case GET:
-                    return webClient.clientOf(resourcePath)
+                    o = webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
-                            .get(inf.getReturnClassType());
+                            .get(returnType);
+                    break;
                 case POST:
-                    return webClient.clientOf(resourcePath)
+                    o = webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
-                            .post(body, inf.getReturnClassType());
+                            .post(body, returnType);
+                    break;
                 case DELETE:
-                    return webClient.clientOf(resourcePath)
+                    o = webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
-                            .delete(body, inf.getReturnClassType());
+                            .delete(body, returnType);
+                    break;
                 case PUT:
-                    return webClient.clientOf(resourcePath)
+                    o = webClient.clientOf(resourcePath)
                             .headers(constructCookie(inf.getMethod(), args, constructHeaders(inf.getMethod(), args)))
                             .queryString(constructFormString(inf.getMethod(), args, constructQueryString(inf.getMethod(), args)))
                             .matrixParams(constructMatrix(inf.getMethod(), args))
-                            .put(body, inf.getReturnClassType());
+                            .put(body, returnType);
+                    break;
                 default:
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
             }
+
+            if (Map.class.isAssignableFrom(inf.getReturnClassType()) || Collection.class.isAssignableFrom(inf.getReturnClassType())){
+                return validateType(o.toString() , method);
+            } else {
+                return o;
+            }
+        }
+
+        private Object validateType(String responseBody, Method m) throws IOException {
+            final Class<?> returnType = m.getReturnType();
+            if (returnType != void.class) {
+                final Type genericReturnType = m.getGenericReturnType();
+                return objectMapper.readValue(responseBody, typeFactory.constructType(genericReturnType, clazz));
+            }
+            return null;
         }
 
         private String constructPath(String url, Method m, Object params[]) {
