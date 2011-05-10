@@ -76,12 +76,12 @@ import java.util.Map;
  * This client build on top of the Sonatype's Jersey AHC Client.
  */
 public class WebAHCClient implements WebClient {
+    public final boolean compatWithSitebricks;
 
     private String uri;
-
     private final ServiceDefinition serviceDefinition;
     private Map<String, String> headers = Collections.emptyMap();
-    private Map<String, String> queryString;
+    private Map<String, String> queryString = Collections.emptyMap();
     private Map<String, String> matrixParams = Collections.emptyMap();
     private List<MediaType> supportedContentType = new ArrayList<MediaType>();
     private NegotiationHandler negotiateHandler;
@@ -104,6 +104,15 @@ public class WebAHCClient implements WebClient {
         this(serviceDefinition, new RFC2295NegotiationHandler());
     }
 
+        /**
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}
+     *
+     * @param serviceDefinition a {@link ServiceDefinition}
+     */
+    public WebAHCClient(ServiceDefinition serviceDefinition,  boolean compatWithSitebricks) {
+        this(serviceDefinition, new RFC2295NegotiationHandler(), compatWithSitebricks);
+    }
+
     /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}.
      *
@@ -111,8 +120,19 @@ public class WebAHCClient implements WebClient {
      * @param negotiateHandler  an implementation of {@link NegotiationHandler}
      */
     public WebAHCClient(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler) {
+        this(serviceDefinition, negotiateHandler, false);
+    }
+
+    /**
+     * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}.
+     *
+     * @param serviceDefinition a {@link ServiceDefinition}
+     * @param negotiateHandler  an implementation of {@link NegotiationHandler}
+     */
+    public WebAHCClient(ServiceDefinition serviceDefinition, NegotiationHandler negotiateHandler, boolean compatWithSitebricks) {
         this.serviceDefinition = serviceDefinition;
         this.negotiateHandler = negotiateHandler;
+        this.compatWithSitebricks = compatWithSitebricks;
     }
 
     /**
@@ -201,6 +221,7 @@ public class WebAHCClient implements WebClient {
     public <T> T post(Object o, Class<T> responseEntity) {
         AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
+        o = quoteString(o);
         try {
             WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.POST).post(ClientResponse.class, o);
@@ -226,6 +247,7 @@ public class WebAHCClient implements WebClient {
     public Object post(Object o) {
         AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
+        o = quoteString(o);
         try {
             WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.POST).post(findEntity(r, TYPE.POST), o);
@@ -247,6 +269,7 @@ public class WebAHCClient implements WebClient {
     public Object delete(Object o) {
         AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
+        o = quoteString(o);
         try {
             WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.DELETE).delete(findEntity(r, TYPE.DELETE), o);
@@ -311,6 +334,7 @@ public class WebAHCClient implements WebClient {
     public <T> T delete(Object o, Class<T> responseEntity) {
         AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
+        o = quoteString(o);
         try {
             WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.DELETE).delete(ClientResponse.class, o);
@@ -379,6 +403,7 @@ public class WebAHCClient implements WebClient {
     public <T> T put(Object o, Class<T> responseEntity) {
         AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
+        o = quoteString(o);
         try {
             WebResource r = buildRequest(asyncClient);
             r.entity(o);
@@ -395,14 +420,6 @@ public class WebAHCClient implements WebClient {
         }
     }
 
-    private <T> T checkVoid(ClientResponse response, Class<T> responseEntity) {
-        if (Void.class.isAssignableFrom(responseEntity) || responseEntity == void.class) {
-            return null;
-        } else {
-            return response.getEntity(responseEntity);
-        }
-    }
-
     /**
      * Execute a PUT operation
      *
@@ -413,6 +430,7 @@ public class WebAHCClient implements WebClient {
     public Object put(Object o) {
         AhcHttpClient asyncClient = AhcHttpClient.create(createAhcConfig());
 
+        o = quoteString(o);
         try {
             WebResource r = buildRequest(asyncClient);
             return headers(r, TYPE.PUT).put(findEntity(r, TYPE.PUT), o);
@@ -421,6 +439,22 @@ public class WebAHCClient implements WebClient {
             return put(o);
         } finally {
             asyncClient.destroy();
+        }
+    }
+
+    private <T> T checkVoid(ClientResponse response, Class<T> responseEntity) {
+        if (Void.class.isAssignableFrom(responseEntity) || responseEntity == void.class) {
+            return null;
+        } else {
+            return response.getEntity(responseEntity);
+        }
+    }
+
+    protected Object quoteString(Object s) {
+        if (compatWithSitebricks && String.class.isAssignableFrom(s.getClass())) {
+            return "\"" + s + "\"";
+        } else {
+            return s;
         }
     }
 

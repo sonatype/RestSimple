@@ -50,6 +50,7 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -92,6 +93,9 @@ public class WebProxy {
      * TODO: Refactor using the visitor pattern the annotation processing part..
      */
 
+    public final static String SITEBRICKS_COMPAT = "sitebricks.quoteString";
+
+
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
 
 
@@ -104,8 +108,54 @@ public class WebProxy {
      * @return an instance of T
      */
     public static final <T> T createProxy(Class<T> clazz, URI uri) {
-        return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), clazz));
+        return createProxy(clazz, uri, Collections.<String, String>emptyMap());
+    }
+
+    /**
+     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
+     *
+     * @param clazz A class an interface annotated with RestSimple annotations.
+     * @param uri   the based uri.
+     * @param <T>
+     * @return an instance of T
+     */
+    public static final <T> T createProxy(Class<T> clazz,
+                                          URI uri,
+                                          Map<String,String> bindings) {
+
+        return createProxy(new ObjectMapper(), clazz, uri, bindings);
+    }
+
+    /**
+     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
+     *
+     * @param clazz A class an interface annotated with RestSimple annotations.
+     * @param uri   the based uri.
+     * @param <T>
+     * @return an instance of T
+     */
+    public static final <T> T createProxy(Class<T> clazz,
+                                          URI uri,
+                                          Map<String,String> bindings,
+                                          Map<String,String> properties) {
+
+        return createProxy(new ObjectMapper(), clazz, uri, bindings, properties);
+    }
+    /**
+     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
+     *
+     * @param objectMapper The Jackson's {@link ObjectMapper}
+     * @param clazz A class an interface annotated with RestSimple annotations.
+     * @param uri   the based uri.
+     * @param <T>
+     * @return an instance of T
+     */
+    public static final <T> T createProxy(ObjectMapper objectMapper,
+                                          Class<T> clazz,
+                                          URI uri) {
+
+        return createProxy(objectMapper, clazz, uri, Collections.<String, String>emptyMap());
+
     }
 
     /**
@@ -117,9 +167,21 @@ public class WebProxy {
      * @param <T>
      * @return an instance of T
      */
-    public static final <T> T createProxy(ObjectMapper objectMapper, Class<T> clazz, URI uri) {
+    public static final <T> T createProxy(ObjectMapper objectMapper,
+                                          Class<T> clazz,
+                                          URI uri,
+                                          Map<String,String> bindings) {
+
+        return createProxy(objectMapper, clazz, uri, bindings, Collections.<String, String>emptyMap());
+    }
+
+    public static final <T> T createProxy(ObjectMapper objectMapper,
+                                          Class<T> clazz, URI uri,
+                                          Map<String,String> bindings,
+                                          Map<String,String> properties ) {
+
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), clazz));
+                new WebProxyHandler(uri, createServiceDefinitionInfo(clazz), clazz, objectMapper, bindings, properties));
     }
 
     private static class WebProxyHandler implements InvocationHandler {
@@ -128,20 +190,30 @@ public class WebProxy {
         private final URI uri;
         private final WebClient webClient;
         private final Class<?> clazz;
+        private final Map<String,String> bindings;
+        private final Map<String,String> properties;
 
         private final ObjectMapper objectMapper;
         private final TypeFactory typeFactory = TypeFactory.defaultInstance();
 
         public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, Class<?> clazz) {
-            this(uri, serviceDefinitionInfo, clazz, new ObjectMapper());
+            this(uri, serviceDefinitionInfo, clazz, new ObjectMapper(), Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
         }
 
-        public WebProxyHandler(URI uri, ServiceDefinitionInfo serviceDefinitionInfo, Class<?> clazz, ObjectMapper objectMapper) {
+        public WebProxyHandler(URI uri,
+                               ServiceDefinitionInfo serviceDefinitionInfo,
+                               Class<?> clazz,
+                               ObjectMapper objectMapper,
+                               Map<String,String> bindings,
+                               Map<String,String> properties) {
+
             this.serviceDefinitionInfo = serviceDefinitionInfo;
             this.uri = uri;
             this.clazz = clazz;
-            this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition());
+            this.webClient = new WebAHCClient(serviceDefinitionInfo.serviceDefinition(), (properties.get(SITEBRICKS_COMPAT) != null));
             this.objectMapper = objectMapper;
+            this.bindings = bindings;
+            this.properties = properties;
         }
 
         @Override
@@ -239,7 +311,10 @@ public class WebProxy {
                     throw new IllegalStateException(String.format("Invalid Method type %s", m));
             }
 
-            if (Map.class.isAssignableFrom(inf.getReturnClassType()) || Collection.class.isAssignableFrom(inf.getReturnClassType())){
+            // TODO: Beurk...
+            boolean sbSupport = String.class.isAssignableFrom(inf.getReturnClassType()) && properties.get(SITEBRICKS_COMPAT) != null;
+            if (sbSupport || Map.class.isAssignableFrom(inf.getReturnClassType())
+                    || Collection.class.isAssignableFrom(inf.getReturnClassType())){
                 return validateType(o.toString() , method);
             } else {
                 return o;
@@ -273,10 +348,15 @@ public class WebProxy {
                         for (String s : tokens) {
                             if (s.startsWith("{") || s.startsWith(":")) {
                                 // TODO: if the method types are not in the order this will fail.
-                                if (position + 1 > params.length) {
+                                // Try to use the global bindings
+                                s = s.substring(1, s.length() - 1);
+                                s = bindings.get(s);
+
+                                if (s == null && position + 1 > params.length) {
                                     throw new IllegalStateException("Missing {...} value");
+                                } else if (s == null) {
+                                    s = params[position++].toString();
                                 }
-                                s = params[position++].toString();
                                 hackyTrick = false;
                             }
                             pathBuilder.append(s).append("/");
