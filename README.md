@@ -312,3 +312,5 @@ Then you can generate the client the implementation by simply doing:
     PetClient client = WebProxy.createProxy(PetClient.class, URI.create(targetUrl));
     Pet pet = client.post(new Pet("pouetpouet"), "myPet");
 
+Support for the use of standard JAXRS resources
+=====================================================
