@@ -373,12 +373,16 @@ public class WebProxy {
                     String[] tokens = url.split("/");
                     for (String s : tokens) {
                         if (s.startsWith("{") || s.startsWith(":")) {
-                             int end = s.startsWith( "{" ) ? s.length() - 1 : s.length();
-                             s = s.substring(1, end);
-                             s = bindings.get(s);
+                            int end = s.startsWith( "{" ) ? s.length() - 1 : s.length();
+                            String newS = s.substring( 1, end );
+                            String tmp = bindings.get( newS );
+                            if ( tmp != null ) {
+                                s = tmp;
+                            }
                         }
                         pathBuilder.append(s).append("/");
                     }
+                    pathBuilder.deleteCharAt(pathBuilder.length() - 1);
                 } else {
                     pathBuilder.append(url);
                 }
