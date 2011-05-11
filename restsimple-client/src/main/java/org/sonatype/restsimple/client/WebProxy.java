@@ -345,7 +345,8 @@ public class WebProxy {
                             if (s.startsWith("{") || s.startsWith(":")) {
                                 // TODO: if the method types are not in the order this will fail.
                                 // Try to use the global bindings
-                                s = s.substring(1, s.length() - 1);
+                                int end = s.startsWith( "{" ) ? s.length() - 1 : s.length();
+                                s = s.substring(1, end);
                                 s = bindings.get(s);
 
                                 if (s == null && position + 1 > params.length) {
@@ -368,7 +369,19 @@ public class WebProxy {
                 position++;
             }
             if (!added) {
-                pathBuilder.append(url);
+                if (url.contains( ":" ) || url.contains( "{" )){
+                    String[] tokens = url.split("/");
+                    for (String s : tokens) {
+                        if (s.startsWith("{") || s.startsWith(":")) {
+                             int end = s.startsWith( "{" ) ? s.length() - 1 : s.length();
+                             s = s.substring(1, end);
+                             s = bindings.get(s);
+                        }
+                        pathBuilder.append(s).append("/");
+                    }
+                } else {
+                    pathBuilder.append(url);
+                }
             }
             return pathBuilder.toString();
         }
