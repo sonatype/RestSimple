@@ -185,7 +185,6 @@ public class WebProxy {
 
     private static class WebProxyHandler implements InvocationHandler {
 
-        private final ServiceDefinition serviceDefinition;
         private final URI uri;
         private final WebClient webClient;
         private final Class<?> clazz;
@@ -206,7 +205,6 @@ public class WebProxy {
                                Map<String,String> bindings,
                                Map<String,String> properties) {
 
-            this.serviceDefinition = serviceDefinition;
             this.uri = uri;
             this.clazz = clazz;
             this.webClient = new WebAHCClient(serviceDefinition, (properties.get(SITEBRICKS_COMPAT) != null));
@@ -218,6 +216,7 @@ public class WebProxy {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 
+            // Stolen from Ali's Sitebricks implementation
             final StringBuilder rawUrl = new StringBuilder(uri.toURL().toString());
             final Path atClass = clazz.getAnnotation(Path.class);
 
@@ -256,8 +255,15 @@ public class WebProxy {
 
             Class<?> returnType = method.getReturnType();
 
-            if (Map.class.isAssignableFrom(returnType) || Collection.class.isAssignableFrom(returnType)){
+
+            // TODO: Beurk...Sitebricks doesn't handle serialization/deserialization the same way as Jersey.
+            boolean sbSupport = (String.class.isAssignableFrom(method.getReturnType())
+                                    && properties.get(SITEBRICKS_COMPAT) != null);
+
+            boolean deserializeLocally = false;
+            if (sbSupport && Map.class.isAssignableFrom(returnType) || Collection.class.isAssignableFrom(returnType) || returnType == Object.class){
                 returnType = String.class;
+                deserializeLocally = true;
             }
 
             Object o = null;
@@ -292,10 +298,7 @@ public class WebProxy {
                     break;
             }
 
-            // TODO: Beurk...
-            boolean sbSupport = String.class.isAssignableFrom(method.getReturnType()) && properties.get(SITEBRICKS_COMPAT) != null;
-            if (sbSupport || Map.class.isAssignableFrom(method.getReturnType())
-                    || Collection.class.isAssignableFrom(method.getReturnType())){
+            if (sbSupport || deserializeLocally){
                 return validateType(o.toString() , method);
             } else {
                 return o;
@@ -579,14 +582,6 @@ public class WebProxy {
             }
         }
         return sd;
-    }
-
-    private static final String constructMethodSignature(Method m) {
-        StringBuilder builder = new StringBuilder(m.getName());
-        for (java.lang.reflect.Type t : m.getGenericParameterTypes()) {
-            builder.append(t.getClass().getName());
-        }
-        return builder.toString();
     }
 
     private static final String getType(String mediaType) {

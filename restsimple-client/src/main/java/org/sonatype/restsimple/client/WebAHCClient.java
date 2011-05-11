@@ -622,7 +622,7 @@ public class WebAHCClient implements WebClient {
         }
 
         if (!contentTypeSet && !formEncoded) {
-            builder.header("Content-Type", "application/json");
+            builder.header("Content-Type", "text/json");
         }
 
         if (!acceptTypeSet) {
