@@ -225,23 +225,13 @@ public class WebProxy {
             } else {
                 final Path atDeclaringClass = method.getDeclaringClass().getAnnotation(Path.class);
                 if (atDeclaringClass != null) {
-                    String path = atDeclaringClass.value();
-                    if (path.startsWith("/")) {
-                        rawUrl.append(atDeclaringClass.value());
-                    } else {
-                        rawUrl.append("/" + atDeclaringClass.value());
-                    }
+                    rawUrl.append(atDeclaringClass.value());
                 }
             }
 
             final Path atMethod = method.getAnnotation(Path.class);
             if (atMethod != null) {
-                String path = atMethod.value();
-                if (path.startsWith("/")) {
-                    rawUrl.append(atMethod.value());
-                } else {
-                    rawUrl.append("/" + atMethod.value());
-                }
+                rawUrl.append(atMethod.value());
             }
 
             if (rawUrl.toString().trim().length() == 0) {

@@ -123,25 +123,25 @@ public class PetClientProxyTest {
     public static interface ProxyClient {
 
         @Get
-        @Path("getPet")
+        @Path("/getPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet get(@PathParam("myPet") String path);
         
         @Get
-        @Path("getPetString")
+        @Path("/getPetString")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes("text/plain") 
         public String getString(@PathParam("myPet") String path);
 
         @Post
-        @Path("addPet")
+        @Path("/addPet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet post(@PathParam("myPet") String myPet, String body);
 
         @Delete
-        @Path("deletePet")
+        @Path("/deletePet")
         @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         @Consumes(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
         public Pet delete(@PathParam("myPet") String path);
