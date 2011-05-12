@@ -474,7 +474,7 @@ public class WebAHCClient implements WebClient {
     @Override
     public WebClient auth(final AuthScheme scheme, final String user, final String password) {
 
-        realm = new RealmBuilder().setPrincipal(user).setPrincipal(password).setScheme(mapScheme(scheme)).build();
+        realm = new RealmBuilder().setPrincipal(user).setPassword(password).setScheme(mapScheme(scheme)).build();
 
         return this;
     }
@@ -509,7 +509,10 @@ public class WebAHCClient implements WebClient {
     }
 
     private String negotiate(UniformInterfaceException u) {
-        return negotiateHandler.negotiate(supportedContentType, u.getResponse().getHeaders(), u.getResponse().getStatus(), u.getResponse().getClientResponseStatus().getReasonPhrase());
+        return negotiateHandler.negotiate(supportedContentType,
+                u.getResponse().getHeaders(),
+                u.getResponse().getStatus(),
+                u.getResponse().getClientResponseStatus().getReasonPhrase());
     }
 
     private WebResource buildRequest(AhcHttpClient asyncClient) {
