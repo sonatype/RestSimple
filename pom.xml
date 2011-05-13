@@ -20,10 +20,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.sonatype.restsimple</groupId>
-    <artifactId>restsimple-parent</artifactId>
+    <artifactId>restsimple</artifactId>
     <packaging>pom</packaging>
     <version>0.3-SNAPSHOT</version>
-    <name>restsimple-parent</name>
+    <name>restsimple</name>
     <url>http://www.sonatype.com</url>
     <description>
         A simple REST framework based on ServiceDefinition.
