@@ -292,16 +292,25 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     private static Reply<?> serializeResponse(Request request, Object response) {
         Collection<String> c = request.headers().get("Accept");
 
-        String contentType = c.size() > 0 ? c.iterator().next() : null;
+        String accept = c.size() > 0 ? c.iterator().next() : null;
+
+        boolean wildCard = false;
+        if (accept.equalsIgnoreCase("*/*")) {
+            wildCard = true;
+        }
+
         if (response == null) {
             return Reply.with("").noContent();
-        } else if (contentType != null) {
-            if (contentType.endsWith("json")) {
-                Map<String, String> m = new HashMap<String, String>();
+        } else if (accept != null) {
+            Map<String, String> m = new HashMap<String, String>();
+            // Default to JSON
+            if (wildCard) {
+                m.put("Content-Type", "text/json");
+                return Reply.with(response).headers(m).as(Json.class);
+            } else if (accept.endsWith("json")) {
                 m.put("Content-Type", "application/json");
                 return Reply.with(response).headers(m).as(Json.class);
-            } else if (contentType.endsWith("xml")) {
-                Map<String, String> m = new HashMap<String, String>();
+            } else if (accept.endsWith("xml")) {
                 m.put("Content-Type", "application/xml");
                 return Reply.with(response).headers(m).as(Xml.class);
             }
@@ -369,6 +378,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         //TODO: Wildcard support
         for (Map.Entry<String, String> e : headers.entries()) {
             if (e.getKey().equalsIgnoreCase("Accept")) {
+                if (e.getValue().trim().equals("*/*")) {
+                    return true;
+                }
+
                 for (MediaType mediaType : mediaTypes) {
                     if (mediaType.toMediaType().equalsIgnoreCase(e.getValue())) {
                         return true;

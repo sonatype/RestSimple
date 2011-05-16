@@ -13,6 +13,12 @@ public class WebException extends RuntimeException {
         this.reasonPhrase = reasonPhrase;
     }
 
+    public WebException(Throwable cause) {
+        super(cause);
+        this.statusCode = 500;
+        this.reasonPhrase = "Server error";
+    }
+
     /**
      * Return the response status code.
      * @return the response status code.

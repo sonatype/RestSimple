@@ -45,6 +45,7 @@ import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.util.List;
 
@@ -55,16 +56,29 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
 
     private Injector parent;
 
+    private final ServiceHandlerMapper mapper;
+
     public SitebricksConfig() {
+        this.mapper = new ServiceHandlerMapper();
     }
 
     public SitebricksConfig(Injector parent) {
         this.parent = parent;
+        this.mapper = new ServiceHandlerMapper();
+    }
+
+    public SitebricksConfig(Injector parent, ServiceHandlerMapper mapper) {
+        this.parent = parent;
+        this.mapper = mapper;
+    }
+
+    public SitebricksConfig(ServiceHandlerMapper mapper) {
+        this.mapper = mapper;
     }
 
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), configureNegotiationTokenGenerator()));
+        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), mapper));
         List<ServiceDefinition> list = defineServices( parent != null ? parent : injector );
         if (list != null && list.size() > 0) {
             ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
