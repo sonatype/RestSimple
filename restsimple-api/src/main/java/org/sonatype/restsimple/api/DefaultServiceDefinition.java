@@ -12,7 +12,7 @@
  */
 package org.sonatype.restsimple.api;
 
-import com.google.inject.Inject;
+import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.util.ArrayList;
@@ -37,7 +37,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         this.serviceHandlerMapper = new ServiceHandlerMapper();
     }
 
-    @Inject
     public DefaultServiceDefinition(ServiceHandlerMapper serviceHandlerMapper) {
         this.serviceHandlerMapper = serviceHandlerMapper;
     }

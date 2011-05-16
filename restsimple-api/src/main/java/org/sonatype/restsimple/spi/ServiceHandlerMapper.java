@@ -12,7 +12,6 @@
  */
 package org.sonatype.restsimple.spi;
 
-import com.google.inject.Singleton;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.uri.UriTemplate;
 
@@ -24,7 +23,6 @@ import java.util.StringTokenizer;
 /**
  * A URI mapper for {@link ServiceHandler}
  */
-@Singleton
 public class ServiceHandlerMapper {
 
     private final HashMap<ServiceHandlerInfo, ServiceHandler> maps = new HashMap<ServiceHandlerInfo, ServiceHandler>();
