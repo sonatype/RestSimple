@@ -33,6 +33,7 @@ import com.google.sitebricks.routing.Action;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
@@ -175,6 +176,19 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     }
 
+    private static String[] derivePathParam(String[] pathParam) {
+        String pathName;
+        String pathValue;
+        if (pathParam.length > 2) {
+            pathName = pathParam[pathParam.length - 2];
+            pathValue = pathParam[pathParam.length - 1];
+        } else {
+            // TODO: this is totally broken
+            pathName = pathParam[1];
+            pathValue = "";
+        }
+        return new String[] { pathName, pathValue};
+    }
 
     public static class PutAction extends ActionBase {
 
@@ -187,9 +201,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
 
             Object body = readBody(serviceHandler, request);
-            String[] pathParam = hreq.getServletPath().split("/");
-            Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", body, request, mapper);
+            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
+            Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParam[0],
+                    pathParam[1], body, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -213,9 +227,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
 
             Object body = readBody(serviceHandler, request);
-            String[] pathParam = hreq.getServletPath().split("/");
-            Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", body, request, mapper);
+            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
+            Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(),  pathParam[0],
+                    pathParam[1], body, request, mapper);
 
             if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
@@ -230,9 +244,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         public Object call(Object page, Map<String, String> map) {
 
             Request request = requestProvider.get();
-            String[] pathParam = hreq.getServletPath().split("/");
-            Object response = createResponse(tokenGenerator, "get", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", null, request, mapper);
+            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
+            Object response = createResponse(tokenGenerator, "get", hreq.getServletPath(),  pathParam[0],
+                    pathParam[1], null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -249,10 +263,9 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            String[] pathParam = hreq.getServletPath().split("/");
-
-            Object response = createResponse(tokenGenerator, "delete", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", null, request, mapper);
+            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
+            Object response = createResponse(tokenGenerator, "delete", hreq.getServletPath(),  pathParam[0],
+                    pathParam[1], null, request, mapper);
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
             } else if (Reply.class.isAssignableFrom(response.getClass())) {
@@ -351,6 +364,8 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     body);
 
             response = action.action(actionContext);
+        } catch (ActionException e) {
+            return Reply.with(e).status(e.getStatusCode());
         } catch (Throwable e) {
             logger.debug("ActionContext error", e);
             return Reply.with(e).error();
