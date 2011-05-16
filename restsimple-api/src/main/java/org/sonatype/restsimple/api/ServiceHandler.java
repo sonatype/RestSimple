@@ -84,6 +84,7 @@ abstract public class ServiceHandler {
     public String toString() {
         return "ServiceHandler{" +
                 "path='" + path + '\'' +
+                ", method=" + getHttpMethod() +
                 ", action=" + action +
                 ", mediaTypeToProduce=" + mediaTypeToProduce +
                 ", consumerClazz=" + consumerClazz +
