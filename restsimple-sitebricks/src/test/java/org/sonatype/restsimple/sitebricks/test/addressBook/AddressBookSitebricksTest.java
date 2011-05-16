@@ -59,7 +59,7 @@ public class AddressBookSitebricksTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = findFreePort();
+        port = 4040;
         server = new Server(port);
         acceptHeader = AddressBookAction.APPLICATION + "/" + AddressBookAction.JSON;
 
@@ -86,7 +86,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("{\"entries\":\"foo - bar - \"}").execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 201);
@@ -99,7 +99,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testPost");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("test").setBody("{\"entries\":\"foo - bar - \"}").execute().get();
         Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
 
         assertNotNull(r);
@@ -131,7 +131,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("{\"entries\":\"foo - bar - \"}").execute().get();
         c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 
@@ -161,7 +161,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("{\"entries\":\"foo - bar - \"}").execute().get();
         Response r = c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         assertEquals(r.getStatusCode(), 200);
         c.prepareDelete(targetUrl + "/deleteAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
@@ -178,7 +178,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testInvalidAcceptPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", "foo").execute().get();
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", "foo").setBody("{\"entries\":\"foo - bar - \"}").execute().get();
 
         assertNotNull(r);
         // TODO: Must return 406, not 500 -> Sitebricks exception
@@ -196,7 +196,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testAcceptPut");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        Response r = c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("{\"entries\":\"foo - bar - \"}").execute().get();
 
         assertNotNull(r);
         assertEquals(r.getStatusCode(), 201);
@@ -209,7 +209,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testSecondResourceGet");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePut(targetUrl + "/foo/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("{\"entries\":\"foo - bar - \"}").execute().get();
         Response r = c.preparePost(targetUrl + "/foo/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         assertEquals(r.getStatusCode(), 200);
 
@@ -228,7 +228,7 @@ public class AddressBookSitebricksTest {
         logger.info("running test: testGetWithPostBody");
         AsyncHttpClient c = new AsyncHttpClient();
 
-        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
+        c.preparePut(targetUrl + "/createAddressBook/myBook").addHeader("Accept", acceptHeader).setBody("{\"entries\":\"foo - bar - \"}").execute().get();
         c.preparePost(targetUrl + "/updateAddressBook/myBook").addHeader("Accept", acceptHeader).addParameter("update","foo").addParameter("update2", "bar").execute().get();
         Response r = c.prepareGet(targetUrl + "/getAddressBook/myBook").addHeader("Accept", acceptHeader).execute().get();
 

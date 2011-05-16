@@ -44,13 +44,7 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Generate a Sitebricks resource, and bind it.
@@ -186,9 +180,16 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
+            ServiceHandler serviceHandler = mapper.map("put", hreq.getServletPath());
+
+            if (serviceHandler == null) {
+                return Reply.with("Method not allowed").status(405);
+            }
+
+            Object body = readBody(serviceHandler, request);
             String[] pathParam = hreq.getServletPath().split("/");
             Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
-                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", null, request, mapper);
+                    pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", body, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -211,19 +212,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                 return Reply.with("Method not allowed").status(405);
             }
 
-            Class<? extends Transport> transport = Text.class;
-            String subType = serviceHandler.consumeMediaType() == null ? null : serviceHandler.consumeMediaType().subType();
-            if (subType != null && subType.endsWith("json")) {
-                transport = Json.class;
-            } else if (subType != null && subType.endsWith("xml")) {
-                transport = Xml.class;
-            }
-
-            Object body = null;
-
-            if (serviceHandler.consumeClass() != null) {
-                body = request.read(serviceHandler.consumeClass()).as(transport);
-            }
+            Object body = readBody(serviceHandler, request);
             String[] pathParam = hreq.getServletPath().split("/");
             Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(), pathParam.length > 1 ? pathParam[1] : "",
                     pathParam.length > 1 ? pathParam[pathParam.length - 1] : "", body, request, mapper);
@@ -460,6 +449,33 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
         return newPath.toString();
     }
+
+    private static Object readBody(ServiceHandler serviceHandler, Request request) {
+        Class<? extends Transport> transport = Text.class;
+        String contentSubType = request.header("Content-Type");
+        if (contentSubType != null && contentSubType.indexOf("/") > 0) {
+            contentSubType = contentSubType.substring(contentSubType.indexOf("/") + 1);
+        }
+
+        String subType = serviceHandler.consumeMediaType() == null ? contentSubType : serviceHandler.consumeMediaType().subType();
+        if (subType != null && subType.endsWith("json")) {
+            transport = Json.class;
+        } else if (subType != null && subType.endsWith("xml")) {
+            transport = Xml.class;
+        }
+
+        Object body = null;
+
+        Class<?> c = serviceHandler.consumeClass() != null ? serviceHandler.consumeClass() : String.class;
+        try {
+            body = request.read(c).as(transport);
+        } catch (Exception ex) {
+            logger.debug("readBody parse exception", ex);
+        }
+
+        return body;
+    }
+
 }
 
 
