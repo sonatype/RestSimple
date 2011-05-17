@@ -15,10 +15,6 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -42,7 +38,7 @@ public class AddressBookAction implements Action<AddressBook, String> {
 
     @Override
     public AddressBook action(ActionContext<String> actionContext) throws ActionException {
-        String addressBookName = actionContext.pathValue();
+        String addressBookName = actionContext.pathParams().get("ad");
         switch (actionContext.method()) {
             case GET:
                 Collection<String> list = book.get(addressBookName);

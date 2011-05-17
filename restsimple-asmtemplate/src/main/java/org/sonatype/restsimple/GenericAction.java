@@ -17,6 +17,7 @@ import org.sonatype.restsimple.api.ActionException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 public class GenericAction implements Action<String,Integer> {
 
@@ -42,8 +43,15 @@ public class GenericAction implements Action<String,Integer> {
     private final static Object getActionType(ActionContext<Integer> objectActionContext) {
         Object o = objectActionContext.get();
         if (String.class.isAssignableFrom(o.getClass()) && String.class.cast(o).equalsIgnoreCase("")) {
-            o = objectActionContext.pathValue();
-        }
+            Map<String,String> pathParams = objectActionContext.pathParams();
+
+            // The last key value is what we are looking for
+            for (Map.Entry<String,String> e : pathParams.entrySet()) {
+                if (!e.getValue().isEmpty()) {
+                    o = e.getValue();
+                }
+            }
+                    }
         return o;
     }
 }

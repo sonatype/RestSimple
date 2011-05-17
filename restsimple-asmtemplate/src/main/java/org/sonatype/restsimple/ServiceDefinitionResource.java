@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
+import org.sonatype.restsimple.api.ActionException;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
@@ -143,20 +144,17 @@ public class ServiceDefinitionResource {
         Object response = null;
         Action action = serviceHandler.getAction();
 
-
-        String pathName = "";
-        String pathValue = "";
-
-        // TODO: Add support for multiple pathParam support.
+        Map<String,String> map = new HashMap<String,String>();
         for (Map.Entry<String,List<String>> l : uriInfo.getPathParameters().entrySet()) {
-            pathName = l.getKey();
-            pathValue = l.getValue().get(0);
+            map.put(l.getKey(), l.getValue().get(0));
         }
 
         try {
             ActionContext<T> actionContext = new ActionContext<T>(mapMethod(request.getMethod()), mapHeaders(),
-                    mapFormParams(formParams), matrixParams, request.getInputStream(), pathName, pathValue, body);
+                    mapFormParams(formParams), matrixParams, request.getInputStream(), map, body);
             response = action.action(actionContext);
+        } catch (ActionException ex) {
+            throw new WebApplicationException(ex, ex.getStatusCode());
         } catch (Throwable e) {
             logger.error("invokeAction", e);
             throw new WebApplicationException(e);

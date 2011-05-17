@@ -28,26 +28,23 @@ public class ActionContext<T> {
     private final Map<String, Collection<String>> headers;
     private final InputStream inputStream;
     private final ServiceDefinition.METHOD methodName;
-    private final String pathName;
-    private final String pathValue;
+    private final Map<String,String> pathParams;
     private final T object;
 
     public ActionContext(ServiceDefinition.METHOD methodName,
                          Map<String, Collection<String>> headers,
                          Map<String, Collection<String>> paramsStrings,
                          InputStream inputStream,
-                         String pathName,
-                         String pathValue,
+                         Map<String,String> pathParams,
                          T object) {
 
         this.paramsStrings = paramsStrings;
         this.methodName = methodName;
         this.inputStream = inputStream;
         this.headers = headers;
-        this.pathName = pathName;
-        this.pathValue = pathValue;
         this.object = object;
         this.matrixStrings = Collections.emptyMap();
+        this.pathParams = pathParams;
     }
 
     public ActionContext(ServiceDefinition.METHOD methodName,
@@ -55,18 +52,16 @@ public class ActionContext<T> {
                          Map<String, Collection<String>> paramsStrings,
                          Map<String, Collection<String>> matrixStrings,
                          InputStream inputStream,
-                         String pathName,
-                         String pathValue,
+                         Map<String,String> pathParams,
                          T object) {
 
         this.paramsStrings = paramsStrings;
         this.methodName = methodName;
         this.inputStream = inputStream;
         this.headers = headers;
-        this.pathName = pathName;
-        this.pathValue = pathValue;
         this.object = object;
         this.matrixStrings = matrixStrings;
+        this.pathParams = pathParams;
     }
 
     /**
@@ -117,21 +112,11 @@ public class ActionContext<T> {
     }
 
     /**
-     * Return the current path name used.
-     *
-     * @return the current path name used.
+     * Return all the path parameters and their associated value.
+     * @return all the path parameters
      */
-    public String pathValue() {
-        return pathValue;
-    }
-
-    /**
-     * Return the current path's value
-     *
-     * @return the current path's value
-     */
-    public String pathName() {
-        return pathName;
+    public Map<String,String> pathParams() {
+        return pathParams;
     }
 
     /**

@@ -219,47 +219,81 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
                 mv.visitMaxs(6, 3);
                 mv.visitEnd();
             }
-            {
-                mv = cw.visitMethod(ACC_PRIVATE + ACC_FINAL + ACC_STATIC, "getActionType", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", "(Lorg/sonatype/restsimple/api/ActionContext<Ljava/lang/Integer;>;)Ljava/lang/Object;", null);
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get", "()Ljava/lang/Object;");
-                mv.visitVarInsn(ASTORE, 1);
-                mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z");
-                Label l0 = new Label();
-                mv.visitJumpInsn(IFEQ, l0);
-                mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;");
-                mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-                mv.visitLdcInsn("");
-                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z");
-                mv.visitJumpInsn(IFEQ, l0);
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "pathValue", "()Ljava/lang/String;");
-                mv.visitVarInsn(ASTORE, 1);
-                mv.visitLabel(l0);
-                mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"java/lang/Object"}, 0, null);
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitInsn(ARETURN);
-                mv.visitMaxs(2, 2);
-                mv.visitEnd();
-            }
-            {
-                mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", null, new String[]{"org/sonatype/restsimple/api/ActionException"});
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKEVIRTUAL, className, "action", "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";");
-                mv.visitInsn(ARETURN);
-                mv.visitMaxs(2, 2);
-                mv.visitEnd();
-            }
-            cw.visitEnd();
-
+        {
+            mv = cw.visitMethod( ACC_PRIVATE + ACC_FINAL + ACC_STATIC, "getActionType",
+                                 "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;",
+                                 "(Lorg/sonatype/restsimple/api/ActionContext<Ljava/lang/Integer;>;)Ljava/lang/Object;",
+                                 null );
+            mv.visitCode();
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get",
+                                "()Ljava/lang/Object;" );
+            mv.visitVarInsn( ASTORE, 1 );
+            mv.visitLdcInsn( Type.getType( "Ljava/lang/String;" ) );
+            mv.visitVarInsn( ALOAD, 1 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z" );
+            Label l0 = new Label();
+            mv.visitJumpInsn( IFEQ, l0 );
+            mv.visitLdcInsn( Type.getType( "Ljava/lang/String;" ) );
+            mv.visitVarInsn( ALOAD, 1 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;" );
+            mv.visitTypeInsn( CHECKCAST, "java/lang/String" );
+            mv.visitLdcInsn( "" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z" );
+            mv.visitJumpInsn( IFEQ, l0 );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "pathParams",
+                                "()Ljava/util/Map;" );
+            mv.visitVarInsn( ASTORE, 2 );
+            mv.visitVarInsn( ALOAD, 2 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map", "entrySet", "()Ljava/util/Set;" );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;" );
+            mv.visitVarInsn( ASTORE, 3 );
+            Label l1 = new Label();
+            mv.visitLabel( l1 );
+            mv.visitFrame( Opcodes.F_APPEND, 3,
+                           new Object[]{ "java/lang/Object", "java/util/Map", "java/util/Iterator" }, 0, null );
+            mv.visitVarInsn( ALOAD, 3 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z" );
+            mv.visitJumpInsn( IFEQ, l0 );
+            mv.visitVarInsn( ALOAD, 3 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;" );
+            mv.visitTypeInsn( CHECKCAST, "java/util/Map$Entry" );
+            mv.visitVarInsn( ASTORE, 4 );
+            mv.visitVarInsn( ALOAD, 4 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;" );
+            mv.visitTypeInsn( CHECKCAST, "java/lang/String" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/String", "isEmpty", "()Z" );
+            Label l2 = new Label();
+            mv.visitJumpInsn( IFNE, l2 );
+            mv.visitVarInsn( ALOAD, 4 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;" );
+            mv.visitVarInsn( ASTORE, 1 );
+            mv.visitLabel( l2 );
+            mv.visitFrame( Opcodes.F_SAME, 0, null, 0, null );
+            mv.visitJumpInsn( GOTO, l1 );
+            mv.visitLabel( l0 );
+            mv.visitFrame( Opcodes.F_CHOP, 2, null, 0, null );
+            mv.visitVarInsn( ALOAD, 1 );
+            mv.visitInsn( ARETURN );
+            mv.visitMaxs( 2, 5 );
+            mv.visitEnd();
+        }
+        {
+            mv = cw.visitMethod( ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "action",
+                                 "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", null,
+                                 new String[]{ "org/sonatype/restsimple/api/ActionException" } );
+            mv.visitCode();
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitVarInsn( ALOAD, 1 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, className, "action",
+                                "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";" );
+            mv.visitInsn( ARETURN );
+            mv.visitMaxs( 2, 2 );
+            mv.visitEnd();
+        }
+        cw.visitEnd();
 
             byte[] bytes = cw.toByteArray();
 

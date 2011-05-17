@@ -45,7 +45,13 @@ import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * Generate a Sitebricks resource, and bind it.
@@ -109,9 +115,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     private void bind(SitebricksModule module, String path, ServiceDefinition serviceDefinition) {
 
         for (ServiceHandler handler : serviceDefinition.serviceHandlers()) {
-            PageBinder.ShowBinder showBinder = module.at(path.equals("/") ? handler.path() : path + handler.path());
+            String newPath = path.equals("/") ? handler.path() : path + handler.path();
+            PageBinder.ShowBinder showBinder = module.at(newPath);
 
-            PageBinder.ActionBinder actionBinder = showBinder.perform(mapAction(handler));
+            PageBinder.ActionBinder actionBinder = showBinder.perform(mapAction(newPath, handler));
 
             if (handler.consumeMediaType() != null) {
                 actionBinder.selectHeader("Accept", handler.consumeMediaType().toMediaType());
@@ -138,20 +145,42 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         }
     }
 
-    private Class<? extends Action> mapAction(ServiceHandler s) {
+    private Action mapAction(String path, ServiceHandler s) {
         switch (s.getHttpMethod()) {
             case GET:
-                return GetAction.class;
+                return new GetAction(path);
             case POST:
-                return PostAction.class;
+                return new PostAction(path);
             case PUT:
-                return PutAction.class;
+                return new PutAction(path);
             case DELETE:
-                return DeleteAction.class;
+                return new DeleteAction(path);
             default:
                 throw new IllegalStateException("Method not supported");
         }
 
+    }
+
+    private final static Map<String, String> deriveNamed(Map<Integer, String> namedParams, String[] pathParam) {
+        if (namedParams.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        HashMap<String, String> map = new HashMap<String,String>();
+        for (int i=0; i < pathParam.length; i++) {
+            boolean added = false;
+            for (Map.Entry<Integer, String> e : namedParams.entrySet()) {
+                if (i == e.getKey() && e.getValue().startsWith(":")) {
+                    added = true;
+                    map.put(e.getValue().substring(1), pathParam[i]);
+                }
+            }
+
+            if (!added) {
+                map.put(pathParam[i], "");
+            }
+        }
+        return map;
     }
 
     public abstract static class ActionBase implements Action {
@@ -166,6 +195,19 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         protected HttpServletRequest hreq;
 
+        protected final Map<Integer,String> namedMapping = new HashMap<Integer,String>();
+
+        public ActionBase(String path) {
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+
+            String[] token = path.split("/");
+            for(int i = 0; i < token.length; i++) {
+                namedMapping.put(i, token[i]);
+            }
+        }
+
         @Override
         public boolean shouldCall(HttpServletRequest request) {
             hreq = request;
@@ -176,21 +218,11 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     }
 
-    private static String[] derivePathParam(String[] pathParam) {
-        String pathName;
-        String pathValue;
-        if (pathParam.length > 2) {
-            pathName = pathParam[pathParam.length - 2];
-            pathValue = pathParam[pathParam.length - 1];
-        } else {
-            // TODO: this is totally broken
-            pathName = pathParam[1];
-            pathValue = "";
-        }
-        return new String[] { pathName, pathValue};
-    }
-
     public static class PutAction extends ActionBase {
+
+        public PutAction( String path ) {
+            super( path );
+        }
 
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
@@ -201,9 +233,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
 
             Object body = readBody(serviceHandler, request);
-            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
-            Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParam[0],
-                    pathParam[1], body, request, mapper);
+            String p = hreq.getServletPath();
+            if (p.startsWith("/")) {
+                p = p.substring(1);
+            }
+            Map<String,String> pathParams = deriveNamed(namedMapping, p.split("/"));
+            Object response = createResponse(tokenGenerator, "put", hreq.getServletPath(), pathParams, body, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -217,6 +252,10 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     public static class PostAction extends ActionBase {
 
+        public PostAction( String path ) {
+            super( path );
+        }
+
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
@@ -227,9 +266,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             }
 
             Object body = readBody(serviceHandler, request);
-            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
-            Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(),  pathParam[0],
-                    pathParam[1], body, request, mapper);
+            String p = hreq.getServletPath();
+            if (p.startsWith("/")) {
+                p = p.substring(1);
+            }
+            Map<String,String> pathParams = deriveNamed(namedMapping, p.split("/"));
+            Object response = createResponse(tokenGenerator, "post", hreq.getServletPath(), pathParams, body, request, mapper);
 
             if (Reply.class.isAssignableFrom(response.getClass())) {
                 return Reply.class.cast(response);
@@ -240,13 +282,20 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     public static class GetAction extends ActionBase {
 
+        public GetAction( String path ) {
+            super( path );
+        }
+
         @Override
         public Object call(Object page, Map<String, String> map) {
 
             Request request = requestProvider.get();
-            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
-            Object response = createResponse(tokenGenerator, "get", hreq.getServletPath(),  pathParam[0],
-                    pathParam[1], null, request, mapper);
+            String p = hreq.getServletPath();
+            if (p.startsWith("/")) {
+                p = p.substring(1);
+            }
+            Map<String,String> pathParams = deriveNamed(namedMapping, p.split("/"));
+            Object response = createResponse(tokenGenerator, "get", hreq.getServletPath(), pathParams, null, request, mapper);
 
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
@@ -260,12 +309,19 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     public static class DeleteAction extends ActionBase {
 
+        public DeleteAction( String path ) {
+            super( path );
+        }
+
         @Override
         public Object call(Object page, Map<String, String> map) {
             Request request = requestProvider.get();
-            String[] pathParam = derivePathParam(hreq.getServletPath().split("/"));
-            Object response = createResponse(tokenGenerator, "delete", hreq.getServletPath(),  pathParam[0],
-                    pathParam[1], null, request, mapper);
+            String p = hreq.getServletPath();
+            if (p.startsWith("/")) {
+                p = p.substring(1);
+            }
+            Map<String,String> pathParams = deriveNamed(namedMapping, p.split("/"));
+            Object response = createResponse(tokenGenerator, "delete", hreq.getServletPath(), pathParams, null, request, mapper);
             if (response == null) {
                 return Reply.NO_REPLY.noContent();
             } else if (Reply.class.isAssignableFrom(response.getClass())) {
@@ -323,8 +379,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     private static <T> Object createResponse(NegotiationTokenGenerator tokenGenerator,
                                              String methodName,
                                              String servletPath,
-                                             String pathName,
-                                             String pathValue,
+                                             Map<String,String> pathParams,
                                              T body,
                                              Request request,
                                              ServiceHandlerMapper mapper) {
@@ -359,8 +414,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                     mapFormParams(request.params()),
                     mapMatrixParams(request.matrix()),
                     new ByteArrayInputStream(body.toString().getBytes()),
-                    pathName,
-                    pathValue,
+                    pathParams,
                     body);
 
             response = action.action(actionContext);
@@ -450,7 +504,6 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         return Collections.unmodifiableMap(map);
     }
 
-
     private static String convertToJaxRs(String path) {
         StringTokenizer st = new StringTokenizer(path, "/");
         StringBuilder newPath = new StringBuilder();
@@ -485,12 +538,11 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         try {
             body = request.read(c).as(transport);
         } catch (Exception ex) {
-            logger.debug("readBody parse exception", ex);
+            logger.trace("readBody parse exception", ex);
         }
 
         return body;
     }
-
 }
 
 

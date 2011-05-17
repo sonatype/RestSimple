@@ -600,135 +600,181 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             }
         }
         {
-            mv = cw.visitMethod(ACC_PRIVATE, "invokeAction", "(Ljava/lang/String;Ljavax/ws/rs/core/UriInfo;Ljavax/ws/rs/core/MultivaluedMap;Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;", "<T:Ljava/lang/Object;>(Ljava/lang/String;Ljavax/ws/rs/core/UriInfo;Ljavax/ws/rs/core/MultivaluedMap<Ljava/lang/String;Ljava/lang/String;>;Ljava/util/Map<Ljava/lang/String;Ljava/util/Collection<Ljava/lang/String;>;>;TT;)Ljava/lang/Object;", null);
+            mv = cw.visitMethod( ACC_PRIVATE, "invokeAction",
+                                 "(Ljava/lang/String;Ljavax/ws/rs/core/UriInfo;Ljavax/ws/rs/core/MultivaluedMap;Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;",
+                                 "<T:Ljava/lang/Object;>(Ljava/lang/String;Ljavax/ws/rs/core/UriInfo;Ljavax/ws/rs/core/MultivaluedMap<Ljava/lang/String;Ljava/lang/String;>;Ljava/util/Map<Ljava/lang/String;Ljava/util/Collection<Ljava/lang/String;>;>;TT;)Ljava/lang/Object;",
+                                 null );
             mv.visitCode();
             Label l0 = new Label();
             Label l1 = new Label();
             Label l2 = new Label();
-            mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Throwable");
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, "mapper", "Lorg/sonatype/restsimple/spi/ServiceHandlerMapper;");
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitVarInsn(ALOAD, 2);
-            mv.visitMethodInsn(INVOKEINTERFACE, "javax/ws/rs/core/UriInfo", "getPath", "()Ljava/lang/String;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/spi/ServiceHandlerMapper", "map", "(Ljava/lang/String;Ljava/lang/String;)Lorg/sonatype/restsimple/api/ServiceHandler;");
-            mv.visitVarInsn(ASTORE, 6);
-            mv.visitVarInsn(ALOAD, 6);
+            mv.visitTryCatchBlock( l0, l1, l2, "org/sonatype/restsimple/api/ActionException" );
             Label l3 = new Label();
-            mv.visitJumpInsn(IFNONNULL, l3);
-            mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
-            mv.visitInsn(DUP);
-            mv.visitIntInsn(SIPUSH, 405);
-            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "status", "(I)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-            mv.visitLdcInsn("Method not allowed");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-            mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljavax/ws/rs/core/Response;)V");
-            mv.visitInsn(ATHROW);
-            mv.visitLabel(l3);
-            mv.visitFrame(Opcodes.F_APPEND, 1, new Object[]{"org/sonatype/restsimple/api/ServiceHandler"}, 0, null);
-            mv.visitVarInsn(ALOAD, 6);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ServiceHandler", "getHttpMethod", "()Lorg/sonatype/restsimple/api/ServiceDefinition$METHOD;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ServiceDefinition$METHOD", "name", "()Ljava/lang/String;");
-            mv.visitVarInsn(ALOAD, 1);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z");
+            mv.visitTryCatchBlock( l0, l1, l3, "java/lang/Throwable" );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitFieldInsn( GETFIELD, className, "mapper",
+                               "Lorg/sonatype/restsimple/spi/ServiceHandlerMapper;" );
+            mv.visitVarInsn( ALOAD, 1 );
+            mv.visitVarInsn( ALOAD, 2 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "javax/ws/rs/core/UriInfo", "getPath", "()Ljava/lang/String;" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/spi/ServiceHandlerMapper", "map",
+                                "(Ljava/lang/String;Ljava/lang/String;)Lorg/sonatype/restsimple/api/ServiceHandler;" );
+            mv.visitVarInsn( ASTORE, 6 );
+            mv.visitVarInsn( ALOAD, 6 );
             Label l4 = new Label();
-            mv.visitJumpInsn(IFNE, l4);
-            mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
-            mv.visitInsn(DUP);
-            mv.visitIntInsn(SIPUSH, 405);
-            mv.visitMethodInsn(INVOKESTATIC, "javax/ws/rs/core/Response", "status", "(I)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-            mv.visitLdcInsn("Method not allowed");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity", "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;");
-            mv.visitMethodInsn(INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build", "()Ljavax/ws/rs/core/Response;");
-            mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljavax/ws/rs/core/Response;)V");
-            mv.visitInsn(ATHROW);
-            mv.visitLabel(l4);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            mv.visitInsn(ACONST_NULL);
-            mv.visitVarInsn(ASTORE, 7);
-            mv.visitVarInsn(ALOAD, 6);
-            mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ServiceHandler", "getAction", "()Lorg/sonatype/restsimple/api/Action;");
-            mv.visitVarInsn(ASTORE, 8);
-            mv.visitLdcInsn("");
-            mv.visitVarInsn(ASTORE, 9);
-            mv.visitLdcInsn("");
-            mv.visitVarInsn(ASTORE, 10);
-            mv.visitVarInsn(ALOAD, 2);
-            mv.visitMethodInsn(INVOKEINTERFACE, "javax/ws/rs/core/UriInfo", "getPathParameters", "()Ljavax/ws/rs/core/MultivaluedMap;");
-            mv.visitMethodInsn(INVOKEINTERFACE, "javax/ws/rs/core/MultivaluedMap", "entrySet", "()Ljava/util/Set;");
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;");
-            mv.visitVarInsn(ASTORE, 11);
+            mv.visitJumpInsn( IFNONNULL, l4 );
+            mv.visitTypeInsn( NEW, "javax/ws/rs/WebApplicationException" );
+            mv.visitInsn( DUP );
+            mv.visitIntInsn( SIPUSH, 405 );
+            mv.visitMethodInsn( INVOKESTATIC, "javax/ws/rs/core/Response", "status",
+                                "(I)Ljavax/ws/rs/core/Response$ResponseBuilder;" );
+            mv.visitLdcInsn( "Method not allowed" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity",
+                                "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build",
+                                "()Ljavax/ws/rs/core/Response;" );
+            mv.visitMethodInsn( INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>",
+                                "(Ljavax/ws/rs/core/Response;)V" );
+            mv.visitInsn( ATHROW );
+            mv.visitLabel( l4 );
+            mv.visitFrame( Opcodes.F_APPEND, 1, new Object[]{ "org/sonatype/restsimple/api/ServiceHandler" }, 0, null );
+            mv.visitVarInsn( ALOAD, 6 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ServiceHandler", "getHttpMethod",
+                                "()Lorg/sonatype/restsimple/api/ServiceDefinition$METHOD;" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ServiceDefinition$METHOD", "name",
+                                "()Ljava/lang/String;" );
+            mv.visitVarInsn( ALOAD, 1 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z" );
             Label l5 = new Label();
-            mv.visitLabel(l5);
-            mv.visitFrame(Opcodes.F_FULL, 12, new Object[]{className, "java/lang/String", "javax/ws/rs/core/UriInfo", "javax/ws/rs/core/MultivaluedMap", "java/util/Map", "java/lang/Object", "org/sonatype/restsimple/api/ServiceHandler", "java/lang/Object", "org/sonatype/restsimple/api/Action", "java/lang/String", "java/lang/String", "java/util/Iterator"}, 0, new Object[]{});
-            mv.visitVarInsn(ALOAD, 11);
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z");
-            mv.visitJumpInsn(IFEQ, l0);
-            mv.visitVarInsn(ALOAD, 11);
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;");
-            mv.visitTypeInsn(CHECKCAST, "java/util/Map$Entry");
-            mv.visitVarInsn(ASTORE, 12);
-            mv.visitVarInsn(ALOAD, 12);
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map$Entry", "getKey", "()Ljava/lang/Object;");
-            mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-            mv.visitVarInsn(ASTORE, 9);
-            mv.visitVarInsn(ALOAD, 12);
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;");
-            mv.visitTypeInsn(CHECKCAST, "java/util/List");
-            mv.visitInsn(ICONST_0);
-            mv.visitMethodInsn(INVOKEINTERFACE, "java/util/List", "get", "(I)Ljava/lang/Object;");
-            mv.visitTypeInsn(CHECKCAST, "java/lang/String");
-            mv.visitVarInsn(ASTORE, 10);
-            mv.visitJumpInsn(GOTO, l5);
-            mv.visitLabel(l0);
-            mv.visitFrame(Opcodes.F_CHOP, 1, null, 0, null);
-            mv.visitTypeInsn(NEW, "org/sonatype/restsimple/api/ActionContext");
-            mv.visitInsn(DUP);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, "request", "Ljavax/servlet/http/HttpServletRequest;");
-            mv.visitMethodInsn(INVOKEINTERFACE, "javax/servlet/http/HttpServletRequest", "getMethod", "()Ljava/lang/String;");
-            mv.visitMethodInsn(INVOKESPECIAL, className, "mapMethod", "(Ljava/lang/String;)Lorg/sonatype/restsimple/api/ServiceDefinition$METHOD;");
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, className, "mapHeaders", "()Ljava/util/Map;");
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitVarInsn(ALOAD, 3);
-            mv.visitMethodInsn(INVOKESPECIAL, className, "mapFormParams", "(Ljavax/ws/rs/core/MultivaluedMap;)Ljava/util/Map;");
-            mv.visitVarInsn(ALOAD, 4);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, "request", "Ljavax/servlet/http/HttpServletRequest;");
-            mv.visitMethodInsn(INVOKEINTERFACE, "javax/servlet/http/HttpServletRequest", "getInputStream", "()Ljavax/servlet/ServletInputStream;");
-            mv.visitVarInsn(ALOAD, 9);
-            mv.visitVarInsn(ALOAD, 10);
-            mv.visitVarInsn(ALOAD, 5);
-            mv.visitMethodInsn(INVOKESPECIAL, "org/sonatype/restsimple/api/ActionContext", "<init>", "(Lorg/sonatype/restsimple/api/ServiceDefinition$METHOD;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/io/InputStream;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;)V");
-            mv.visitVarInsn(ASTORE, 11);
-            mv.visitVarInsn(ALOAD, 8);
-            mv.visitVarInsn(ALOAD, 11);
-            mv.visitMethodInsn(INVOKEINTERFACE, "org/sonatype/restsimple/api/Action", "action", "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;");
-            mv.visitVarInsn(ASTORE, 7);
-            mv.visitLabel(l1);
+            mv.visitJumpInsn( IFNE, l5 );
+            mv.visitTypeInsn( NEW, "javax/ws/rs/WebApplicationException" );
+            mv.visitInsn( DUP );
+            mv.visitIntInsn( SIPUSH, 405 );
+            mv.visitMethodInsn( INVOKESTATIC, "javax/ws/rs/core/Response", "status",
+                                "(I)Ljavax/ws/rs/core/Response$ResponseBuilder;" );
+            mv.visitLdcInsn( "Method not allowed" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "entity",
+                                "(Ljava/lang/Object;)Ljavax/ws/rs/core/Response$ResponseBuilder;" );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "javax/ws/rs/core/Response$ResponseBuilder", "build",
+                                "()Ljavax/ws/rs/core/Response;" );
+            mv.visitMethodInsn( INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>",
+                                "(Ljavax/ws/rs/core/Response;)V" );
+            mv.visitInsn( ATHROW );
+            mv.visitLabel( l5 );
+            mv.visitFrame( Opcodes.F_SAME, 0, null, 0, null );
+            mv.visitInsn( ACONST_NULL );
+            mv.visitVarInsn( ASTORE, 7 );
+            mv.visitVarInsn( ALOAD, 6 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ServiceHandler", "getAction",
+                                "()Lorg/sonatype/restsimple/api/Action;" );
+            mv.visitVarInsn( ASTORE, 8 );
+            mv.visitTypeInsn( NEW, "java/util/HashMap" );
+            mv.visitInsn( DUP );
+            mv.visitMethodInsn( INVOKESPECIAL, "java/util/HashMap", "<init>", "()V" );
+            mv.visitVarInsn( ASTORE, 9 );
+            mv.visitVarInsn( ALOAD, 2 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "javax/ws/rs/core/UriInfo", "getPathParameters",
+                                "()Ljavax/ws/rs/core/MultivaluedMap;" );
+            mv.visitMethodInsn( INVOKEINTERFACE, "javax/ws/rs/core/MultivaluedMap", "entrySet", "()Ljava/util/Set;" );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;" );
+            mv.visitVarInsn( ASTORE, 10 );
             Label l6 = new Label();
-            mv.visitJumpInsn(GOTO, l6);
-            mv.visitLabel(l2);
-            mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{"java/lang/Throwable"});
-            mv.visitVarInsn(ASTORE, 11);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitFieldInsn(GETFIELD, className, "logger", "Lorg/slf4j/Logger;");
-            mv.visitLdcInsn("invokeAction");
-            mv.visitVarInsn(ALOAD, 11);
-            mv.visitMethodInsn(INVOKEINTERFACE, "org/slf4j/Logger", "error", "(Ljava/lang/String;Ljava/lang/Throwable;)V");
-            mv.visitTypeInsn(NEW, "javax/ws/rs/WebApplicationException");
-            mv.visitInsn(DUP);
-            mv.visitVarInsn(ALOAD, 11);
-            mv.visitMethodInsn(INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>", "(Ljava/lang/Throwable;)V");
-            mv.visitInsn(ATHROW);
-            mv.visitLabel(l6);
-            mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            mv.visitVarInsn(ALOAD, 7);
-            mv.visitInsn(ARETURN);
-            mv.visitMaxs(10, 13);
+            mv.visitLabel( l6 );
+            mv.visitFrame( Opcodes.F_FULL, 11,
+                           new Object[]{ className, "java/lang/String",
+                               "javax/ws/rs/core/UriInfo", "javax/ws/rs/core/MultivaluedMap", "java/util/Map",
+                               "java/lang/Object", "org/sonatype/restsimple/api/ServiceHandler", "java/lang/Object",
+                               "org/sonatype/restsimple/api/Action", "java/util/Map", "java/util/Iterator" }, 0,
+                           new Object[]{ } );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z" );
+            mv.visitJumpInsn( IFEQ, l0 );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;" );
+            mv.visitTypeInsn( CHECKCAST, "java/util/Map$Entry" );
+            mv.visitVarInsn( ASTORE, 11 );
+            mv.visitVarInsn( ALOAD, 9 );
+            mv.visitVarInsn( ALOAD, 11 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map$Entry", "getKey", "()Ljava/lang/Object;" );
+            mv.visitVarInsn( ALOAD, 11 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;" );
+            mv.visitTypeInsn( CHECKCAST, "java/util/List" );
+            mv.visitInsn( ICONST_0 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/List", "get", "(I)Ljava/lang/Object;" );
+            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map", "put",
+                                "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;" );
+            mv.visitInsn( POP );
+            mv.visitJumpInsn( GOTO, l6 );
+            mv.visitLabel( l0 );
+            mv.visitFrame( Opcodes.F_CHOP, 1, null, 0, null );
+            mv.visitTypeInsn( NEW, "org/sonatype/restsimple/api/ActionContext" );
+            mv.visitInsn( DUP );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitFieldInsn( GETFIELD, className, "request",
+                               "Ljavax/servlet/http/HttpServletRequest;" );
+            mv.visitMethodInsn( INVOKEINTERFACE, "javax/servlet/http/HttpServletRequest", "getMethod",
+                                "()Ljava/lang/String;" );
+            mv.visitMethodInsn( INVOKESPECIAL, className, "mapMethod",
+                                "(Ljava/lang/String;)Lorg/sonatype/restsimple/api/ServiceDefinition$METHOD;" );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitMethodInsn( INVOKESPECIAL, className, "mapHeaders",
+                                "()Ljava/util/Map;" );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitVarInsn( ALOAD, 3 );
+            mv.visitMethodInsn( INVOKESPECIAL, className, "mapFormParams",
+                                "(Ljavax/ws/rs/core/MultivaluedMap;)Ljava/util/Map;" );
+            mv.visitVarInsn( ALOAD, 4 );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitFieldInsn( GETFIELD, className, "request",
+                               "Ljavax/servlet/http/HttpServletRequest;" );
+            mv.visitMethodInsn( INVOKEINTERFACE, "javax/servlet/http/HttpServletRequest", "getInputStream",
+                                "()Ljavax/servlet/ServletInputStream;" );
+            mv.visitVarInsn( ALOAD, 9 );
+            mv.visitVarInsn( ALOAD, 5 );
+            mv.visitMethodInsn( INVOKESPECIAL, "org/sonatype/restsimple/api/ActionContext", "<init>",
+                                "(Lorg/sonatype/restsimple/api/ServiceDefinition$METHOD;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/io/InputStream;Ljava/util/Map;Ljava/lang/Object;)V" );
+            mv.visitVarInsn( ASTORE, 10 );
+            mv.visitVarInsn( ALOAD, 8 );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "org/sonatype/restsimple/api/Action", "action",
+                                "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;" );
+            mv.visitVarInsn( ASTORE, 7 );
+            mv.visitLabel( l1 );
+            Label l7 = new Label();
+            mv.visitJumpInsn( GOTO, l7 );
+            mv.visitLabel( l2 );
+            mv.visitFrame( Opcodes.F_SAME1, 0, null, 1, new Object[]{ "org/sonatype/restsimple/api/ActionException" } );
+            mv.visitVarInsn( ASTORE, 10 );
+            mv.visitTypeInsn( NEW, "javax/ws/rs/WebApplicationException" );
+            mv.visitInsn( DUP );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionException", "getStatusCode", "()I" );
+            mv.visitMethodInsn( INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>",
+                                "(Ljava/lang/Throwable;I)V" );
+            mv.visitInsn( ATHROW );
+            mv.visitLabel( l3 );
+            mv.visitFrame( Opcodes.F_SAME1, 0, null, 1, new Object[]{ "java/lang/Throwable" } );
+            mv.visitVarInsn( ASTORE, 10 );
+            mv.visitVarInsn( ALOAD, 0 );
+            mv.visitFieldInsn( GETFIELD, className, "logger",
+                               "Lorg/slf4j/Logger;" );
+            mv.visitLdcInsn( "invokeAction" );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitMethodInsn( INVOKEINTERFACE, "org/slf4j/Logger", "error",
+                                "(Ljava/lang/String;Ljava/lang/Throwable;)V" );
+            mv.visitTypeInsn( NEW, "javax/ws/rs/WebApplicationException" );
+            mv.visitInsn( DUP );
+            mv.visitVarInsn( ALOAD, 10 );
+            mv.visitMethodInsn( INVOKESPECIAL, "javax/ws/rs/WebApplicationException", "<init>",
+                                "(Ljava/lang/Throwable;)V" );
+            mv.visitInsn( ATHROW );
+            mv.visitLabel( l7 );
+            mv.visitFrame( Opcodes.F_SAME, 0, null, 0, null );
+            mv.visitVarInsn( ALOAD, 7 );
+            mv.visitInsn( ARETURN );
+            mv.visitMaxs( 9, 12 );
             mv.visitEnd();
         }
         {

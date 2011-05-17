@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.sonatype.restsimple.example.hello;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-
 public class HelloWorld {
     public String helloWorld;
 

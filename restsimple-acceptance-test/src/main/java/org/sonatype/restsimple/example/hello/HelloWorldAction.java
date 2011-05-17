@@ -15,6 +15,8 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
 import org.sonatype.restsimple.api.ActionException;
 
+import java.util.Map;
+
 public class HelloWorldAction implements Action<Object, String> {
     public final static String APPLICATION = "application";
     public final static String TXT = "vnd.org.sonatype.rest+txt";
@@ -42,14 +44,15 @@ public class HelloWorldAction implements Action<Object, String> {
     @Override
     public Object action(ActionContext<String> actionContext) throws ActionException {
 
-        if (actionContext.pathName().equalsIgnoreCase("sayPlainTextHello")) {
-            return sayPlainTextHello(actionContext.pathValue());
-        } else if (actionContext.pathName().equalsIgnoreCase("sayPlainHtmlHello")) {
-            return sayPlainHtmlHello(actionContext.pathValue());
-        } else if (actionContext.pathName().equalsIgnoreCase("sayPlainXmlHello")) {
-            return new HelloWorld(sayPlainXmlHello(actionContext.pathValue()));
+        Map<String,String> pathParams = actionContext.pathParams();
+        if (pathParams.containsKey("sayPlainTextHello")) {
+            return sayPlainTextHello(pathParams.get("name"));
+        } else if (pathParams.containsKey("sayPlainHtmlHello")) {
+            return sayPlainHtmlHello(pathParams.get("name"));
+        } else if (pathParams.containsKey("sayPlainXmlHello")) {
+            return new HelloWorld(sayPlainXmlHello(pathParams.get("name")));
         } else {
-            return new HelloWorld(sayPlainJsonHello(actionContext.pathValue()));
+            return new HelloWorld(sayPlainJsonHello(pathParams.get("name")));
         }
     }
 }

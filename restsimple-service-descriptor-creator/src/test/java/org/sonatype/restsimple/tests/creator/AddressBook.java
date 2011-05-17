@@ -18,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class AddressBook {
-    private final Map<String, Person> peoplea = new LinkedHashMap<String, Person>();;
+    private final Map<String, Person> peoplea = new LinkedHashMap<String, Person>();
 
     private static int idx = 4;
 

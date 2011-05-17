@@ -35,9 +35,10 @@ public class PetstoreAction implements Action<Pet, Pet> {
         Map<String, Collection<String>> queryStrings = actionContext.paramsString();
         Map<String, Collection<String>> matrixParams = actionContext.matrixString();
 
+        String pathValue = actionContext.pathParams().get("pet");
         switch (actionContext.method()) {
             case GET:
-                Pet pet = pets.get(actionContext.pathValue());
+                Pet pet = pets.get(pathValue);
                 if (pet != null) {
 
                     if (headers.size() > 0) {
@@ -51,7 +52,7 @@ public class PetstoreAction implements Action<Pet, Pet> {
                 }
                 return pet;
             case DELETE:
-                return pets.remove(actionContext.pathValue());
+                return pets.remove(pathValue);
             case POST:
 
                 pet = actionContext.get();
@@ -82,10 +83,10 @@ public class PetstoreAction implements Action<Pet, Pet> {
                     }
                 }
 
-                String value = actionContext.pathValue();
+                String value = pathValue;
                 int matrixPos = value.indexOf(";");
                 if (matrixPos > 0) {
-                    value = actionContext.pathValue().substring(0, matrixPos);
+                    value = pathValue.substring(0, matrixPos);
                 }
 
                 pets.put(value, pet);
