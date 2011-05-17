@@ -47,6 +47,7 @@ import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -59,22 +60,40 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
 
     private Injector parent;
     private final Map<String,String> jaxrsProperties;
+    private final ServiceHandlerMapper mapper;
 
     public JaxrsConfig() {
         this(null, new HashMap<String,String>());
+    }
+
+    public JaxrsConfig(ServiceHandlerMapper mapper) {
+        this(null, new HashMap<String,String>(), mapper);
     }
 
     public JaxrsConfig(Map<String,String> jaxrsProperties) {
         this(null, jaxrsProperties);
     }
 
+    public JaxrsConfig(Map<String,String> jaxrsProperties, ServiceHandlerMapper mapper) {
+        this(null, jaxrsProperties, mapper);
+    }
+
     public JaxrsConfig(Injector parent) {
         this(parent, new HashMap<String,String>());
     }
 
+    public JaxrsConfig(Injector parent, ServiceHandlerMapper mapper) {
+        this(parent, new HashMap<String,String>(), mapper);
+    }
+
     public JaxrsConfig(Injector parent, Map<String,String> jaxrsProperties) {
+        this(parent, jaxrsProperties, new ServiceHandlerMapper());
+    }
+
+    public JaxrsConfig(Injector parent, Map<String,String> jaxrsProperties, ServiceHandlerMapper mapper) {
         this.jaxrsProperties = jaxrsProperties;
         this.parent = parent;
+        this.mapper = mapper;
     }
 
     @Override
