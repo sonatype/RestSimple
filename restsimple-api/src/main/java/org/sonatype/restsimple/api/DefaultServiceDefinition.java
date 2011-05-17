@@ -34,7 +34,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     private final List<Class<?>> extensions = new ArrayList<Class<?>>();
 
     public DefaultServiceDefinition() {
-        this.serviceHandlerMapper = new ServiceHandlerMapper();
+        this(new ServiceHandlerMapper());
     }
 
     @Inject
@@ -134,6 +134,9 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      */
     @Override
     public List<MediaType> mediaToProduce() {
+        if (mediaTypeToProduce.isEmpty()) {
+            mediaTypeToProduce.add(new MediaType( "text", "json"));
+        }
         return Collections.unmodifiableList(mediaTypeToProduce);
     }
 

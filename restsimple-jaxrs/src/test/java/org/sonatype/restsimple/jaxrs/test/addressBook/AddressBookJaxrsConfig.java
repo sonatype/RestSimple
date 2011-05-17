@@ -66,9 +66,7 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
 
                 serviceDefinition
                         .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
-                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                         .consuming(MediaType.JSON)
-                        .consuming(MediaType.XML)
                         .handleWithPut("/createAddressBook/{ad}", action)
                         .handleWithGet("/getAddressBook/{ad}", action)
                         .withHandler(postServiceHandler)
@@ -83,9 +81,7 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
                 serviceDefinition
                         .withPath("/foo")
                         .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
-                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.XML))
                         .consuming(MediaType.JSON)
-                        .consuming(MediaType.XML)
                         .handleWithPut("/createAddressBook/{ad}", action)
                         .handleWithGet("/getAddressBook/{ad}", action)
                         .withHandler(postServiceHandler)
@@ -101,6 +97,8 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
                 serviceDefinition = injector.getInstance(ServiceDefinition.class);
                 serviceDefinition
                         .withPath("/bar")
+                        .producing(new MediaType(AddressBookAction.APPLICATION, AddressBookAction.JSON))
+                        .consuming(MediaType.JSON)
                         .handleWithPut("/createAddressBook/{ad}", action)
                         .handleWithGet("/getAddressBook/{ad}", action)
                         .withHandler(postServiceHandler)
