@@ -98,7 +98,7 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
 
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), configureNegotiationTokenGenerator()));
+        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), mapper));
         List<ServiceDefinition> list = defineServices(parent != null ? parent : injector);
         if (list != null && list.size() > 0) {
             ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
