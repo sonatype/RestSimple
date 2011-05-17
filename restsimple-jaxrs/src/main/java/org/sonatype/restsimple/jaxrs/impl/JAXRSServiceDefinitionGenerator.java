@@ -83,6 +83,7 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
 
         {
             String path = serviceDefinition.path().contains("/:") ? convert(serviceDefinition.path()) : serviceDefinition.path();
+            logger.info( "Generating jaxrs resource for {} with path {}", serviceDefinition, path );
             if (path == "") {
                 path = "/";
             }
