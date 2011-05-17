@@ -59,7 +59,7 @@ public class AddressBookSitebricksTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        port = 4040;
+        port = findFreePort();
         server = new Server(port);
         acceptHeader = AddressBookAction.APPLICATION + "/" + AddressBookAction.JSON;
 
