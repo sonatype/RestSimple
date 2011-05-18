@@ -121,7 +121,7 @@
             
             <dependency>
                 <groupId>org.sonatype.restsimple</groupId>
-                <artifactId>restsimple-template</artifactId>
+                <artifactId>restsimple-asmtemplate</artifactId>
                 <version>${project.version}</version>                
             </dependency>
 
