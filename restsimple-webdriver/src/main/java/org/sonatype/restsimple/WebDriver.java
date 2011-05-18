@@ -86,7 +86,6 @@ public class WebDriver {
         String targetUrl = "http://127.0.0.1:" + port;
         Server server = new org.eclipse.jetty.server.Server(port);
 
-
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
