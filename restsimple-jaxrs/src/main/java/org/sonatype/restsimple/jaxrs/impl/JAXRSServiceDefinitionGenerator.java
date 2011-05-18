@@ -167,9 +167,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                 if (serviceHandler.getHttpMethod().name().equalsIgnoreCase("get")) {
                     mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljavax/ws/rs/core/UriInfo;)Ljava/lang/Object;", null, null);
                     {
-                        av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
-                        av0.visit("value", convert(serviceHandler.path()));
-                        av0.visitEnd();
+                        String p = convert(serviceHandler.path());
+                        if (!p.equals( "/" ) && !p.isEmpty()) {
+                            av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
+                            av0.visit("value", p);
+                            av0.visitEnd();
+                        }
                     }
                     {
                         av0 = mv.visitAnnotation("Ljavax/ws/rs/GET;", true);
@@ -231,9 +234,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         }
                         mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljavax/ws/rs/core/UriInfo;)Ljavax/ws/rs/core/Response;", null, null);
                         {
-                            av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
-                            av0.visit("value", convert(serviceHandler.path()));
-                            av0.visitEnd();
+                            String p = convert(serviceHandler.path());
+                            if (!p.equals( "/" ) && !p.isEmpty()) {
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
+                                av0.visit("value", p);
+                                av0.visitEnd();
+                            }
                         }
                         {
                             av0 = mv.visitAnnotation("Ljavax/ws/rs/HEAD;", true);
@@ -299,9 +305,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                         String methodType = serviceHandler.consumeClass() != null ? serviceHandler.consumeClass().getName().replace(".", "/") : "java/lang/String";
                         mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljavax/ws/rs/core/UriInfo;L" + methodType + ";)Ljavax/ws/rs/core/Response;", null, null);
                         {
-                            av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
-                            av0.visit("value", convert(serviceHandler.path()));
-                            av0.visitEnd();
+                            String p = convert(serviceHandler.path());
+                            if (!p.equals( "/" ) && !p.isEmpty()) {
+                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
+                                av0.visit("value", p);
+                                av0.visitEnd();
+                            }
                         }
                         {
                             av0 = mv.visitAnnotation("Ljavax/ws/rs/PUT;", true);
@@ -390,9 +399,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             {
                                 mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljavax/ws/rs/core/UriInfo;Ljavax/ws/rs/core/MultivaluedMap;)Ljavax/ws/rs/core/Response;", "(Ljavax/ws/rs/core/UriInfo;Ljavax/ws/rs/core/MultivaluedMap<Ljava/lang/String;Ljava/lang/String;>;)Ljavax/ws/rs/core/Response;", null);
                                 {
-                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
-                                    av0.visit("value", convert(serviceHandler.path()));
-                                    av0.visitEnd();
+                                    String p = convert(serviceHandler.path());
+                                    if (!p.equals( "/" ) && !p.isEmpty()) {
+                                        av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
+                                        av0.visit("value", p);
+                                        av0.visitEnd();
+                                    }
                                 }
                                 {
                                     av0 = mv.visitAnnotation("Ljavax/ws/rs/POST;", true);
@@ -456,9 +468,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                             String methodType = serviceHandler.consumeClass() != null ? serviceHandler.consumeClass().getName().replace(".", "/") : "java/lang/String";
                             mv = cw.visitMethod(ACC_PUBLIC, methodName, "(Ljavax/ws/rs/core/UriInfo;L" + methodType + ";)Ljavax/ws/rs/core/Response;", null, null);
                             {
-                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
-                                av0.visit("value", convert(serviceHandler.path()));
-                                av0.visitEnd();
+                                String p = convert(serviceHandler.path());
+                                if (!p.equals( "/" ) && !p.isEmpty()) {
+                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
+                                    av0.visit("value", p);
+                                    av0.visitEnd();
+                                }
                             }
                             {
                                 av0 = mv.visitAnnotation("Ljavax/ws/rs/POST;", true);
@@ -536,9 +551,12 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
                                     + ";)Ljavax/ws/rs/core/Response;", null, null);
 
                             {
-                                av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
-                                av0.visit("value", convert(serviceHandler.path()));
-                                av0.visitEnd();
+                                String p = convert(serviceHandler.path());
+                                if (!p.equals( "/" ) && !p.isEmpty()) {
+                                    av0 = mv.visitAnnotation("Ljavax/ws/rs/Path;", true);
+                                    av0.visit("value", p);
+                                    av0.visitEnd();
+                                }
                             }
                             {
                                 av0 = mv.visitAnnotation("Ljavax/ws/rs/DELETE;", true);
