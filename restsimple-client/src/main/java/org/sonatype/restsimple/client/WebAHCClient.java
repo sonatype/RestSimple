@@ -226,7 +226,11 @@ public class WebAHCClient implements WebClient {
             WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.POST).post(ClientResponse.class, o);
             if (response.getStatus() > 300) {
-                throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
+                String reasonPhrase = "";
+                if (response.getClientResponseStatus() != null) {
+                    reasonPhrase = response.getClientResponseStatus().getReasonPhrase();
+                }
+                throw new WebException(response.getStatus(), reasonPhrase);
             }
             return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
