@@ -314,8 +314,8 @@ Then you can generate the client the implementation by simply doing:
     Pet pet = client.post(new Pet("pouetpouet"), "myPet");
 
 
-  Generating ServiceDefinition HTML description
-  =============================================
+Generating ServiceDefinition HTML description
+=============================================
 
   It is possible to generate an HTML view of a ServiceDefinition. All you need to do is
 
