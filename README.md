@@ -184,13 +184,14 @@ You can customize the method to HTTP method operation
 
 Hence a method starting with foo will be mapped to a POST operation etc.
 
+Extending RestSimple via native REST support
+============================================
 Currently RestSimple supports Sitebricks and Jaxrs. It is possible to extend a ServiceDefinition with Sitebricks or Jaxrs annotation invoking the extendedWith:
 
 
     @Override
     protected Injector getInjector() {
         return Guice.createInjector(new SitebricksConfig() {
-
 
             @Override
             public List<ServiceDefinition> defineServices(Injector injector) {
@@ -312,5 +313,148 @@ Then you can generate the client the implementation by simply doing:
     PetClient client = WebProxy.createProxy(PetClient.class, URI.create(targetUrl));
     Pet pet = client.post(new Pet("pouetpouet"), "myPet");
 
-Support for the use of standard JAXRS resources
-=====================================================
+
+  Generating ServiceDefinition HTML description
+  =============================================
+
+  It is possible to generate an HTML view of a ServiceDefinition. All you need to do is
+
+        ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
+        serviceDefinition
+                .withHandler(new PutServiceHandler("/createAddressBook/:ad", action))
+                .withHandler(new GetServiceHandler("/getAddressBook/:ad", action))
+                .withHandler(postServiceHandler)
+                .withHandler(new DeleteServiceHandler("/deleteAddressBook/:ad", action));
+
+
+        HtmlTemplateGenerator generator = new HtmlTemplateGenerator(new VelocityTemplater());
+
+The Html page will looks like:
+
+        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/html4/loose.dtd">
+        <html>
+        <head>
+            <title>ServiceDefinitionTemplate</title>
+        </head>
+        <body>
+        <h1>ServiceDefinition</h1>
+
+        <div name="ServiceDefinition">
+            <p class="rooturi">
+                ROOT URI: /serviceDefinition
+            </p>
+
+            <p class="consuming">
+                Consuming:
+            <ul>
+                            <li>application/vnd.org.sonatype.rest+json</li>
+                    </ul>
+            </p>
+            <p class="producing">
+                Producing:
+            <ul class="ul-producing">
+                            <li class="li-producing">application/vnd.org.sonatype.rest+json</li>
+                            <li class="li-producing">application/vnd.org.sonatype.rest+xml</li>
+                    </ul>
+            </p>
+
+        </div>
+                <h2> ServiceHandler </h2>
+
+            <div class="ServiceHandler">
+                <p class="uri">
+                    URI: /serviceDefinition/createAddressBook/:ad
+                </p>
+
+                <p class="method">
+                    Method: PUT
+                </p>
+
+                            <p>
+                    Consuming: application/vnd.org.sonatype.rest+json
+                    </p>
+
+                <p class="sh-producing">
+                    Producing:
+                <ul>
+                            </ul>
+                </p>
+                <p class="action">
+                    Action: AddressBookAction
+                </p>
+            </div>
+                <h2> ServiceHandler </h2>
+
+            <div class="ServiceHandler">
+                <p class="uri">
+                    URI: /serviceDefinition/getAddressBook/:ad
+                </p>
+
+                <p class="method">
+                    Method: GET
+                </p>
+
+                            <p>
+                    Consuming: application/vnd.org.sonatype.rest+json
+                    </p>
+
+                <p class="sh-producing">
+                    Producing:
+                <ul>
+                            </ul>
+                </p>
+                <p class="action">
+                    Action: AddressBookAction
+                </p>
+            </div>
+                <h2> ServiceHandler </h2>
+
+            <div class="ServiceHandler">
+                <p class="uri">
+                    URI: /serviceDefinition/updateAddressBook/:ad
+                </p>
+
+                <p class="method">
+                    Method: POST
+                </p>
+
+                            <p>
+                    Consuming: application/vnd.org.sonatype.rest+json
+                    </p>
+
+                <p class="sh-producing">
+                    Producing:
+                <ul>
+                            </ul>
+                </p>
+                <p class="action">
+                    Action: AddressBookAction
+                </p>
+            </div>
+                <h2> ServiceHandler </h2>
+
+            <div class="ServiceHandler">
+                <p class="uri">
+                    URI: /serviceDefinition/deleteAddressBook/:ad
+                </p>
+
+                <p class="method">
+                    Method: DELETE
+                </p>
+
+                            <p>
+                    Consuming: application/vnd.org.sonatype.rest+json
+                    </p>
+
+                <p class="sh-producing">
+                    Producing:
+                <ul>
+                            </ul>
+                </p>
+                <p class="action">
+                    Action: AddressBookAction
+                </p>
+            </div>
+            </body>
+        </html>
