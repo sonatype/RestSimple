@@ -178,8 +178,8 @@ You can customize the method to HTTP method operation
     ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
 
     config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
-         .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
-         .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
+          .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
+          .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
     serviceDefinition = creator.create(AddressFooBook.class, config);
 
 Hence a method starting with foo will be mapped to a POST operation etc.
@@ -274,7 +274,6 @@ Once a RestSimple application is deployed, you can simply use the AsyncHttpClien
                   .get();
     Pet pet = new Pet(response.getResponseBodyAsString());
 
-
 Using the Web class
 
 You can also use the RestSimple's Web class to invoke your ServiceDefinition
@@ -313,7 +312,6 @@ Then you can generate the client the implementation by simply doing:
     PetClient client = WebProxy.createProxy(PetClient.class, URI.create(targetUrl));
     Pet pet = client.post(new Pet("pouetpouet"), "myPet");
 
-
 Generating ServiceDefinition HTML description
 =============================================
 
@@ -325,7 +323,6 @@ Generating ServiceDefinition HTML description
                 .withHandler(new GetServiceHandler("/getAddressBook/:ad", action))
                 .withHandler(postServiceHandler)
                 .withHandler(new DeleteServiceHandler("/deleteAddressBook/:ad", action));
-
 
         HtmlTemplateGenerator generator = new HtmlTemplateGenerator(new VelocityTemplater());
 
