@@ -225,13 +225,7 @@ public class WebAHCClient implements WebClient {
         try {
             WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.POST).post(ClientResponse.class, o);
-            if (response.getStatus() > 300) {
-                String reasonPhrase = "";
-                if (response.getClientResponseStatus() != null) {
-                    reasonPhrase = response.getClientResponseStatus().getReasonPhrase();
-                }
-                throw new WebException(response.getStatus(), reasonPhrase);
-            }
+            checkStatus(response);
             return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -342,9 +336,7 @@ public class WebAHCClient implements WebClient {
         try {
             WebResource r = buildRequest(asyncClient);
             ClientResponse response = headers(r, TYPE.DELETE).delete(ClientResponse.class, o);
-            if (response.getStatus() > 300) {
-                throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
-            }
+            checkStatus(response);
             return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -412,9 +404,7 @@ public class WebAHCClient implements WebClient {
             WebResource r = buildRequest(asyncClient);
             r.entity(o);
             ClientResponse response = headers(r, TYPE.PUT).put(ClientResponse.class, o);
-            if (response.getStatus() > 300) {
-                throw new WebException(response.getStatus(), response.getClientResponseStatus().getReasonPhrase());
-            }
+            checkStatus(response);
             return checkVoid(response, responseEntity);
         } catch (UniformInterfaceException u) {
             headers.put(negotiateHandler.challengedHeaderName(), negotiate(u));
@@ -637,4 +627,15 @@ public class WebAHCClient implements WebClient {
         }
         return builder;
     }
+
+    private void checkStatus(ClientResponse response) {
+        if (response.getStatus() > 299) {
+            String reasonPhrase = "";
+            if (response.getClientResponseStatus() != null) {
+                reasonPhrase = response.getClientResponseStatus().getReasonPhrase();
+            }
+            throw new WebException(response.getStatus(), reasonPhrase);
+        }
+    }
+
 }
