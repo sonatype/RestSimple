@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 /**
@@ -114,22 +115,36 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
     private void bind(SitebricksModule module, String path, ServiceDefinition serviceDefinition) {
 
-        for (ServiceHandler handler : serviceDefinition.serviceHandlers()) {
-            String newPath = path.equals("/") ? handler.path() : path + handler.path();
+        Map<String, List<ServiceHandler>> map =  sortMappingPath(serviceDefinition.serviceHandlers());
+        for (Entry<String, List<ServiceHandler>> e : map.entrySet()) {
+            String newPath = path.equals("/") ? e.getKey() : path + e.getKey();
             PageBinder.ShowBinder showBinder = module.at(newPath);
+            for (ServiceHandler handler : e.getValue()) {
+                PageBinder.ActionBinder actionBinder = showBinder.perform(mapAction(newPath, handler));
 
-            PageBinder.ActionBinder actionBinder = showBinder.perform(mapAction(newPath, handler));
-
-            if (handler.consumeMediaType() != null) {
-                actionBinder.selectHeader("Accept", handler.consumeMediaType().toMediaType());
-            } else if (!serviceDefinition.mediaToConsume().isEmpty()) {
-                for (MediaType m : serviceDefinition.mediaToConsume()) {
-                    actionBinder.selectHeader("Accept", m.toMediaType());
+                if (handler.consumeMediaType() != null) {
+                    actionBinder.selectHeader("Accept", handler.consumeMediaType().toMediaType());
+                } else if (!serviceDefinition.mediaToConsume().isEmpty()) {
+                    for (MediaType m : serviceDefinition.mediaToConsume()) {
+                        actionBinder.selectHeader("Accept", m.toMediaType());
+                    }
                 }
+                actionBinder.on(mapServiceToMethod(handler));
             }
-
-            actionBinder.on(mapServiceToMethod(handler));
         }
+    }
+
+    private Map<String, List<ServiceHandler>> sortMappingPath(List<ServiceHandler> serviceHandlers) {
+         Map<String, List<ServiceHandler>> map = new HashMap<String,List<ServiceHandler>>();
+         for (ServiceHandler h : serviceHandlers) {
+             List<ServiceHandler> l = map.get(h.path());
+             if (l == null) {
+                 l = new ArrayList<ServiceHandler>();
+                 map.put(h.path(), l);
+             }
+             l.add(h);
+         }
+         return map;
     }
 
     private void bindExtension(SitebricksModule module, ServiceDefinition serviceDefinition) {
