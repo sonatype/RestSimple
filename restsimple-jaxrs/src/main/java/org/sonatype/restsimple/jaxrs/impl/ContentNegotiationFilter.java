@@ -51,6 +51,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 @Singleton
 public class ContentNegotiationFilter implements Filter {
@@ -59,10 +60,13 @@ public class ContentNegotiationFilter implements Filter {
 
     private final NegotiationTokenGenerator negotiationTokenGenerator;
 
+    private final Logger logger;
+
     @Inject
-    public ContentNegotiationFilter(ServiceHandlerMapper mapper, NegotiationTokenGenerator negotiationTokenGenerator) {
+    public ContentNegotiationFilter(ServiceHandlerMapper mapper, NegotiationTokenGenerator negotiationTokenGenerator, Logger logger) {
         this.mapper = mapper;
         this.negotiationTokenGenerator = negotiationTokenGenerator;
+        this.logger = logger;
     }
 
 
@@ -74,9 +78,18 @@ public class ContentNegotiationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest hreq = HttpServletRequest.class.cast(request);
-        String pathName = hreq.getServletPath().split("/")[1];
+        String[] paths = hreq.getServletPath().split("/");
+
+        String pathName;
+        if (paths.length > 0) {
+            pathName = paths[1];
+        } else {
+            pathName = "";
+        }
 
         ServiceHandler serviceHandler = mapper.map(hreq.getMethod(), pathName);
+        logger.info("Configuring Negotiation Token Header to " + pathName + " with ServiceHandler " + serviceHandler);
+
         // TODO: Must add a special header in Jersey generation so we don't add the header for all request.
         if (serviceHandler != null) {
             HttpServletResponse hres = HttpServletResponse.class.cast(response);
