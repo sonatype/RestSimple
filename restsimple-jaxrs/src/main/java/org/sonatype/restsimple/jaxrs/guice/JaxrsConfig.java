@@ -114,7 +114,6 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
         serve("/*").with(GuiceContainer.class, jaxrsProperties);
     }
 
-
     @Override
     public NegotiationTokenGenerator configureNegotiationTokenGenerator() {
         return new RFC2295NegotiationTokenGenerator();
