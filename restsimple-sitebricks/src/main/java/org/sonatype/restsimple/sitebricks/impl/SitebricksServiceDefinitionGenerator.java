@@ -18,6 +18,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.sitebricks.At;
 import com.google.sitebricks.PageBinder;
+import com.google.sitebricks.Show;
 import com.google.sitebricks.SitebricksModule;
 import com.google.sitebricks.client.Transport;
 import com.google.sitebricks.client.transport.Json;
@@ -156,7 +157,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
                 throw new IllegalStateException(
                         String.format("Invalid extension %s . The clazz must be annotated with the @At annotation", clazz));
             }
-            module.at(at.value()).serve(clazz);
+            Show show = clazz.getAnnotation( Show.class );
+            if (show != null) {
+                module.at(at.value()).show( clazz );
+            } else {
+                module.at(at.value()).serve( clazz );
+            }
         }
     }
 
