@@ -55,31 +55,41 @@ import java.util.List;
 public abstract class SitebricksConfig extends ServletModule implements ServiceDefinitionConfig {
 
     private Injector parent;
-
+    private Injector injector;
     private final ServiceHandlerMapper mapper;
+    private final boolean createChild;
 
     public SitebricksConfig() {
-        this.mapper = new ServiceHandlerMapper();
+        this(null, new ServiceHandlerMapper(), false);
     }
 
     public SitebricksConfig(Injector parent) {
-        this.parent = parent;
-        this.mapper = new ServiceHandlerMapper();
+        this(parent, new ServiceHandlerMapper(), false);
     }
 
     public SitebricksConfig(Injector parent, ServiceHandlerMapper mapper) {
+        this(parent, mapper, false);
+    }
+
+    public SitebricksConfig(Injector parent, ServiceHandlerMapper mapper, boolean createChild) {
         this.parent = parent;
         this.mapper = mapper;
+        this.createChild = createChild;
     }
 
     public SitebricksConfig(ServiceHandlerMapper mapper) {
-        this.mapper = mapper;
+        this(null, mapper, false);
     }
-
+    
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), mapper));
-        List<ServiceDefinition> list = defineServices( parent != null ? parent : injector );
+        if (!createChild || parent == null) {
+            injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), mapper));
+        } else {
+            injector = parent.createChildInjector( new RestSimpleSitebricksModule(binder(), mapper, createChild) );
+        }
+        
+        List<ServiceDefinition> list = defineServices( parent == null ? injector : parent);
         if (list != null && list.size() > 0) {
             ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
             for (ServiceDefinition sd : list) {
@@ -91,5 +101,10 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
     @Override
     public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
         return new RFC2295NegotiationTokenGenerator();
+    }
+
+    @Override
+    public Injector injector() {
+        return injector;
     }
 }

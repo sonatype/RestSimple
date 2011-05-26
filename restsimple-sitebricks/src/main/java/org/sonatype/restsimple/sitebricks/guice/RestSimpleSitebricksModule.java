@@ -34,36 +34,57 @@ public class RestSimpleSitebricksModule extends AbstractModule {
     private final ServiceHandlerMapper mapper;
     private final NegotiationTokenGenerator tokenGenerator;
     private final Class<? extends ServiceDefinitionProvider> provider;
+    private final boolean isChild;
 
     public RestSimpleSitebricksModule(Binder binder,
                                       ServiceHandlerMapper mapper,
                                       NegotiationTokenGenerator tokenGenerator,
-                                      Class<? extends ServiceDefinitionProvider> provider) {
+                                      Class<? extends ServiceDefinitionProvider> provider,
+                                      boolean isChild) {
         this.binder = binder;
         this.mapper = mapper;
         this.tokenGenerator = tokenGenerator;
         this.provider = provider;
+        this.isChild = isChild;
     }
 
     public RestSimpleSitebricksModule(Binder binder, NegotiationTokenGenerator tokenGenerator) {
-        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class);
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class, false);
+    }
+
+    public RestSimpleSitebricksModule(Binder binder, NegotiationTokenGenerator tokenGenerator, boolean isChild) {
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class, isChild);
     }
 
     public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper) {
-        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, false);
+    }
+
+    public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper, boolean isChild) {
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, isChild);
     }
 
     public RestSimpleSitebricksModule(Binder binder) {
-        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, false);
+    }
+
+    public RestSimpleSitebricksModule(Binder binder, boolean isChild) {
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, isChild);
     }
 
     @Override
     protected void configure() {
-        bind(ServiceHandlerMapper.class).toInstance(mapper);
-        bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
+        // Only bind if we aren't a child of another Injector.
+        if (!isChild) {
+            bind(ServiceHandlerMapper.class).toInstance(mapper);
+            bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
+                        bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
+            bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
+            bind(ServiceDefinitionProvider.class).to(provider);
+            binder.bind(ServiceHandlerMapper.class).toInstance(mapper);            
+        }
+        
         binder.bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
-
-        binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
 
@@ -87,9 +108,6 @@ public class RestSimpleSitebricksModule extends AbstractModule {
                 binder.install(module);
             }
         });
-        bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
-        bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
-        bind(ServiceDefinitionProvider.class).to(provider);
         
     }
 }

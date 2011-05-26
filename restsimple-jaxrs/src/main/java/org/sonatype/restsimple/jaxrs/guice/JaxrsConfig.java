@@ -59,6 +59,7 @@ import java.util.Map;
 public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
 
     private Injector parent;
+    private Injector injector;
     private final Map<String,String> jaxrsProperties;
     private final ServiceHandlerMapper mapper;
 
@@ -98,7 +99,7 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
 
     @Override
     protected final void configureServlets() {
-        Injector injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), mapper));
+        injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), mapper));
         List<ServiceDefinition> list = defineServices(parent != null ? parent : injector);
         if (list != null && list.size() > 0) {
             ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
@@ -119,4 +120,8 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
         return new RFC2295NegotiationTokenGenerator();
     }
 
+    @Override
+    public Injector injector() {
+        return injector;
+    }
 }

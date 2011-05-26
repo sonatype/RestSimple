@@ -36,5 +36,11 @@ public interface ServiceDefinitionConfig {
      * @return an instance of {@link NegotiationTokenGenerator}
      */
     NegotiationTokenGenerator configureNegotiationTokenGenerator();
-    
+
+    /**
+     * Return the {@link Injector} used to create the module
+     * @return the {@link Injector} used to create the module
+     */
+    Injector injector();
+
 }
