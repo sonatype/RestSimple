@@ -78,13 +78,12 @@ public class RestSimpleSitebricksModule extends AbstractModule {
         if (!isChild) {
             bind(ServiceHandlerMapper.class).toInstance(mapper);
             bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
-                        bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
+            bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
             bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
             bind(ServiceDefinitionProvider.class).to(provider);
-            binder.bind(ServiceHandlerMapper.class).toInstance(mapper);            
+            binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
+            binder.bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
         }
-        
-        binder.bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
 
         bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
 

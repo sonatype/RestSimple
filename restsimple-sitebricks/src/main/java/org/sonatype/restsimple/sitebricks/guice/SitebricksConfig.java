@@ -88,7 +88,7 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
         } else {
             injector = parent.createChildInjector( new RestSimpleSitebricksModule(binder(), mapper, createChild) );
         }
-        
+
         List<ServiceDefinition> list = defineServices( parent == null ? injector : parent);
         if (list != null && list.size() > 0) {
             ServiceDefinitionGenerator generator = injector.getInstance(SitebricksServiceDefinitionGenerator.class);
