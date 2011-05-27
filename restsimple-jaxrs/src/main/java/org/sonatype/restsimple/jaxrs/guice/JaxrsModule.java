@@ -34,28 +34,43 @@ public class JaxrsModule extends AbstractModule {
     private final ServiceHandlerMapper mapper;
     private final NegotiationTokenGenerator tokenGenerator;
     private final Class<? extends ServiceDefinitionProvider> provider;
+    private final boolean isChild;
 
     public JaxrsModule(Binder binder,
                        ServiceHandlerMapper mapper,
                        NegotiationTokenGenerator tokenGenerator,
-                       Class<? extends ServiceDefinitionProvider> provider) {
+                       Class<? extends ServiceDefinitionProvider> provider,
+                       boolean isChild) {
         
         this.binder = binder;
         this.mapper = mapper;
         this.tokenGenerator = tokenGenerator;
         this.provider = provider;
+        this.isChild = isChild;
     }
 
     public JaxrsModule(Binder binder, NegotiationTokenGenerator tokenGenerator) {
-        this(binder, new ServiceHandlerMapper(), tokenGenerator, JAXRSServiceDefinitionProvider.class);
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, JAXRSServiceDefinitionProvider.class, false);
+    }
+
+    public JaxrsModule(Binder binder, NegotiationTokenGenerator tokenGenerator, boolean isChild) {
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, JAXRSServiceDefinitionProvider.class, isChild);
     }
 
     public JaxrsModule(Binder binder, ServiceHandlerMapper mapper) {
-        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class);
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class, false);
+    }
+
+    public JaxrsModule(Binder binder, ServiceHandlerMapper mapper, boolean isChild) {
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class, isChild);
     }
 
     public JaxrsModule(Binder binder) {
-        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class);
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class, false);
+    }
+
+    public JaxrsModule(Binder binder, boolean isChild) {
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), JAXRSServiceDefinitionProvider.class, isChild);
     }
 
     @Override
