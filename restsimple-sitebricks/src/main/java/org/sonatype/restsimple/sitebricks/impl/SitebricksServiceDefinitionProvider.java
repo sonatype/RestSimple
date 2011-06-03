@@ -23,6 +23,9 @@ public class SitebricksServiceDefinitionProvider implements ServiceDefinitionPro
     @Inject
     ServiceHandlerMapper mapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ServiceDefinition get() {
         return new DefaultServiceDefinition(mapper);

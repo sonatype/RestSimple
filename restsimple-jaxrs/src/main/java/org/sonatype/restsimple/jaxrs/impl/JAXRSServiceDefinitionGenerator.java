@@ -34,7 +34,8 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 
 /**
- * Generate a JAXRS resource, and bind it.
+ * Generate a JAXRS resource based on {@link ServiceDefinition}, and bind it. The generated resource is closed
+ * to the {@link ServiceDefinitionResource}
  */
 public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerator, Opcodes {
 
@@ -47,27 +48,10 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
         this.moduleConfig = moduleConfig;
     }
 
-    private String convert(String path) {
-        StringTokenizer st = new StringTokenizer(path, "/");
-        StringBuilder newPath = new StringBuilder();
-        while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            if (token.startsWith(":")) {
-                newPath.append("/").append(token.replace(":", "{")).append("}");
-            } else {
-                newPath.append("/").append(token);
-            }
-        }
-        return newPath.toString();
-    }
-
-    private void bindExtension(ServiceDefinition serviceDefinition) {
-        List<Class<?>> extensions = serviceDefinition.extensions();
-        for (Class<?> clazz : extensions) {
-            moduleConfig.bind(clazz);
-        }
-    }
-
+    /**
+     * Generate a JAX RS Resource on the fly, based on the information contained with a {@link ServiceDefinition}
+     * @param serviceDefinition a {@link ServiceDefinition}
+     */
     @Override
     public void generate(ServiceDefinition serviceDefinition) {
 
@@ -1079,6 +1063,27 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
             } else {
                 return super.findClass(name);
             }
+        }
+    }
+
+    private String convert(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        StringBuilder newPath = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.startsWith(":")) {
+                newPath.append("/").append(token.replace(":", "{")).append("}");
+            } else {
+                newPath.append("/").append(token);
+            }
+        }
+        return newPath.toString();
+    }
+
+    private void bindExtension(ServiceDefinition serviceDefinition) {
+        List<Class<?>> extensions = serviceDefinition.extensions();
+        for (Class<?> clazz : extensions) {
+            moduleConfig.bind(clazz);
         }
     }
 }

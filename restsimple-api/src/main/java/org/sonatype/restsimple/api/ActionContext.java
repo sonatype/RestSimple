@@ -19,7 +19,8 @@ import java.util.Map;
 
 /**
  * This class encapsulates the REST request, e.g the headers, the form parameters, the path and it's value. It also
- * contains the request's body deserialization
+ * contains the request's body typed object. The deserialization occurs before an {@link Action#action(ActionContext)}
+ * gets invoked.
  */
 public class ActionContext<T> {
 

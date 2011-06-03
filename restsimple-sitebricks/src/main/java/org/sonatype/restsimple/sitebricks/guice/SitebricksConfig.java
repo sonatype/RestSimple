@@ -80,7 +80,10 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
     public SitebricksConfig(ServiceHandlerMapper mapper) {
         this(null, mapper, false);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final void configureServlets() {
         if (!createChild || parent == null) {
@@ -97,12 +100,18 @@ public abstract class SitebricksConfig extends ServletModule implements ServiceD
             }
         }
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
         return new RFC2295NegotiationTokenGenerator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Injector injector() {
         return injector;

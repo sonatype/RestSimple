@@ -1,14 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2010-2011 Sonatype, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Apache License v2.0 which accompanies this distribution.
- * The Eclipse Public License is available at
- *   http://www.eclipse.org/legal/epl-v10.html
- * The Apache License v2.0 is available at
- *   http://www.apache.org/licenses/LICENSE-2.0.html
- * You may elect to redistribute this code under either of these licenses.
- *******************************************************************************/
+/*
+ * Copyright (c) 2011 Sonatype, Inc. All rights reserved.
+ *
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+ */
 package org.sonatype.restsimple.client;
 
 import com.ning.http.client.Realm;
@@ -104,7 +105,7 @@ public class WebAHCClient implements WebClient {
         this(serviceDefinition, new RFC2295NegotiationHandler());
     }
 
-        /**
+    /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}
      *
      * @param serviceDefinition a {@link ServiceDefinition}
@@ -136,10 +137,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Configure the headers of the request.
-     *
-     * @param headers a {@link Map} of request's headers.
-     * @return this
+     * {@inheritDoc}
      */
     @Override
     public WebClient headers(Map<String, String> headers) {
@@ -148,10 +146,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Configure the query string of the request.
-     *
-     * @param queryString a {@link Map} of request's query string.
-     * @return this
+     * {@inheritDoc}
      */
     @Override
     public WebClient queryString(Map<String, String> queryString) {
@@ -160,10 +155,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Configure the matrix parameters of the request.
-     *
-     * @param matrixParams a {@link Map} of request's matrix parameters
-     * @return this
+     * {@inheritDoc}
      */
     @Override
     public WebClient matrixParams(Map<String, String> matrixParams) {
@@ -172,10 +164,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Set the request URI.
-     *
-     * @param uri the request URI.
-     * @return this
+     * {@inheritDoc}
      */
     @Override
     public WebClient clientOf(String uri) {
@@ -184,12 +173,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a POST operation
-     *
-     * @param formParams A Map of forms parameters
-     * @param t          A class of type T that will be used when serializing/deserializing the request/response body.
-     * @param <T>
-     * @return An instance of t
+     * {@inheritDoc}
      */
     @Override
     public <T> T post(Map<String, String> formParams, Class<T> t) {
@@ -210,12 +194,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a POST operation
-     *
-     * @param o              An object that will be serialized as the request body
-     * @param responseEntity A class of type T that will be used when serializing the response's body.
-     * @param <T>
-     * @return An instance of t
+     * {@inheritDoc}
      */
     @Override
     public <T> T post(Object o, Class<T> responseEntity) {
@@ -236,10 +215,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a POST operation
-     *
-     * @param o An object that will be serialized as the request body
-     * @return An Object representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public Object post(Object o) {
@@ -258,10 +234,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a DELETE operation
-     *
-     * @param o An object that will be serialized as the request body
-     * @return An Object representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public Object delete(Object o) {
@@ -280,10 +253,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a DELETE operation
-     *
-     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
-     * @return A T representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public <T> T delete(Class<T> t) {
@@ -301,9 +271,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a DELETE operation
-     *
-     * @return An Object representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public Object delete() {
@@ -321,12 +289,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a DELETE operation
-     *
-     * @param o              An object that will be serialized as the request body
-     * @param responseEntity A class of type T that will be used when serializing the response's body.
-     * @param <T>
-     * @return An instance of t
+     * {@inheritDoc}
      */
     @Override
     public <T> T delete(Object o, Class<T> responseEntity) {
@@ -347,10 +310,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a GET operation
-     *
-     * @param t A class of type T that will be used when serializing/deserializing the request/response body.
-     * @return An T representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public <T> T get(Class<T> t) {
@@ -368,9 +328,7 @@ public class WebAHCClient implements WebClient {
     }
         
     /**
-     * Execute a GET operation
-     *
-     * @return An Object representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public Object get() {
@@ -388,12 +346,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a PUT operation
-     *
-     * @param o              An object that will be serialized as the request body
-     * @param responseEntity A class of type T that will be used when serializing the response's body.
-     * @param <T>
-     * @return An instance of t
+     * {@inheritDoc}
      */
     @Override
     public <T> T put(Object o, Class<T> responseEntity) {
@@ -415,10 +368,7 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
-     * Execute a PUT operation
-     *
-     * @param o An object that will be serialized as the request body
-     * @return A T representing the response's body
+     * {@inheritDoc}
      */
     @Override
     public Object put(Object o) {
@@ -436,28 +386,8 @@ public class WebAHCClient implements WebClient {
         }
     }
 
-    private <T> T checkVoid(ClientResponse response, Class<T> responseEntity) {
-        if (Void.class.isAssignableFrom(responseEntity) || responseEntity == void.class) {
-            return null;
-        } else {
-            return response.getEntity(responseEntity);
-        }
-    }
-
-    protected Object quoteString(Object s) {
-        if (compatWithSitebricks && String.class.isAssignableFrom(s.getClass())) {
-            return "\"" + s + "\"";
-        } else {
-            return s;
-        }
-    }
-
     /**
-     * Add a {@link MediaType} to the list of supported content-type. The list of supported content-type
-     * is used when the server returns a http statis code of 206.
-     *
-     * @param mediaType
-     * @return this
+     * {@inheritDoc}
      */
     @Override
     public WebClient supportedContentType(MediaType mediaType) {
@@ -465,11 +395,12 @@ public class WebAHCClient implements WebClient {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WebClient auth(final AuthScheme scheme, final String user, final String password) {
-
         realm = new RealmBuilder().setPrincipal(user).setPassword(password).setScheme(mapScheme(scheme)).build();
-
         return this;
     }
 
@@ -638,4 +569,19 @@ public class WebAHCClient implements WebClient {
         }
     }
 
+    private <T> T checkVoid(ClientResponse response, Class<T> responseEntity) {
+        if (Void.class.isAssignableFrom(responseEntity) || responseEntity == void.class) {
+            return null;
+        } else {
+            return response.getEntity(responseEntity);
+        }
+    }
+
+    protected Object quoteString(Object s) {
+        if (compatWithSitebricks && String.class.isAssignableFrom(s.getClass())) {
+            return "\"" + s + "\"";
+        } else {
+            return s;
+        }
+    }
 }

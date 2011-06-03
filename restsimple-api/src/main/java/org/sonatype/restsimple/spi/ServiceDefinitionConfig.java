@@ -18,9 +18,8 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import java.util.List;
 
 /**
- * As simple interface allowing applications to define a list of {@link ServiceDefinition} to deploy, and configure
+ * A simple interface allowing applications to define a list of {@link ServiceDefinition} to deploy, and configure
  * the server side functionality.
- * 
  */
 public interface ServiceDefinitionConfig {
 

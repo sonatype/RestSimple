@@ -14,8 +14,6 @@
 package org.sonatype.restsimple.api;
 
 import com.google.inject.ImplementedBy;
-import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
-import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.util.List;
 
@@ -36,16 +34,16 @@ import java.util.List;
                 .bind();
  * }
  * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension. A ServiceDefinition can be
- * seen as a DLS for REST application.
+ * seen as a DSL for REST application.
  *
- * Request will be delegated to the {@link Action}'s method using the information contained within passed
+ * Request will be delegated to the {@link Action#action}'s method using the information contained within its associated
  * {@link ServiceHandler}. Using the example above, a request to:
  * <p>
  *   PUT /createAddressBook/myBook
  * <p>
  * will be mapped on the server side to the ServiceHandler defined as
  * <p>
- * new PutServiceHandler("/createAddressBook/myBook", action))
+ *      new PutServiceHandler("/createAddressBook/myBook", action))
  * <p>
  * which will invoke the {@link Action}
  * <p>

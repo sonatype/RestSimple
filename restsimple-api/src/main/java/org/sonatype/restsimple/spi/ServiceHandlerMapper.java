@@ -22,7 +22,8 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
- * A URI mapper for {@link ServiceHandler}
+ * A URI mapper for {@link ServiceHandler}. It is recommended to let Guice inject instance of that class. Having multiple
+ * instance can cause mapping issue (not found) if the wrong instance of that class get used.
  */
 @Singleton
 public class ServiceHandlerMapper {
@@ -32,6 +33,10 @@ public class ServiceHandlerMapper {
     public ServiceHandlerMapper() {
     }
 
+    /**
+     * Create a ServiceMapper using the list of {@link ServiceHandler}
+     * @param serviceHandlers the list of {@link ServiceHandler}
+     */
     public ServiceHandlerMapper(List<ServiceHandler> serviceHandlers) {
         for (ServiceHandler s: serviceHandlers) {
             addServiceHandler("", s);
@@ -39,7 +44,7 @@ public class ServiceHandlerMapper {
     }
 
     /**
-     * Ass a {@link ServiceHandler}
+     * Add a {@link ServiceHandler}
      * @param serviceHandler {@link ServiceHandler}
      * @return this
      */

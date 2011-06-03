@@ -1,14 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2010-2011 Sonatype, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Apache License v2.0 which accompanies this distribution.
- * The Eclipse Public License is available at
- *   http://www.eclipse.org/legal/epl-v10.html
- * The Apache License v2.0 is available at
- *   http://www.apache.org/licenses/LICENSE-2.0.html
- * You may elect to redistribute this code under either of these licenses.
- *******************************************************************************/
+/*
+ * Copyright (c) 2011 Sonatype, Inc. All rights reserved.
+ *
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+ */
 package org.sonatype.restsimple.client;
 
 import org.sonatype.restsimple.api.MediaType;
@@ -17,14 +18,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of this class implements the necessary handling for content and version negotiation
+ * Implementation of this class implements the handling logic for content and version negotiation
  */
 public interface NegotiationHandler {
 
     /**
      * Return the name of the challenged header.
      *
-     * @return
+     * @return the name of the challenged header.
      */
     String challengedHeaderName();
 
@@ -38,6 +39,6 @@ public interface NegotiationHandler {
      * @return a new Accept header value to use for challenging the server
      * @throws WebException if no challenge is possible.
      */
-    public String negotiate(List<MediaType> mediaTypes, Map<String, List<String>> headers, int statusCode, String reasonPhrase) throws WebException;
+    String negotiate(List<MediaType> mediaTypes, Map<String, List<String>> headers, int statusCode, String reasonPhrase) throws WebException;
 
 }

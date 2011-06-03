@@ -72,6 +72,9 @@ public class RestSimpleSitebricksModule extends AbstractModule {
         this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, isChild);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void configure() {
         // Only bind if we aren't a child of another Injector.

@@ -1,14 +1,15 @@
-/*******************************************************************************
- * Copyright (c) 2010-2011 Sonatype, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * and Apache License v2.0 which accompanies this distribution.
- * The Eclipse Public License is available at
- *   http://www.eclipse.org/legal/epl-v10.html
- * The Apache License v2.0 is available at
- *   http://www.apache.org/licenses/LICENSE-2.0.html
- * You may elect to redistribute this code under either of these licenses.
- *******************************************************************************/
+/*
+ * Copyright (c) 2011 Sonatype, Inc. All rights reserved.
+ *
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+ */
 package org.sonatype.restsimple.client;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -60,22 +61,22 @@ import java.util.Map;
  * {@code
  * public static interface ProxyClient {
  *
- * @Get
- * @Path("getPet")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public Pet get(@PathParam("myPet") String path);
- * @Get
- * @Path("getPetString")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public String getString(@PathParam("myPet") String path);
- * @Post
- * @Path("addPet")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public Pet post(@PathParam("myPet") String myPet, String body);
- * @Delete
- * @Path("deletePet")
- * @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
- * public Pet delete(@PathParam("myPet") String path);
+ *    @Get
+ *    @Path("getPet")
+ *    @Produces("application/json")
+ *    public Pet get(@PathParam("myPet") String path);
+ *    @Get
+ *    @Path("getPetString")
+ *    @Produces("application/json")
+ *    public String getString(@PathParam("myPet") String path);
+ *    @Post
+ *    @Path("addPet")
+ *    @Produces("application/json")
+ *    public Pet post(@PathParam("myPet") String myPet, String body);
+ *    @Delete
+ *    @Path("deletePet")
+ *    @Produces("application/json")
+ *    public Pet delete(@PathParam("myPet") String path);
  * <p/>
  * }
  * }
@@ -94,7 +95,6 @@ public class WebProxy {
      */
 
     public final static String SITEBRICKS_COMPAT = "sitebricks.quoteString";
-
 
     private final static Logger logger = LoggerFactory.getLogger(WebProxy.class);
 

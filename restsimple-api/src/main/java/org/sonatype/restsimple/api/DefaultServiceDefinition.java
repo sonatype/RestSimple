@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A default {@link ServiceDefinition} which can be injected or created directly.
- *
  */
 public class DefaultServiceDefinition implements ServiceDefinition {
     private String path = "";

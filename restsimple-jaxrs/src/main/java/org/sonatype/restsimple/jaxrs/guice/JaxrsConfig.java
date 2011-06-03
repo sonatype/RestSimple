@@ -97,6 +97,9 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
         this.mapper = mapper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected final void configureServlets() {
         injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), mapper));

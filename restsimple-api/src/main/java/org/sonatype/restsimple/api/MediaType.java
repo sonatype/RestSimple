@@ -1,7 +1,19 @@
+/*
+ * Copyright (c) 2011 Sonatype, Inc. All rights reserved.
+ *
+ * This program is licensed to you under the Apache License Version 2.0,
+ * and you may not use this file except in compliance with the Apache License Version 2.0.
+ * You may obtain a copy of the Apache License Version 2.0 at http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the Apache License Version 2.0 is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
+ */
 package org.sonatype.restsimple.api;
 
 /**
- * Represent a Media type consumed or produced by a resource.
+ * Represent a Media type consumed or produced by an {@link Action}.
  */
 public final class MediaType {
     public static MediaType JSON = new MediaType("application","json");
@@ -12,19 +24,26 @@ public final class MediaType {
     private final String type;
     private final String subType;
 
+    /**
+     * Create a media type that support wildcard
+     */
     public MediaType() {
         this("*", "*");
     }
 
+    /**
+     * Create a media type with the wildcard as sub type, e.g "application/*"
+     * @param type
+     */
     public MediaType(String type) {
         this(type, "*");
     }
 
-    @Override
-    public String toString() {
-        return toMediaType();
-    }
-
+    /**
+     * Create a media type representation
+     * @param type the type, or first part of "application/json"
+     * @param subType  the type, or the last part of "application/json"
+     */
     public MediaType(String type, String subType) {
         this.type = type;
         this.subType = subType;
@@ -53,4 +72,10 @@ public final class MediaType {
     public String toMediaType(){
         return type + "/" + subType();
     }
+
+    @Override
+    public String toString() {
+        return toMediaType();
+    }
+
 }

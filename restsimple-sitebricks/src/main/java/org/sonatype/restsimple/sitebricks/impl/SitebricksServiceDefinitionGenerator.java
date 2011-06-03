@@ -72,25 +72,6 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         this.moduleConfig = moduleConfig;
     }
 
-    private String convert(String path) {
-        StringTokenizer st = new StringTokenizer(path, "/");
-        StringBuilder newPath = new StringBuilder();
-        while (st.hasMoreTokens()) {
-            String token = st.nextToken();
-            if (token.startsWith("{")) {
-                newPath.append("/").append(token.replace("{", ":").substring(0, newPath.length() - 1));
-            } else {
-                newPath.append("/").append(token);
-            }
-        }
-
-        String s = newPath.toString();
-        if (s.isEmpty()) {
-            s = "/";
-        }
-        return s;
-    }
-
     @Override
     public void generate(final ServiceDefinition serviceDefinition) {
         try {
@@ -564,6 +545,26 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
 
         return body;
     }
+
+    private String convert(String path) {
+        StringTokenizer st = new StringTokenizer(path, "/");
+        StringBuilder newPath = new StringBuilder();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (token.startsWith("{")) {
+                newPath.append("/").append(token.replace("{", ":").substring(0, newPath.length() - 1));
+            } else {
+                newPath.append("/").append(token);
+            }
+        }
+
+        String s = newPath.toString();
+        if (s.isEmpty()) {
+            s = "/";
+        }
+        return s;
+    }
+
 }
 
 

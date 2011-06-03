@@ -56,6 +56,10 @@ public class GenericMessageBodyWriter implements MessageBodyWriter<Object> {
         return -1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isWriteable(final Class<?> type, final Type genericType,
                                final Annotation[] annotations, final MediaType mediaType) {
         return mediaType.isCompatible(MediaType.TEXT_PLAIN_TYPE) ||
@@ -64,6 +68,10 @@ public class GenericMessageBodyWriter implements MessageBodyWriter<Object> {
                 mediaType.isCompatible(new MediaType("application", "vnd.org.sonatype.rest+html"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void writeTo(final Object t, final Class<?> type, final Type genericType,
                         final Annotation[] annotations, final MediaType mediaType,
                         final MultivaluedMap<String, Object> httpHeaders,
