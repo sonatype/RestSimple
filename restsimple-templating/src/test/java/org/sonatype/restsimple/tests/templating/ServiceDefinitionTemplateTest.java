@@ -178,6 +178,7 @@ public class ServiceDefinitionTemplateTest {
 
         HtmlTemplateGenerator generator = new HtmlTemplateGenerator(new VelocityTemplater());
         String sdString = generator.generateTemplate(serviceDefinition);
+        sdString = sdString.replace( "\r\n", "\n" );
         assertEquals(sdString, SD);
     }
 }
