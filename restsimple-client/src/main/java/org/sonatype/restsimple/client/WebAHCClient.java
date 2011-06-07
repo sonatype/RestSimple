@@ -12,6 +12,7 @@
  */
 package org.sonatype.restsimple.client;
 
+import com.ning.http.client.ProxyServer;
 import com.ning.http.client.Realm;
 import com.ning.http.client.Realm.RealmBuilder;
 import com.sun.jersey.api.client.ClientResponse;
@@ -33,6 +34,7 @@ import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
 import javax.ws.rs.core.UriBuilder;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,6 +90,7 @@ public class WebAHCClient implements WebClient {
     private NegotiationHandler negotiateHandler;
 
     private Realm realm;
+    private ProxyServer proxyServer;
 
     /**
      * Create a WebAHCClient Client
@@ -404,6 +407,12 @@ public class WebAHCClient implements WebClient {
         return this;
     }
 
+    @Override
+    public WebClient proxyWith(URI uri, String principal, String password) {
+        proxyServer = new ProxyServer(uri.getHost(), uri.getPort(), principal, password);
+        return null;
+    }
+
     private DefaultAhcConfig createAhcConfig(){
         DefaultAhcConfig ahcConfig = new DefaultAhcConfig();
                 ahcConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
@@ -412,6 +421,10 @@ public class WebAHCClient implements WebClient {
 
         if (realm != null) {
             ahcConfig.getAsyncHttpClientConfigBuilder().setRealm(realm);
+        }
+
+        if (proxyServer != null) {
+            ahcConfig.getAsyncHttpClientConfigBuilder().setProxyServer(proxyServer);
         }
 
         return ahcConfig;

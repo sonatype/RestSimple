@@ -15,6 +15,7 @@ package org.sonatype.restsimple.client;
 import com.google.inject.ImplementedBy;
 import org.sonatype.restsimple.api.MediaType;
 
+import java.net.URI;
 import java.util.Map;
 
 /**
@@ -175,4 +176,13 @@ public interface WebClient {
      * @return this
      */
     WebClient auth(AuthScheme scheme, String user, String password);
+
+    /**
+     * Set the Proxy information
+     * @param uri  the proxy uri
+     * @param principal the proxy principal
+     * @param password the proxy password
+     * @return
+     */
+    WebClient proxyWith(URI uri, String principal, String password);
 }
