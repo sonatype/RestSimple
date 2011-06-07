@@ -34,7 +34,6 @@ import org.sonatype.spice.jersey.client.ahc.AhcHttpClient;
 import org.sonatype.spice.jersey.client.ahc.config.DefaultAhcConfig;
 
 import javax.ws.rs.core.UriBuilder;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -408,8 +407,8 @@ public class WebAHCClient implements WebClient {
     }
 
     @Override
-    public WebClient proxyWith(URI uri, String principal, String password) {
-        proxyServer = new ProxyServer(uri.getHost(), uri.getPort(), principal, password);
+    public WebClient proxyWith(String host, int port, String user, String password) {
+        proxyServer = new ProxyServer(host, port, user, password);
         return null;
     }
 
