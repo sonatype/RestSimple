@@ -406,6 +406,9 @@ public class WebAHCClient implements WebClient {
         return this;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WebClient proxyWith(String host, int port, String user, String password) {
         proxyServer = new ProxyServer(host, port, user, password);
