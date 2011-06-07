@@ -14,7 +14,7 @@ The framework goal is to easy allow programmatic, embeddable and portable REST a
 * restsimple-client: a client library for RestSimple.
 * restsimple-jaxrs: an implementation of the restsimple-api using Jersey.
 * restsimple-sitebricks: an implementation of the restsimple-api using Sitebricks
-* restsimple-templating: generate HTLM file from ServiceDefinition(similar to Enunciate)
+* restsimple-templating: generate HTML file from ServiceDefinition (similar to Enunciate)
 * restsimple-service-descriptor-creator: generate ServiceDefinition from POJO object following some convention
 * restsimple-webdriver: a framework for testing RestSimple application
 
@@ -99,7 +99,7 @@ The serialization and deserialization of the Pet class will be handled be the Re
 
     new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON);
 
-The line above map an Action to an HTTP Get operation, consuming JSON and producing JSON. If you are familiar with JAXRS, the functionality would be defined as
+The line above map an Action to an HTTP Get operation, consuming JSON and producing JSON. If you are familiar with JAX-RS, the functionality would be defined as
 
     @Get
     @Produces
@@ -186,7 +186,7 @@ Hence a method starting with foo will be mapped to a POST operation etc.
 
 Extending RestSimple via native REST support
 ============================================
-Currently RestSimple supports Sitebricks and Jaxrs. It is possible to extend a ServiceDefinition with Sitebricks or Jaxrs annotation invoking the extendedWith:
+Currently RestSimple supports Sitebricks and JAX-RS. It is possible to extend a ServiceDefinition with Sitebricks or Jaxrs annotation invoking the extendedWith:
 
 
     @Override
@@ -224,7 +224,7 @@ Currently RestSimple supports Sitebricks and Jaxrs. It is possible to extend a S
 Deploying your RestSimple application
 =====================================
 
-There is many ways to deploy a ServiceDefinition. First, you need to decide which framework you want to deploy to. Currently, RestSimple supports JAXRS and Sitebricks. Deploying a ServiceDefinition is as simple as:
+There is many ways to deploy a ServiceDefinition. First, you need to decide which framework you want to deploy to. Currently, RestSimple supports JAX-RS and Sitebricks. Deploying a ServiceDefinition is as simple as:
 
     public class PetstoreJaxrsConfig extends GuiceServletContextListener {
 
