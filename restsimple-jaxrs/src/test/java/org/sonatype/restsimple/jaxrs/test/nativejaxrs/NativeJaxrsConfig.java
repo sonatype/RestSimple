@@ -14,10 +14,8 @@ package org.sonatype.restsimple.jaxrs.test.nativejaxrs;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.petstore.Pet;
-import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
 
 import javax.ws.rs.Consumes;
@@ -31,9 +29,6 @@ public class NativeJaxrsConfig extends GuiceServletContextListener {
     @Override
     protected Injector getInjector() {
         return Guice.createInjector(new JaxrsConfig() {
-
-            private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
-
             @Override
             public List<ServiceDefinition> defineServices(Injector injector) {
                 List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
