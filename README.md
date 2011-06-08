@@ -220,6 +220,31 @@ Currently RestSimple supports Sitebricks and JAX-RS. It is possible to extend a 
         }
     }
 
+Using RestSimple with existing JAXRS or Sitebricks Resource
+============================================================
+Existing JAXRS or Sitebricks resource can be used as it with RestSimple. All you need to do is to tell RestSimple the package name of your resource. As simple as:
+
+    public class NativeJaxrsConfig extends GuiceServletContextListener {
+
+        @Override
+        protected Injector getInjector() {
+            JaxrsConfig config = new JaxrsConfig();
+            config.scan( Extension.class.getPackage() );
+            return Guice.createInjector(config);
+        }
+
+        @Path("/lolipet/{myPet}")
+        public final static class Extension {
+            @GET
+            @Consumes("application/vnd.org.sonatype.rest+json")
+            public Pet lolipet(){
+                return new Pet("lolipet");
+            }
+        }
+    }
+
+
+
 
 Deploying your RestSimple application
 =====================================
