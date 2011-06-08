@@ -22,7 +22,7 @@ package org.sonatype.restsimple.api;
 public class TypedAction<T, V> implements Action<T, V> {
 
     @Override
-    public T action(ActionContext<V> actionContext) throws ActionException {
+    public final T action(ActionContext<V> actionContext) throws ActionException {
         switch (actionContext.method()) {
             case GET:
                 return get(actionContext);

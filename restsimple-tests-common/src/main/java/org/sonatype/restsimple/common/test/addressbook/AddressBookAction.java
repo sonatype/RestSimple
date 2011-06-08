@@ -11,16 +11,15 @@
  *******************************************************************************/
 package org.sonatype.restsimple.common.test.addressbook;
 
-import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.ActionContext;
-import org.sonatype.restsimple.api.ActionException;
+import org.sonatype.restsimple.api.TypedAction;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class AddressBookAction implements Action<AddressBook, String> {
+public class AddressBookAction extends TypedAction<AddressBook, String> {
 
     public final static String APPLICATION = "application";
     public final static String JSON = "vnd.org.sonatype.rest+json";
@@ -36,53 +35,56 @@ public class AddressBookAction implements Action<AddressBook, String> {
         return "AddressBookAction";
     }
 
-    @Override
-    public AddressBook action(ActionContext<String> actionContext) throws ActionException {
+    public AddressBook get(ActionContext<String> actionContext) {
         String addressBookName = actionContext.pathParams().get("ad");
-        switch (actionContext.method()) {
-            case GET:
-                Collection<String> list = book.get(addressBookName);
+        Collection<String> list = book.get(addressBookName);
 
-                if (list != null) {
-                    StringBuilder b = new StringBuilder();
-                    for(String s: list) {
-                        b.append(s);
-                        b.append(" - ");
-                    }
-                    return new AddressBook(b.toString());
-                } else {
-                    throw new IllegalStateException("No address book have been created for " + addressBookName);
-                }
-            case POST:
-                list = book.get(addressBookName);
-
-                if (list == null) {
-                    throw new IllegalStateException("No address book have been created for " + addressBookName);
-                }
-
-                if (actionContext.paramsString().size() > 0) {
-                    for (Map.Entry<String,Collection<String>> e : actionContext.paramsString().entrySet()) {
-                        list.addAll(e.getValue());
-                    }
-                } else {
-                    list.add(actionContext.get());
-                }
-
-                book.put(addressBookName, list);
-                return new AddressBook("posted");
-            case PUT:
-                book.put(addressBookName, new ArrayList<String>());
-                return new AddressBook("updated");
-            case DELETE:
-                book.remove(addressBookName);
-                return new AddressBook("deleted");
-            case HEAD:
-                break;
-
-            default:
-                ;;
+        if (list != null) {
+            StringBuilder b = new StringBuilder();
+            for (String s : list) {
+                b.append(s);
+                b.append(" - ");
+            }
+            return new AddressBook(b.toString());
+        } else {
+            throw new IllegalStateException("No address book have been created for " + addressBookName);
         }
-        return new AddressBook("invalid-state");
     }
+
+    public AddressBook post(ActionContext<String> actionContext) {
+        String addressBookName = actionContext.pathParams().get("ad");
+
+        Collection<String> list = book.get(addressBookName);
+
+        if (list == null) {
+            throw new IllegalStateException("No address book have been created for " + addressBookName);
+        }
+
+        if (actionContext.paramsString().size() > 0) {
+            for (Map.Entry<String, Collection<String>> e : actionContext.paramsString().entrySet()) {
+                list.addAll(e.getValue());
+            }
+        } else {
+            list.add(actionContext.get());
+        }
+
+        book.put(addressBookName, list);
+        return new AddressBook("posted");
+    }
+
+    public AddressBook put(ActionContext<String> actionContext) {
+        String addressBookName = actionContext.pathParams().get("ad");
+
+        book.put(addressBookName, new ArrayList<String>());
+        return new AddressBook("updated");
+    }
+
+    public AddressBook delete(ActionContext<String> actionContext) {
+        String addressBookName = actionContext.pathParams().get("ad");
+
+        book.remove(addressBookName);
+        return new AddressBook("deleted");
+    }
+
 }
     
