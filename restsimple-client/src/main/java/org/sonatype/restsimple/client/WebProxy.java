@@ -64,14 +64,17 @@ import java.util.Map;
  *    @Path("getPet")
  *    @Produces("application/json")
  *    public Pet get(@PathParam("myPet") String path);
+ *    <p>
  *    @Get
  *    @Path("getPetString")
  *    @Produces("application/json")
  *    public String getString(@PathParam("myPet") String path);
+ *    <p></p>
  *    @Post
  *    @Path("addPet")
  *    @Produces("application/json")
  *    public Pet post(@PathParam("myPet") String myPet, String body);
+ *    <p>
  *    @Delete
  *    @Path("deletePet")
  *    @Produces("application/json")
