@@ -31,6 +31,9 @@ public interface WebClient {
         BASIC, DIGEST, KERBEROS, SPNEGO
     }
 
+    public enum ProxyScheme {
+        HTTP, HTTPS, NTLM, KERBEROS, SPNEGO
+    }
     /**
      * Configure the headers of the request.
      *
@@ -178,11 +181,13 @@ public interface WebClient {
 
     /**
      * Set the Proxy information
+     *
+     * @param scheme The proxy protocol scheme
      * @param host the proxy uri
      * @param port the proxy port
      * @param user the proxy principal
      * @param password the proxy password
      * @return
      */
-    WebClient proxyWith(String host, int port, String user, String password);
+    WebClient proxyWith(ProxyScheme scheme, String host, int port, String user, String password);
 }

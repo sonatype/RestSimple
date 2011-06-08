@@ -410,9 +410,10 @@ public class WebAHCClient implements WebClient {
      * {@inheritDoc}
      */
     @Override
-    public WebClient proxyWith(String host, int port, String user, String password) {
-        proxyServer = new ProxyServer(host, port, user, password);
+    public WebClient proxyWith(final ProxyScheme scheme, String host, int port, String user, String password) {
+        proxyServer = new ProxyServer(mapProxyScheme(scheme), host, port, user, password);
         return null;
+
     }
 
     private DefaultAhcConfig createAhcConfig(){
@@ -443,6 +444,24 @@ public class WebAHCClient implements WebClient {
                 return Realm.AuthScheme.KERBEROS;
             case SPNEGO:
                 return Realm.AuthScheme.SPNEGO;
+            default:
+                throw new IllegalStateException();
+        }
+    }
+
+    private ProxyServer.Protocol mapProxyScheme(ProxyScheme scheme) {
+
+        switch (scheme) {
+            case HTTP:
+                return ProxyServer.Protocol.HTTP;
+            case HTTPS:
+                return ProxyServer.Protocol.HTTPS;
+            case NTLM:
+                return ProxyServer.Protocol.NTLM;
+            case KERBEROS:
+                return ProxyServer.Protocol.KERBEROS;
+            case SPNEGO:
+                return ProxyServer.Protocol.SPNEGO;
             default:
                 throw new IllegalStateException();
         }
