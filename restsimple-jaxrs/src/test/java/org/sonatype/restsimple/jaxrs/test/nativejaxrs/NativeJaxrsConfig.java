@@ -14,32 +14,20 @@ package org.sonatype.restsimple.jaxrs.test.nativejaxrs;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NativeJaxrsConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new JaxrsConfig() {
-            @Override
-            public List<ServiceDefinition> defineServices(Injector injector) {
-                List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
-
-                ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
-                serviceDefinition.extendWith(Extension.class);
-
-                list.add(serviceDefinition);
-                return list;
-            }
-        });
+        JaxrsConfig config = new JaxrsConfig();
+        config.scan( Extension.class.getPackage() );
+        return Guice.createInjector(config);
     }
 
     @Path("/lolipet/{myPet}")

@@ -40,6 +40,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
@@ -48,20 +49,29 @@ import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
+import org.sonatype.restsimple.spi.scan.Classes;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static com.google.inject.matcher.Matchers.annotatedWith;
 
 /**
  * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
  */
-public abstract class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
+public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
 
     private Injector parent;
     private Injector injector;
     private final Map<String,String> jaxrsProperties;
     private final ServiceHandlerMapper mapper;
+    private final List<Package> packages = new ArrayList<Package>();
 
     public JaxrsConfig() {
         this(null, new HashMap<String,String>());
@@ -104,11 +114,25 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
     protected final void configureServlets() {
         injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), mapper));
         List<ServiceDefinition> list = defineServices(parent != null ? parent : injector);
+        ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
+
         if (list != null && list.size() > 0) {
-            ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
             for (ServiceDefinition sd : list) {
                 generator.generate(sd);
             }
+        }
+
+        Set<Class<?>> set = new HashSet<Class<?>>();
+        for (Package pkg : packages) {
+            //look for any classes annotated with @Path, @PathParam
+            set.addAll(Classes.matching(
+                    annotatedWith(Path.class).or(
+                            annotatedWith(PathParam.class))
+            ).in(pkg));
+        }
+
+        for (Class<?> clazz: set) {
+            generator.generate(new DefaultServiceDefinition().extendWith(clazz));
         }
 
         jaxrsProperties.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
@@ -118,13 +142,35 @@ public abstract class JaxrsConfig extends ServletModule implements ServiceDefini
         serve("/*").with(GuiceContainer.class, jaxrsProperties);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ServiceDefinition> defineServices(Injector injector) {
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public NegotiationTokenGenerator configureNegotiationTokenGenerator() {
         return new RFC2295NegotiationTokenGenerator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Injector injector() {
         return injector;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void scan(Package packageName) {
+        packages.add(packageName);
     }
 }

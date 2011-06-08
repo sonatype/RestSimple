@@ -42,4 +42,11 @@ public interface ServiceDefinitionConfig {
      */
     Injector injector();
 
+    /**
+     * Scan for native REST resource located in the package name
+     *
+     * @param packageName the package name
+     */
+    void scan(Package packageName);
+
 }

@@ -9,7 +9,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.jaxrs.test.nativejaxrs;
+package org.sonatype.restsimple.sitebricks.test.nativesitebricks;
 
 import com.google.inject.servlet.GuiceFilter;
 import com.ning.http.client.AsyncHttpClient;
@@ -30,9 +30,9 @@ import java.net.ServerSocket;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
-public class NativeJaxrsTest {
+public class NativeSitebricksTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(NativeJaxrsTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(NativeSitebricksTest.class);
 
     protected Server server;
 
@@ -68,7 +68,7 @@ public class NativeJaxrsTest {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         context.addFilter(GuiceFilter.class, "/*", 0);
-        context.addEventListener(new NativeJaxrsConfig());
+        context.addEventListener(new NativeSitebricksConfig());
         context.addServlet(DefaultServlet.class, "/");
 
         server.setHandler(context);

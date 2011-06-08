@@ -9,7 +9,7 @@
  *   http://www.apache.org/licenses/LICENSE-2.0.html
  * You may elect to redistribute this code under either of these licenses.
  *******************************************************************************/
-package org.sonatype.restsimple.sitebricks.test.petstore;
+package org.sonatype.restsimple.sitebricks.test.nativesitebricks;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -20,41 +20,16 @@ import com.google.sitebricks.headless.Reply;
 import com.google.sitebricks.headless.Service;
 import com.google.sitebricks.http.Get;
 import com.google.sitebricks.http.negotiate.Accept;
-import org.sonatype.restsimple.api.Action;
-import org.sonatype.restsimple.api.GetServiceHandler;
-import org.sonatype.restsimple.api.MediaType;
-import org.sonatype.restsimple.api.PostServiceHandler;
-import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.petstore.Pet;
-import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
 import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PetstoreSitebricksConfig extends GuiceServletContextListener {
-    private final static MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
+public class NativeSitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new SitebricksConfig() {
-
-
-            @Override
-            public List<ServiceDefinition> defineServices(Injector injector) {
-                Action action = new PetstoreAction();
-                List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
-
-                ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class);
-                serviceDefinition
-                        .withHandler(new GetServiceHandler("/get/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                        .withHandler(new PostServiceHandler("/create/:pet", action).consumeWith(JSON, Pet.class).producing(JSON))
-                        .extendWith(Extension.class);
-
-                list.add(serviceDefinition);
-                return list;
-            }
-        });
+        SitebricksConfig config = new SitebricksConfig();
+        config.scan( Extension.class.getPackage() );
+        return Guice.createInjector(config);
     }
 
     @At("/lolipet/:myPet")
