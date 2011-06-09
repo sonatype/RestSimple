@@ -184,8 +184,8 @@ You can also generate ServiceDefinition on the fly from any POJO object. Let's s
 
 You can generate a ServiceDefinition by doing:
 
-    MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
-    ServiceDefinition serviceDefinition = creator.create(AddressBook.class);
+    MethodServiceDefinitionBuilder serviceDefinitionBuilder = new MethodServiceDefinitionBuilder();
+    ServiceDefinition serviceDefinition = serviceDefinitionBuilder.type(AddressBook.class).build();
 
 The ServiceDefinition will be generated using the following template:
 
@@ -196,13 +196,15 @@ The ServiceDefinition will be generated using the following template:
 
 You can customize the method to HTTP method operation
 
-    MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
-    ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
+    import static org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig.METHOD;
+    import static org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig.config;
+    ....
 
-    config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
-          .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
-          .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
-    serviceDefinition = creator.create(AddressFooBook.class, config);
+    MethodServiceDefinitionBuilder serviceDefinitionBuilder = new MethodServiceDefinitionBuilder();
+    ServiceDefinition serviceDefinition =
+         serviceDefinitionBuilder.type(AddressFooBook.class).config(config().map("foo", METHOD.POST)
+                                                                            .map("bar", METHOD.GET)
+                                                                            .map("pong", METHOD.DELETE)).build();
 
 Hence a method starting with foo will be mapped to a POST operation etc.
 
