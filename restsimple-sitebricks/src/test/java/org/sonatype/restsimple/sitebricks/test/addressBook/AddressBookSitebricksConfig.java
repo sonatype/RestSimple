@@ -52,9 +52,9 @@ public class AddressBookSitebricksConfig extends GuiceServletContextListener {
                         .producing(JSON)
                         .consuming(JSON)
                         .withHandler( new PutServiceHandler( "/createAddressBook/:ad", action).consumeWith( JSON, AddressBook.class))
-                        .handleWithGet("/getAddressBook/:ad", action)
+                        .get("/getAddressBook/:ad", action)
                         .withHandler(postServiceHandler)
-                        .handleWithDelete("/deleteAddressBook/:ad", action);
+                        .delete("/deleteAddressBook/:ad", action);
                 list.add(serviceDefinition);
 
                 serviceDefinition = injector.getInstance(ServiceDefinition.class);

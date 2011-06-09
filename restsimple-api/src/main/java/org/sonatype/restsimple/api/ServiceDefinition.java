@@ -132,7 +132,7 @@ public interface ServiceDefinition {
      * @param action an {@link Action} to invoke
      * @return this
      */
-    ServiceDefinition handleWithGet(String path, Action action);
+    ServiceDefinition get(String path, Action action);
 
     /**
      * Support HTTP POST using an {@link Action}
@@ -140,7 +140,7 @@ public interface ServiceDefinition {
      * @param action an {@link Action} to invoke
      * @return this
      */
-    ServiceDefinition handleWithPost(String path, Action action);
+    ServiceDefinition post(String path, Action action);
 
     /**
      * Support HTTP PUT using an {@link Action}
@@ -148,7 +148,7 @@ public interface ServiceDefinition {
      * @param action an {@link Action} to invoke
      * @return this
      */
-    ServiceDefinition handleWithPut(String path, Action action);
+    ServiceDefinition put(String path, Action action);
 
     /**
      * Support HTTP DELETE using an {@link Action}
@@ -156,7 +156,7 @@ public interface ServiceDefinition {
      * @param action an {@link Action} to invoke
      * @return this
      */
-    ServiceDefinition handleWithDelete(String path, Action action);
+    ServiceDefinition delete(String path, Action action);
 
 
 }

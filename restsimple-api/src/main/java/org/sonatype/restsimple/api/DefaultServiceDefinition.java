@@ -159,7 +159,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceDefinition handleWithGet(String path, Action action) {
+    public ServiceDefinition get(String path, Action action) {
         withHandler(new GetServiceHandler(path,action));
         return this;
     }
@@ -168,7 +168,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceDefinition handleWithPost(String path, Action action) {
+    public ServiceDefinition post(String path, Action action) {
         withHandler(new PostServiceHandler(path,action));
         return this;
     }
@@ -177,7 +177,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceDefinition handleWithPut(String path, Action action) {
+    public ServiceDefinition put(String path, Action action) {
         withHandler(new PutServiceHandler(path,action));
         return this;
     }
@@ -186,7 +186,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
      * {@inheritDoc}
      */
     @Override
-    public ServiceDefinition handleWithDelete(String path, Action action) {
+    public ServiceDefinition delete(String path, Action action) {
         withHandler(new DeleteServiceHandler(path,action));
         return this;
     }
