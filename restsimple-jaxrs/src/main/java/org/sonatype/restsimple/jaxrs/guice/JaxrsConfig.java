@@ -47,13 +47,15 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
     private final Map<String,String> jaxrsProperties;
     private final ServiceHandlerMapper mapper;
     private final List<Package> packages = new ArrayList<Package>();
+    private final String filterPath;
+    private final String servletPath;
 
     public JaxrsConfig() {
         this(null, new HashMap<String,String>());
     }
 
     public JaxrsConfig(ServiceHandlerMapper mapper) {
-        this(null, new HashMap<String,String>(), mapper);
+        this(null, new HashMap<String,String>(), mapper, "/*", "/*");
     }
 
     public JaxrsConfig(Map<String,String> jaxrsProperties) {
@@ -61,7 +63,7 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
     }
 
     public JaxrsConfig(Map<String,String> jaxrsProperties, ServiceHandlerMapper mapper) {
-        this(null, jaxrsProperties, mapper);
+        this(null, jaxrsProperties, mapper, "/*", "/*");
     }
 
     public JaxrsConfig(Injector parent) {
@@ -69,17 +71,23 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
     }
 
     public JaxrsConfig(Injector parent, ServiceHandlerMapper mapper) {
-        this(parent, new HashMap<String,String>(), mapper);
+        this(parent, new HashMap<String,String>(), mapper, "/*", "/*");
     }
 
     public JaxrsConfig(Injector parent, Map<String,String> jaxrsProperties) {
-        this(parent, jaxrsProperties, new ServiceHandlerMapper());
+        this(parent, jaxrsProperties, new ServiceHandlerMapper(), "/*", "/*");
     }
 
-    public JaxrsConfig(Injector parent, Map<String,String> jaxrsProperties, ServiceHandlerMapper mapper) {
+    public JaxrsConfig(Injector parent,
+                       Map<String,String> jaxrsProperties,
+                       ServiceHandlerMapper mapper,
+                       String filterPath,
+                       String servletPath) {
         this.jaxrsProperties = jaxrsProperties;
         this.parent = parent;
         this.mapper = mapper;
+        this.filterPath = filterPath;
+        this.servletPath = servletPath;
     }
 
     /**
@@ -148,4 +156,5 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
     public void scan(Package packageName) {
         packages.add(packageName);
     }
+
 }
