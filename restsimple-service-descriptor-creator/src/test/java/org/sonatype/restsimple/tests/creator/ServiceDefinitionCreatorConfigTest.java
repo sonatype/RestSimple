@@ -24,8 +24,7 @@ import org.sonatype.restsimple.annotation.Produces;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
-import org.sonatype.restsimple.creator.MethodBasedServiceDefinitionCreator;
-import org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig;
+import org.sonatype.restsimple.creator.MethodServiceDefinitionBuilder;
 import org.sonatype.restsimple.tests.creator.model.Person;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -35,12 +34,14 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig.METHOD;
+import static org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig.config;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 
 public class ServiceDefinitionCreatorConfigTest {
 
-    private MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
+    private MethodServiceDefinitionBuilder serviceDefinitionBuilder = new MethodServiceDefinitionBuilder();
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceDefinitionCreatorConfigTest.class);
 
@@ -51,14 +52,11 @@ public class ServiceDefinitionCreatorConfigTest {
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
 
-        ServiceDefinitionCreatorConfig config = new ServiceDefinitionCreatorConfig();
+        serviceDefinition = serviceDefinitionBuilder.type(AddressFooBook.class)
+                .config(config().map("foo", METHOD.POST)
+                                .map("bar", METHOD.GET)
+                                .map("pong", METHOD.DELETE)).build();
 
-        config.addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("foo", ServiceDefinitionCreatorConfig.METHOD.POST))
-              .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("bar", ServiceDefinitionCreatorConfig.METHOD.GET))
-              .addMethodMapper(new ServiceDefinitionCreatorConfig.MethodMapper("pong", ServiceDefinitionCreatorConfig.METHOD.DELETE));
-
-
-        serviceDefinition = creator.create(AddressFooBook.class, config);
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");

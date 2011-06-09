@@ -16,9 +16,9 @@ import org.sonatype.restsimple.api.MediaType;
 import java.util.HashMap;
 
 /**
- * A configuration object used by {@link org.sonatype.restsimple.creator.ServiceDefinitionCreator} when generating
+ * A configuration object used by {@link ServiceDefinitionBuilder} when generating
  * {@link org.sonatype.restsimple.api.ServiceDefinition}
- *
+ * <p/>
  * The following table described how a class' methods are mapped to {@link org.sonatype.restsimple.api.ServiceHandler}
  * and {@link org.sonatype.restsimple.api.ServiceDefinition}
  * <p/>
@@ -50,34 +50,56 @@ public class ServiceDefinitionCreatorConfig {
 
     private final HashMap<String, MethodMapper> methodMappers = new HashMap<String, MethodMapper>();
 
-    /**
-     * Create a ServiceDefinitionCreatorConfig that use the default mapping.
-     */
-    public ServiceDefinitionCreatorConfig() {
-        addMethodMapper(new MethodMapper(CREATE, METHOD.POST, APPLICATION_JSON, APPLICATION_JSON));
-        addMethodMapper(new MethodMapper(READ, METHOD.GET, APPLICATION_JSON, APPLICATION_JSON));
-        addMethodMapper(new MethodMapper(READS, METHOD.GET, APPLICATION_JSON, APPLICATION_JSON));
-        addMethodMapper(new MethodMapper(UPDATE, METHOD.PUT, APPLICATION_JSON, APPLICATION_JSON));
-        addMethodMapper(new MethodMapper(DELETE, METHOD.DELETE, APPLICATION_JSON, APPLICATION_JSON));
+    public final static ServiceDefinitionCreatorConfig config() {
+        return new ServiceDefinitionCreatorConfig();
     }
 
     /**
-     * Add a {@link MethodMapper} used by a {@link org.sonatype.restsimple.creator.ServiceDefinitionCreator} when
+     * Create a ServiceDefinitionCreatorConfig that use the default mapping.
+     */
+    private ServiceDefinitionCreatorConfig() {
+        map(CREATE, METHOD.POST, APPLICATION_JSON, APPLICATION_JSON);
+        map(READ, METHOD.GET, APPLICATION_JSON, APPLICATION_JSON);
+        map(READS, METHOD.GET, APPLICATION_JSON, APPLICATION_JSON);
+        map(UPDATE, METHOD.PUT, APPLICATION_JSON, APPLICATION_JSON);
+        map(DELETE, METHOD.DELETE, APPLICATION_JSON, APPLICATION_JSON);
+    }
+
+    /**
+     * Add a method mapper used by a {@link ServiceDefinitionBuilder} when
      * generating {@link org.sonatype.restsimple.api.ServiceDefinition} from any POJO/Class.
-     * @param methodMapper
+     *
+     * @param methodName a method name used for the mapping
+     * @param method the HTTP Method type
      * @return this
      */
-    public ServiceDefinitionCreatorConfig addMethodMapper(MethodMapper methodMapper) {
-        methodMappers.put(methodMapper.getMethodMappedTo(), methodMapper);
+    public ServiceDefinitionCreatorConfig map(String methodName, METHOD method) {
+        methodMappers.put(methodName, new MethodMapper(methodName, method, APPLICATION_JSON, APPLICATION_JSON));
+        return this;
+    }
+
+    /**
+     * Add a {@link MethodMapper} used by a {@link ServiceDefinitionBuilder} when
+     * generating {@link org.sonatype.restsimple.api.ServiceDefinition} from any POJO/Class.
+     *
+     * @param methodName a method name used for the mapping
+     * @param method the HTTP Method type
+     * @param produceMediaType a {@link MediaType} the method will produce
+     * @param consumeMediaType a {@link MediaType} the method will consume
+     * @return this
+     */
+    public ServiceDefinitionCreatorConfig map(String methodName, METHOD method, MediaType produceMediaType, MediaType consumeMediaType) {
+        methodMappers.put(methodName, new MethodMapper(methodName, method, produceMediaType, consumeMediaType));
         return this;
     }
 
     /**
      * Return the {@link MethodMapper} associated with the method's name, or null if there is no mapping.
+     *
      * @param methodName a method name
      * @return
      */
-    public MethodMapper map(String methodName) {
+    protected MethodMapper map(String methodName) {
 
         for (String m : methodMappers.keySet()) {
 
@@ -92,7 +114,7 @@ public class ServiceDefinitionCreatorConfig {
      * A utility class used when translating a Class into a ServiceDefinition. This class hold the information
      * used to generate the ServiceDefinition and it's associated URI mapping.
      */
-    public static final class MethodMapper {
+    protected static final class MethodMapper {
         private final String methodMappedTo;
         private final METHOD method;
         private final MediaType produceMediaType;

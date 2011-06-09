@@ -23,7 +23,6 @@ import org.sonatype.restsimple.api.Action;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.DeleteServiceHandler;
 import org.sonatype.restsimple.api.GetServiceHandler;
-import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
@@ -35,7 +34,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 /**
- * A {@link ServiceDefinitionCreator} that generate on the fly {@link ServiceDefinition} from a class that follow the {@link ServiceDefinition} convention.
+ * A {@link ServiceDefinitionBuilder} that generate on the fly {@link ServiceDefinition} from a class that follow the {@link ServiceDefinition} convention.
  * The {@link ServiceDefinition} convention is defined as:
  * <p/>
  * The following table described how a class' methods are mapped to {@link ServiceHandler} and {@link ServiceDefinition}
@@ -50,38 +49,30 @@ import java.lang.reflect.Method;
  */
 @Named
 @Singleton
-public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCreator {
+public class MethodServiceDefinitionBuilder implements ServiceDefinitionBuilder {
 
-    private final static Logger logger = LoggerFactory.getLogger(MethodBasedServiceDefinitionCreator.class);
+    private final static Logger logger = LoggerFactory.getLogger(MethodServiceDefinitionBuilder.class);
+    private Class<?> type;
+    private ServiceDefinitionCreatorConfig config = ServiceDefinitionCreatorConfig.config();
 
-    private final MediaType APPLICATION_JSON = new MediaType(ServiceDefinitionCreatorConfig.APPLICATION, ServiceDefinitionCreatorConfig.JSON);
-
-    /**
-     * Create a {@link ServiceDefinition} from a Class. The mapping between the class methods and {@link ServiceHandler}
-     * will be determined by the default's {@link ServiceDefinitionCreatorConfig} value.
-     *
-     * @param application a class
-     * @return {@link ServiceDefinition}
-     * @throws Exception
-     */
-    public ServiceDefinition create(Class<?> application) throws Exception {
-        return create(application, new ServiceDefinitionCreatorConfig());
+    @Override
+    public ServiceDefinitionBuilder type(Class<?> type) throws Exception {
+        this.type = type;
+        return this;
     }
 
-    /**
-     * Create a {@link ServiceDefinition} from a Class by using the {@link ServiceDefinitionCreatorConfig} to get some hints about
-     * how uri are generated.
-     *
-     * @param application a class
-     * @param config {@link ServiceDefinitionCreatorConfig}
-     * @return {@link ServiceDefinition}
-     * @throws Exception
-     */
-    public ServiceDefinition create(Class<?> application, ServiceDefinitionCreatorConfig config) throws Exception {
+    @Override
+    public ServiceDefinitionBuilder config(ServiceDefinitionCreatorConfig config) throws Exception {
+        this.config = config;
+        return this;
+    }
+
+    @Override
+    public ServiceDefinition build() throws Exception {
         ServiceDefinition serviceDefinition = new DefaultServiceDefinition();
 
-        Method[] methods = application.getDeclaredMethods();
-        Object instance = application.newInstance();
+        Method[] methods = type.getDeclaredMethods();
+        Object instance = type.newInstance();
         for (Method method : methods) {
             ServiceHandler serviceHandler = null;
             Class[] types = method.getParameterTypes();
@@ -96,19 +87,19 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
             switch (methodMapper.getMethod()) {
                 case GET:
                     if (types.length == 1) {
-                        serviceHandler = new GetServiceHandler("/" + methodMapper.getMethodMappedTo() + "/:id", ActionGenerator.generate(instance, application, method));
+                        serviceHandler = new GetServiceHandler("/" + methodMapper.getMethodMappedTo() + "/:id", ActionGenerator.generate(instance, type, method));
                     } else {
-                        serviceHandler = new GetServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, application, method));
+                        serviceHandler = new GetServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, type, method));
                     }
                     break;
                 case POST:
-                    serviceHandler = new PostServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, application, method));
+                    serviceHandler = new PostServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, type, method));
                     break;
                 case DELETE:
-                    serviceHandler = new DeleteServiceHandler("/" + methodMapper.getMethodMappedTo() + "/:id", ActionGenerator.generate(instance, application, method));
+                    serviceHandler = new DeleteServiceHandler("/" + methodMapper.getMethodMappedTo() + "/:id", ActionGenerator.generate(instance, type, method));
                     break;
                 case PUT:
-                    serviceHandler = new PutServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, application, method));
+                    serviceHandler = new PutServiceHandler("/" + methodMapper.getMethodMappedTo(), ActionGenerator.generate(instance, type, method));
                     break;
                 default:
                     throw new IllegalStateException();
@@ -219,81 +210,81 @@ public class MethodBasedServiceDefinitionCreator implements ServiceDefinitionCre
                 mv.visitMaxs(6, 3);
                 mv.visitEnd();
             }
-        {
-            mv = cw.visitMethod( ACC_PRIVATE + ACC_FINAL + ACC_STATIC, "getActionType",
-                                 "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;",
-                                 "(Lorg/sonatype/restsimple/api/ActionContext<Ljava/lang/Integer;>;)Ljava/lang/Object;",
-                                 null );
-            mv.visitCode();
-            mv.visitVarInsn( ALOAD, 0 );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get",
-                                "()Ljava/lang/Object;" );
-            mv.visitVarInsn( ASTORE, 1 );
-            mv.visitLdcInsn( Type.getType( "Ljava/lang/String;" ) );
-            mv.visitVarInsn( ALOAD, 1 );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;" );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z" );
-            Label l0 = new Label();
-            mv.visitJumpInsn( IFEQ, l0 );
-            mv.visitLdcInsn( Type.getType( "Ljava/lang/String;" ) );
-            mv.visitVarInsn( ALOAD, 1 );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;" );
-            mv.visitTypeInsn( CHECKCAST, "java/lang/String" );
-            mv.visitLdcInsn( "" );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z" );
-            mv.visitJumpInsn( IFEQ, l0 );
-            mv.visitVarInsn( ALOAD, 0 );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "pathParams",
-                                "()Ljava/util/Map;" );
-            mv.visitVarInsn( ASTORE, 2 );
-            mv.visitVarInsn( ALOAD, 2 );
-            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map", "entrySet", "()Ljava/util/Set;" );
-            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;" );
-            mv.visitVarInsn( ASTORE, 3 );
-            Label l1 = new Label();
-            mv.visitLabel( l1 );
-            mv.visitFrame( Opcodes.F_APPEND, 3,
-                           new Object[]{ "java/lang/Object", "java/util/Map", "java/util/Iterator" }, 0, null );
-            mv.visitVarInsn( ALOAD, 3 );
-            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z" );
-            mv.visitJumpInsn( IFEQ, l0 );
-            mv.visitVarInsn( ALOAD, 3 );
-            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;" );
-            mv.visitTypeInsn( CHECKCAST, "java/util/Map$Entry" );
-            mv.visitVarInsn( ASTORE, 4 );
-            mv.visitVarInsn( ALOAD, 4 );
-            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;" );
-            mv.visitTypeInsn( CHECKCAST, "java/lang/String" );
-            mv.visitMethodInsn( INVOKEVIRTUAL, "java/lang/String", "isEmpty", "()Z" );
-            Label l2 = new Label();
-            mv.visitJumpInsn( IFNE, l2 );
-            mv.visitVarInsn( ALOAD, 4 );
-            mv.visitMethodInsn( INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;" );
-            mv.visitVarInsn( ASTORE, 1 );
-            mv.visitLabel( l2 );
-            mv.visitFrame( Opcodes.F_SAME, 0, null, 0, null );
-            mv.visitJumpInsn( GOTO, l1 );
-            mv.visitLabel( l0 );
-            mv.visitFrame( Opcodes.F_CHOP, 2, null, 0, null );
-            mv.visitVarInsn( ALOAD, 1 );
-            mv.visitInsn( ARETURN );
-            mv.visitMaxs( 2, 5 );
-            mv.visitEnd();
-        }
-        {
-            mv = cw.visitMethod( ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "action",
-                                 "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", null,
-                                 new String[]{ "org/sonatype/restsimple/api/ActionException" } );
-            mv.visitCode();
-            mv.visitVarInsn( ALOAD, 0 );
-            mv.visitVarInsn( ALOAD, 1 );
-            mv.visitMethodInsn( INVOKEVIRTUAL, className, "action",
-                                "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";" );
-            mv.visitInsn( ARETURN );
-            mv.visitMaxs( 2, 2 );
-            mv.visitEnd();
-        }
-        cw.visitEnd();
+            {
+                mv = cw.visitMethod(ACC_PRIVATE + ACC_FINAL + ACC_STATIC, "getActionType",
+                        "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;",
+                        "(Lorg/sonatype/restsimple/api/ActionContext<Ljava/lang/Integer;>;)Ljava/lang/Object;",
+                        null);
+                mv.visitCode();
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "get",
+                        "()Ljava/lang/Object;");
+                mv.visitVarInsn(ASTORE, 1);
+                mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Object", "getClass", "()Ljava/lang/Class;");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "isAssignableFrom", "(Ljava/lang/Class;)Z");
+                Label l0 = new Label();
+                mv.visitJumpInsn(IFEQ, l0);
+                mv.visitLdcInsn(Type.getType("Ljava/lang/String;"));
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "cast", "(Ljava/lang/Object;)Ljava/lang/Object;");
+                mv.visitTypeInsn(CHECKCAST, "java/lang/String");
+                mv.visitLdcInsn("");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z");
+                mv.visitJumpInsn(IFEQ, l0);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "org/sonatype/restsimple/api/ActionContext", "pathParams",
+                        "()Ljava/util/Map;");
+                mv.visitVarInsn(ASTORE, 2);
+                mv.visitVarInsn(ALOAD, 2);
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "entrySet", "()Ljava/util/Set;");
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Set", "iterator", "()Ljava/util/Iterator;");
+                mv.visitVarInsn(ASTORE, 3);
+                Label l1 = new Label();
+                mv.visitLabel(l1);
+                mv.visitFrame(Opcodes.F_APPEND, 3,
+                        new Object[]{"java/lang/Object", "java/util/Map", "java/util/Iterator"}, 0, null);
+                mv.visitVarInsn(ALOAD, 3);
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "hasNext", "()Z");
+                mv.visitJumpInsn(IFEQ, l0);
+                mv.visitVarInsn(ALOAD, 3);
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Iterator", "next", "()Ljava/lang/Object;");
+                mv.visitTypeInsn(CHECKCAST, "java/util/Map$Entry");
+                mv.visitVarInsn(ASTORE, 4);
+                mv.visitVarInsn(ALOAD, 4);
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;");
+                mv.visitTypeInsn(CHECKCAST, "java/lang/String");
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "isEmpty", "()Z");
+                Label l2 = new Label();
+                mv.visitJumpInsn(IFNE, l2);
+                mv.visitVarInsn(ALOAD, 4);
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map$Entry", "getValue", "()Ljava/lang/Object;");
+                mv.visitVarInsn(ASTORE, 1);
+                mv.visitLabel(l2);
+                mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                mv.visitJumpInsn(GOTO, l1);
+                mv.visitLabel(l0);
+                mv.visitFrame(Opcodes.F_CHOP, 2, null, 0, null);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitInsn(ARETURN);
+                mv.visitMaxs(2, 5);
+                mv.visitEnd();
+            }
+            {
+                mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "action",
+                        "(Lorg/sonatype/restsimple/api/ActionContext;)Ljava/lang/Object;", null,
+                        new String[]{"org/sonatype/restsimple/api/ActionException"});
+                mv.visitCode();
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKEVIRTUAL, className, "action",
+                        "(Lorg/sonatype/restsimple/api/ActionContext;)L" + returnType + ";");
+                mv.visitInsn(ARETURN);
+                mv.visitMaxs(2, 2);
+                mv.visitEnd();
+            }
+            cw.visitEnd();
 
             byte[] bytes = cw.toByteArray();
 

@@ -16,7 +16,7 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 /**
  * Generate {@link ServiceDefinition} from a class.
  */
-public interface ServiceDefinitionCreator {
+public interface ServiceDefinitionBuilder {
 
     /**
      * Generate {@link ServiceDefinition} from a class. The default mapping described in {@link ServiceDefinitionCreatorConfig}
@@ -26,17 +26,22 @@ public interface ServiceDefinitionCreator {
      * @throws Exception
      * @throws IllegalAccessException
      */
-    ServiceDefinition create(Class<?> application) throws Exception, IllegalAccessException;
+    ServiceDefinitionBuilder type(Class<?> application) throws Exception, IllegalAccessException;
 
     /**
      * Generate {@link ServiceDefinition} from a class using {@link ServiceDefinitionCreatorConfig} as an hint.
      * will be used.
-     * @param application any class.
      * @param config a {@link ServiceDefinitionCreatorConfig}
      * @return {@link ServiceDefinition}
      * @throws Exception
      * @throws IllegalAccessException
      */
-    ServiceDefinition create(Class<?> application, ServiceDefinitionCreatorConfig config) throws Exception, IllegalAccessException;
+    ServiceDefinitionBuilder config(ServiceDefinitionCreatorConfig config) throws Exception, IllegalAccessException;
+
+    /**
+     * Build a {@link ServiceDefinition}
+     * @return a {@link ServiceDefinition}
+     */
+    ServiceDefinition build() throws Exception ;
 
 }

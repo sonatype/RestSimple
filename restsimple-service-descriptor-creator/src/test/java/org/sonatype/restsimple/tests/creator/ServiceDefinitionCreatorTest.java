@@ -25,7 +25,7 @@ import org.sonatype.restsimple.annotation.Put;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.client.WebException;
 import org.sonatype.restsimple.client.WebProxy;
-import org.sonatype.restsimple.creator.MethodBasedServiceDefinitionCreator;
+import org.sonatype.restsimple.creator.MethodServiceDefinitionBuilder;
 import org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig;
 import org.sonatype.restsimple.tests.creator.model.Person;
 import org.testng.annotations.AfterClass;
@@ -40,7 +40,7 @@ import static org.testng.AssertJUnit.assertNotNull;
 
 public class ServiceDefinitionCreatorTest {
 
-    private MethodBasedServiceDefinitionCreator creator = new MethodBasedServiceDefinitionCreator();
+    private MethodServiceDefinitionBuilder serviceDefinitionBuilder = new MethodServiceDefinitionBuilder();
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceDefinitionCreatorTest.class);
 
@@ -50,7 +50,7 @@ public class ServiceDefinitionCreatorTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpGlobal() throws Exception {
-        serviceDefinition = creator.create(AddressBook.class);
+        serviceDefinition = serviceDefinitionBuilder.type(AddressBook.class).build();
         webDriver = WebDriver.getDriver().serviceDefinition(serviceDefinition);
         targetUrl = webDriver.getUri();
         logger.info("Local HTTP server started successfully");
