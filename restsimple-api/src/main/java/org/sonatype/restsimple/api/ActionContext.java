@@ -70,7 +70,7 @@ public class ActionContext<T> {
      * @return a {@link Map} of parameters.
      */
     public Map<String, Collection<String>> matrixString() {
-        return matrixStrings;
+        return Collections.unmodifiableMap(matrixStrings);
 
     }
 
@@ -80,7 +80,7 @@ public class ActionContext<T> {
      * @return a {@link Map} of parameters.
      */
     public Map<String, Collection<String>> paramsString() {
-        return paramsStrings;
+        return Collections.unmodifiableMap(paramsStrings);
 
     }
 
@@ -90,7 +90,7 @@ public class ActionContext<T> {
      * @return a {@link Map} of request headers
      */
     public Map<String, Collection<String>> headers() {
-        return headers;
+        return Collections.unmodifiableMap(headers);
     }
 
     /**
