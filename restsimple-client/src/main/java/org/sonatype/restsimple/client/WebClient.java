@@ -17,7 +17,7 @@ import org.sonatype.restsimple.api.MediaType;
 import java.util.Map;
 
 /**
- * A Web WebClient for RestSimple. 
+ * A WebClient for RestSimple.
  */
 @ImplementedBy(WebAHCClient.class)
 public interface WebClient {
@@ -33,6 +33,7 @@ public interface WebClient {
     public enum ProxyScheme {
         HTTP, HTTPS, NTLM, KERBEROS, SPNEGO
     }
+
     /**
      * Configure the headers of the request.
      *

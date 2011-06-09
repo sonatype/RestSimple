@@ -21,6 +21,11 @@ public class WebException extends RuntimeException {
     private final int statusCode;
     private final String reasonPhrase;
 
+    /**
+     * Create an exception with the associated statusCode and reason phrase.
+     * @param statusCode the HTTP status code
+     * @param reasonPhrase the HTTP reason phrase
+     */
     public WebException(int statusCode, String reasonPhrase) {
         super(new IOException(String.format("Server returned status %s with reason phrase %s", statusCode, reasonPhrase)));
         this.statusCode = statusCode;

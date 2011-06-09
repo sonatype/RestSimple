@@ -93,10 +93,12 @@ abstract public class ServiceHandler {
 
     /**
      *  Unmarshall the request's body into an Object of type T.
+     *  @param mediaType A media type that will be used for deserializing the resquest's body.
+     *  @param clazz a Class that will be instanciated and populated by the request's body.
      */
-    public <T> ServiceHandler consumeWith(MediaType mediaType, Class<T> object) {
+    public <T> ServiceHandler consumeWith(MediaType mediaType, Class<T> clazz) {
         consumerMediaType = mediaType;
-        consumerClazz = object;
+        consumerClazz = clazz;
         return this;
     }
 
