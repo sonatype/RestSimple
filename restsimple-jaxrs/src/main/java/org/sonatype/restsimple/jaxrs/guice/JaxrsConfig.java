@@ -121,8 +121,8 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
         jaxrsProperties.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
         //jaxrsProperties.put("com.sun.jersey.config.feature.Trace", "true");
 
-        filter("/*").through(ContentNegotiationFilter.class);
-        serve("/*").with(GuiceContainer.class, jaxrsProperties);
+        filter(filterPath).through(ContentNegotiationFilter.class);
+        serve(servletPath).with(GuiceContainer.class, jaxrsProperties);
     }
 
     /**
