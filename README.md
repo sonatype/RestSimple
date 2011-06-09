@@ -194,7 +194,7 @@ The ServiceDefinition will be generated using the following template:
     PUT         updateXXXX
     DELETE      delete
 
-You can customize the method to HTTP method operation
+You can customize the method's name to HTTP method operation
 
     import static org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig.METHOD;
     import static org.sonatype.restsimple.creator.ServiceDefinitionCreatorConfig.config;
