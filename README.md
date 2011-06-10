@@ -289,9 +289,11 @@ There is many ways to deploy a ServiceDefinition. First, you need to decide whic
                     Action action = new PetstoreAction();
                     ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
                     serviceDefinition
-                       .withHandler(new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
-                       .withHandler(new DeleteServiceHandler("/deletePet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON))
-                       .withHandler(new PostServiceHandler("/addPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON));
+                       .consuming(JSON)
+                       .producing(JSON);
+                       .get("/getPet/{pet}", action)
+                       .delete("/deletePet/{pet}", action)
+                       .post("/addPet/{pet}", action);
 
                     list.add(serviceDefinition);
                     return list;
