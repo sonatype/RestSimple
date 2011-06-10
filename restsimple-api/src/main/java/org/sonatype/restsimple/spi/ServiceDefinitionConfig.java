@@ -23,9 +23,11 @@ import java.util.List;
 public interface ServiceDefinitionConfig {
 
     /**
-     * Return the a list of ServiceDefinition.
+     * Return the a list of ServiceDefinition to generate. By default this method scan the classpath in search
+     * for class annotated with the @Service annotation, and search for method that returns an instance of {@link ServiceDefinition}
+     *
      * @param injector a Guice {@link Injector}
-     * @return the a list of ServiceDefinition.
+     * @return the a list of ServiceDefinition to generate.
      */
     List<ServiceDefinition> defineServices(Injector injector);
 
@@ -46,6 +48,6 @@ public interface ServiceDefinitionConfig {
      *
      * @param packageName the package name
      */
-    void scan(Package packageName);
+    ServiceDefinitionConfig scan(Package packageName);
 
 }

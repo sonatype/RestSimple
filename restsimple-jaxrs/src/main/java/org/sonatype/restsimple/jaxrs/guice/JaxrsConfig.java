@@ -15,6 +15,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.annotation.Service;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
@@ -28,6 +31,8 @@ import org.sonatype.restsimple.spi.scan.Classes;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,6 +46,7 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
  * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
  */
 public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
+    private final Logger logger = LoggerFactory.getLogger(JaxrsConfig.class);
 
     private Injector parent;
     private Injector injector;
@@ -130,7 +136,37 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
      */
     @Override
     public List<ServiceDefinition> defineServices(Injector injector) {
-        return null;
+
+        Set<Class<?>> set = new HashSet<Class<?>>();
+        for (Package pkg : packages) {
+            //look for any classes annotated with @Service
+            set.addAll(Classes.matching(
+                    annotatedWith(Service.class)
+            ).in(pkg));
+        }
+
+        List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
+        // Now let's find the method that returns a ServiceDefinition
+        for(Class<?> clazz : set) {
+
+            Object o = injector.getInstance(clazz);
+            Method[] methods = clazz.getMethods();
+            for(Method method: methods) {
+                Class<?> returnType = method.getReturnType();
+                ServiceDefinition sd;
+                if (returnType.equals(ServiceDefinition.class)) {
+                    try {
+                        sd  = ServiceDefinition.class.cast(method.invoke(o, null));
+                        list.add(sd);
+                    } catch (IllegalAccessException e) {
+                        logger.trace("defineServices",e);
+                    } catch (InvocationTargetException e) {
+                        logger.trace("defineServices",e);
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -153,8 +189,9 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
      * {@inheritDoc}
      */
     @Override
-    public void scan(Package packageName) {
+    public JaxrsConfig scan(Package packageName) {
         packages.add(packageName);
+        return this;
     }
 
 }

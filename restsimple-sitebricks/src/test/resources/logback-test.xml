@@ -6,6 +6,7 @@
 	</appender>
 
 	<logger name="org" level="DEBUG"/>
+    <logger name="org.eclipse" level="INFO"/>
 	<logger name="com" level="DEBUG"/>
 
 	<root>

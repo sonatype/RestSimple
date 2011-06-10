@@ -18,6 +18,9 @@ import com.google.sitebricks.At;
 import com.google.sitebricks.Show;
 import com.google.sitebricks.rendering.EmbedAs;
 import com.google.sitebricks.rendering.With;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.annotation.Service;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
@@ -28,7 +31,8 @@ import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import org.sonatype.restsimple.spi.scan.Classes;
 
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -40,6 +44,8 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
  * Base class for deploying {@link org.sonatype.restsimple.api.ServiceDefinition} to a Sitebricks.
  */
 public class SitebricksConfig extends ServletModule implements ServiceDefinitionConfig {
+
+    private final Logger logger = LoggerFactory.getLogger(SitebricksConfig.class);
 
     private Injector parent;
     private Injector injector;
@@ -110,7 +116,36 @@ public class SitebricksConfig extends ServletModule implements ServiceDefinition
      */
     @Override
     public List<ServiceDefinition> defineServices(Injector injector) {
-        return null;
+        Set<Class<?>> set = new HashSet<Class<?>>();
+        for (Package pkg : packages) {
+            //look for any classes annotated with @Service
+            set.addAll(Classes.matching(
+                    annotatedWith(Service.class)
+            ).in(pkg));
+        }
+
+        List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
+        // Now let's find the method that returns a ServiceDefinition
+        for(Class<?> clazz : set) {
+
+            Object o = injector.getInstance(clazz);
+            Method[] methods = clazz.getMethods();
+            for(Method method: methods) {
+                Class<?> returnType = method.getReturnType();
+                ServiceDefinition sd;
+                if (returnType.equals(ServiceDefinition.class)) {
+                    try {
+                        sd  = ServiceDefinition.class.cast(method.invoke(o, null));
+                        list.add(sd);
+                    } catch (IllegalAccessException e) {
+                        logger.trace("defineServices",e);
+                    } catch (InvocationTargetException e) {
+                        logger.trace("defineServices",e);
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     /**
@@ -133,7 +168,8 @@ public class SitebricksConfig extends ServletModule implements ServiceDefinition
      * {@inheritDoc}
      */
     @Override
-    public void scan(Package packageName) {
+    public SitebricksConfig scan(Package packageName) {
         packages.add(packageName);
+        return this;
     }
 }
