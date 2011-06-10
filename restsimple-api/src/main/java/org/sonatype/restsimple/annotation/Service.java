@@ -20,10 +20,8 @@ import java.lang.annotation.Target;
  * A maker annotation that can be used when annotating {@link org.sonatype.restsimple.api.ServiceDefinition} or POJO
  * used with the service-decriptor-creator module.
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ServiceDefinition {
-
-    public String name() default "";
+public @interface Service {
 
 }
