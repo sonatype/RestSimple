@@ -49,6 +49,8 @@ package org.sonatype.restsimple.api;
     }
   
    }
+ * You can use the {@link TypedAction} for an implementation of an {@link Action}
+ *
  * The de-serialization of the Request's body is always performed before the {@link Action#action} and the result can
  * always be retrieved using {@link org.sonatype.restsimple.api.ActionContext#get()} The returned value of the
  * {@link Action#action} will be serialized based on the information represented by the associated {@link ServiceHandler}.
