@@ -65,12 +65,16 @@ public class SitebricksConfig extends ServletModule implements ServiceDefinition
         this(parent, mapper, false);
     }
 
+   public SitebricksConfig(Injector parent, boolean createChild) {
+        this(parent, null, createChild);
+    }
+
     public SitebricksConfig(Injector parent, ServiceHandlerMapper mapper, boolean createChild) {
         this.parent = parent;
         this.createChild = createChild;
 
-        if (mapper == null && injector != null) {
-            this.mapper = injector.getInstance( ServiceHandlerMapper.class );
+        if (mapper == null && parent != null) {
+            this.mapper = parent.getInstance( ServiceHandlerMapper.class );
         } else if (mapper == null) {
             this.mapper = new ServiceHandlerMapper();
         } else {

@@ -89,11 +89,19 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
                        ServiceHandlerMapper mapper,
                        String filterPath,
                        String servletPath) {
+
         this.jaxrsProperties = jaxrsProperties;
         this.parent = parent;
-        this.mapper = mapper;
         this.filterPath = filterPath;
         this.servletPath = servletPath;
+
+        if (mapper == null && parent != null) {
+            this.mapper = parent.getInstance( ServiceHandlerMapper.class );
+        } else if (mapper == null) {
+            this.mapper = new ServiceHandlerMapper();
+        } else {
+            this.mapper = mapper;
+        }
     }
 
     /**
