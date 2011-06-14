@@ -33,42 +33,27 @@ public class RestSimpleSitebricksModule extends AbstractModule {
     private final ServiceHandlerMapper mapper;
     private final NegotiationTokenGenerator tokenGenerator;
     private final Class<? extends ServiceDefinitionProvider> provider;
-    private final boolean isChild;
 
     public RestSimpleSitebricksModule(Binder binder,
                                       ServiceHandlerMapper mapper,
                                       NegotiationTokenGenerator tokenGenerator,
-                                      Class<? extends ServiceDefinitionProvider> provider,
-                                      boolean isChild) {
+                                      Class<? extends ServiceDefinitionProvider> provider) {
         this.binder = binder;
         this.mapper = mapper;
         this.tokenGenerator = tokenGenerator;
         this.provider = provider;
-        this.isChild = isChild;
     }
 
     public RestSimpleSitebricksModule(Binder binder, NegotiationTokenGenerator tokenGenerator) {
-        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class, false);
-    }
-
-    public RestSimpleSitebricksModule(Binder binder, NegotiationTokenGenerator tokenGenerator, boolean isChild) {
-        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class, isChild);
+        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class);
     }
 
     public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper) {
-        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, false);
-    }
-
-    public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper, boolean isChild) {
-        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, isChild);
+        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
     }
 
     public RestSimpleSitebricksModule(Binder binder) {
-        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, false);
-    }
-
-    public RestSimpleSitebricksModule(Binder binder, boolean isChild) {
-        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class, isChild);
+        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
     }
 
     /**

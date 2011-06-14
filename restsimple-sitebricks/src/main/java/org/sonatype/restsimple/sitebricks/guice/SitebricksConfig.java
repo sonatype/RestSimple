@@ -54,11 +54,11 @@ public class SitebricksConfig extends ServletModule implements ServiceDefinition
     private final List<Package> packages = new ArrayList<Package>();
 
     public SitebricksConfig() {
-        this(null, new ServiceHandlerMapper(), false);
+        this(null, null, false);
     }
 
     public SitebricksConfig(Injector parent) {
-        this(parent, new ServiceHandlerMapper(), false);
+        this(parent, null, false);
     }
 
     public SitebricksConfig(Injector parent, ServiceHandlerMapper mapper) {
@@ -67,8 +67,15 @@ public class SitebricksConfig extends ServletModule implements ServiceDefinition
 
     public SitebricksConfig(Injector parent, ServiceHandlerMapper mapper, boolean createChild) {
         this.parent = parent;
-        this.mapper = mapper;
         this.createChild = createChild;
+
+        if (mapper == null && injector != null) {
+            this.mapper = injector.getInstance( ServiceHandlerMapper.class );
+        } else if (mapper == null) {
+            this.mapper = new ServiceHandlerMapper();
+        } else {
+            this.mapper = mapper;
+        }
     }
 
     public SitebricksConfig(ServiceHandlerMapper mapper) {
@@ -80,10 +87,11 @@ public class SitebricksConfig extends ServletModule implements ServiceDefinition
      */
     @Override
     protected final void configureServlets() {
+
         if (!createChild || parent == null) {
             injector = Guice.createInjector(new RestSimpleSitebricksModule(binder(), mapper));
         } else {
-            injector = parent.createChildInjector( new RestSimpleSitebricksModule(binder(), mapper, createChild) );
+            injector = parent.createChildInjector( new RestSimpleSitebricksModule(binder(), mapper) );
         }
 
         List<ServiceDefinition> list = defineServices( parent == null ? injector : parent);
