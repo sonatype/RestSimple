@@ -13,6 +13,7 @@ package org.sonatype.restsimple.jaxrs.guice;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 import com.google.inject.servlet.ServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
 import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
+import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
@@ -45,63 +47,42 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
 /**
  * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
  */
-public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfig {
-    private final Logger logger = LoggerFactory.getLogger(JaxrsConfig.class);
+public class RestSimpleJaxrsModule
+    extends ServletModule implements ServiceDefinitionConfig {
+    private final Logger logger = LoggerFactory.getLogger(RestSimpleJaxrsModule.class);
 
     private Injector parent;
     private Injector injector;
     private final Map<String,String> jaxrsProperties;
-    private final ServiceHandlerMapper mapper;
     private final List<Package> packages = new ArrayList<Package>();
     private final String filterPath;
     private final String servletPath;
+    private final Set<Class<?>> classesSet = new HashSet<Class<?>>();
+    private final Set<ServiceDefinition> sdSet = new HashSet<ServiceDefinition>();
 
-    public JaxrsConfig() {
+    public RestSimpleJaxrsModule() {
         this(null, new HashMap<String,String>());
     }
 
-    public JaxrsConfig(ServiceHandlerMapper mapper) {
-        this(null, new HashMap<String,String>(), mapper, "/*", "/*");
-    }
-
-    public JaxrsConfig(Map<String,String> jaxrsProperties) {
+    public RestSimpleJaxrsModule( Map<String, String> jaxrsProperties ) {
         this(null, jaxrsProperties);
     }
 
-    public JaxrsConfig(Map<String,String> jaxrsProperties, ServiceHandlerMapper mapper) {
-        this(null, jaxrsProperties, mapper, "/*", "/*");
-    }
-
-    public JaxrsConfig(Injector parent) {
+    public RestSimpleJaxrsModule( Injector parent ) {
         this(parent, new HashMap<String,String>());
     }
 
-    public JaxrsConfig(Injector parent, ServiceHandlerMapper mapper) {
-        this(parent, new HashMap<String,String>(), mapper, "/*", "/*");
+    public RestSimpleJaxrsModule( Injector parent, Map<String, String> jaxrsProperties ) {
+        this( parent, jaxrsProperties, "/*", "/*" );
     }
 
-    public JaxrsConfig(Injector parent, Map<String,String> jaxrsProperties) {
-        this(parent, jaxrsProperties, new ServiceHandlerMapper(), "/*", "/*");
-    }
-
-    public JaxrsConfig(Injector parent,
-                       Map<String,String> jaxrsProperties,
-                       ServiceHandlerMapper mapper,
-                       String filterPath,
-                       String servletPath) {
+    public RestSimpleJaxrsModule( Injector parent, Map<String, String> jaxrsProperties, String filterPath,
+                                  String servletPath ) {
 
         this.jaxrsProperties = jaxrsProperties;
         this.parent = parent;
         this.filterPath = filterPath;
         this.servletPath = servletPath;
-
-        if (mapper == null && parent != null) {
-            this.mapper = parent.getInstance( ServiceHandlerMapper.class );
-        } else if (mapper == null) {
-            this.mapper = new ServiceHandlerMapper();
-        } else {
-            this.mapper = mapper;
-        }
     }
 
     /**
@@ -109,27 +90,60 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
      */
     @Override
     protected final void configureServlets() {
-        injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]"), mapper));
-        List<ServiceDefinition> list = defineServices(parent != null ? parent : injector);
-        ServiceDefinitionGenerator generator = injector.getInstance(JAXRSServiceDefinitionGenerator.class);
+        if (parent == null) {
+            injector = Guice.createInjector();
+        } else if (parent.getBinding( ServiceDefinition.class ) == null) {
+            injector = parent.createChildInjector();
+        } else {
+            injector = parent;
+        }
 
-        if (list != null && list.size() > 0) {
-            for (ServiceDefinition sd : list) {
-                generator.generate(sd);
+        NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
+        bind(NegotiationTokenGenerator.class).toInstance( token );
+
+        ServiceHandlerMapper mapper = injector.getInstance( ServiceHandlerMapper.class );
+        bind( ServiceHandlerMapper.class ).toInstance( mapper );
+
+        sdSet.addAll( defineServices( injector ) );
+        ServiceDefinitionGenerator generator = new JAXRSServiceDefinitionGenerator( new ResourceModuleConfig<Module>() {
+
+            @Override
+            public <A> void bindToInstance(Class<A> clazz, A instance) {
+                binder().withSource( "[generated]" ).bind( clazz ).toInstance(instance);
+            }
+
+            @Override
+            public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
+                binder().withSource( "[generated]" ).bind( clazz ).to(clazz2);
+            }
+
+            @Override
+            public void bind(Class<?> clazz) {
+                binder().withSource( "[generated]" ).bind( clazz ).asEagerSingleton();
+            }
+
+            @Override
+            public void install(Module module) {
+            }
+        });
+
+        if (sdSet != null && sdSet.size() > 0) {
+            for (ServiceDefinition sd : sdSet) {
+                generator.generate(sd, mapper);
             }
         }
 
-        Set<Class<?>> set = new HashSet<Class<?>>();
+        classesSet.clear();
         for (Package pkg : packages) {
             //look for any classes annotated with @Path, @PathParam
-            set.addAll(Classes.matching(
+            classesSet.addAll(Classes.matching(
                     annotatedWith(Path.class).or(
                             annotatedWith(PathParam.class))
             ).in(pkg));
         }
 
-        for (Class<?> clazz: set) {
-            generator.generate(new DefaultServiceDefinition().extendWith(clazz));
+        for (Class<?> clazz: classesSet) {
+            generator.generate(new DefaultServiceDefinition().extendWith(clazz), mapper);
         }
 
         jaxrsProperties.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
@@ -145,17 +159,16 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
     @Override
     public List<ServiceDefinition> defineServices(Injector injector) {
 
-        Set<Class<?>> set = new HashSet<Class<?>>();
         for (Package pkg : packages) {
             //look for any classes annotated with @Service
-            set.addAll(Classes.matching(
+            classesSet.addAll(Classes.matching(
                     annotatedWith(Service.class)
             ).in(pkg));
         }
 
         List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
         // Now let's find the method that returns a ServiceDefinition
-        for(Class<?> clazz : set) {
+        for(Class<?> clazz : classesSet) {
 
             Object o = injector.getInstance(clazz);
             Method[] methods = clazz.getMethods();
@@ -197,9 +210,24 @@ public class JaxrsConfig extends ServletModule implements ServiceDefinitionConfi
      * {@inheritDoc}
      */
     @Override
-    public JaxrsConfig scan(Package packageName) {
+    public RestSimpleJaxrsModule scan(Package packageName) {
         packages.add(packageName);
         return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RestSimpleJaxrsModule addClass( Class<?> className ) {
+        classesSet.add( className );
+        return this;
+    }
+
+    @Override
+    public RestSimpleJaxrsModule addInstance( ServiceDefinition instance ){
+        sdSet.add( instance );
+        return null;
     }
 
 }

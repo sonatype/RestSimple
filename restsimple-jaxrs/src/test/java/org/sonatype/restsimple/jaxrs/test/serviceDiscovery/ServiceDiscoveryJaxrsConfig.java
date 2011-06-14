@@ -14,12 +14,12 @@ package org.sonatype.restsimple.jaxrs.test.serviceDiscovery;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
+import org.sonatype.restsimple.jaxrs.guice.RestSimpleJaxrsModule;
 
 public class ServiceDiscoveryJaxrsConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector( new JaxrsConfig().scan(ServiceDiscoveryJaxrsConfig.class.getPackage() ) );
+        return Guice.createInjector( new RestSimpleJaxrsModule().scan(ServiceDiscoveryJaxrsConfig.class.getPackage() ) );
     }
 }

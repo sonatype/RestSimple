@@ -72,7 +72,12 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
     }
 
     @Override
-    public void generate(final ServiceDefinition serviceDefinition) {
+    public void generate(final ServiceDefinition serviceDefinition, ServiceHandlerMapper mapper) {
+
+        for(ServiceHandler sh : serviceDefinition.serviceHandlers()) {
+            mapper.addServiceHandler( serviceDefinition.path(), sh);
+        }
+
         try {
             final String path = serviceDefinition.path().contains("/{") ? convert(serviceDefinition.path()) : serviceDefinition.path();
 

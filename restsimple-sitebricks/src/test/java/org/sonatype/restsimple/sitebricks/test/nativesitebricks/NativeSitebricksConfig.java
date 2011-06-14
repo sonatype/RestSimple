@@ -21,13 +21,13 @@ import com.google.sitebricks.headless.Service;
 import com.google.sitebricks.http.Get;
 import com.google.sitebricks.http.negotiate.Accept;
 import org.sonatype.restsimple.common.test.petstore.Pet;
-import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 public class NativeSitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        SitebricksConfig config = new SitebricksConfig();
+        RestSimpleSitebricksModule config = new RestSimpleSitebricksModule();
         config.scan( Extension.class.getPackage() );
         return Guice.createInjector(config);
     }

@@ -27,6 +27,7 @@ import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.api.ServiceHandler;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
+import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 import java.util.List;
 import java.util.StringTokenizer;
@@ -52,7 +53,11 @@ public class JAXRSServiceDefinitionGenerator implements ServiceDefinitionGenerat
      * @param serviceDefinition a {@link ServiceDefinition}
      */
     @Override
-    public void generate(ServiceDefinition serviceDefinition) {
+    public void generate(final ServiceDefinition serviceDefinition, ServiceHandlerMapper mapper) {
+
+        for(ServiceHandler sh : serviceDefinition.serviceHandlers()) {
+            mapper.addServiceHandler( serviceDefinition.path(), sh);
+        }
 
         ClassWriter cw = new ClassWriter(0);
         FieldVisitor fv;

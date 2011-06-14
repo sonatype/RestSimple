@@ -21,7 +21,7 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
-import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
+import org.sonatype.restsimple.jaxrs.guice.RestSimpleJaxrsModule;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -33,7 +33,7 @@ public class PetstoreJaxrsConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new JaxrsConfig() {
+        return Guice.createInjector(new RestSimpleJaxrsModule() {
 
             private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 

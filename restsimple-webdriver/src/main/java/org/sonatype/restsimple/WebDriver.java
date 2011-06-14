@@ -16,24 +16,18 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceFilter;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.google.inject.servlet.ServletModule;
-import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.api.ServiceHandler;
-import org.sonatype.restsimple.jaxrs.guice.JaxrsModule;
-import org.sonatype.restsimple.jaxrs.impl.ContentNegotiationFilter;
-import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
+import org.sonatype.restsimple.jaxrs.guice.RestSimpleJaxrsModule;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
-import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
-import org.sonatype.restsimple.spi.ServiceHandlerMapper;
+import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.HashMap;
 
 /**
  * Simple utilities class that configure Jetty and properly bind a {@link ServiceDefinition} to
@@ -111,36 +105,10 @@ public class WebDriver {
         context.addEventListener(new GuiceServletContextListener() {
             @Override
             protected Injector getInjector() {
-                return Guice.createInjector(new ServletModule() {
-                    @Override
-                    public void configureServlets() {
-                        Injector injector;
-                        if (provider.equals(PROVIDER.JAXRS)) {
-                            injector = Guice.createInjector(new JaxrsModule(binder().withSource("[generated]")));
-                        } else {
-                            injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
-                        }
 
-                        // If the ServiceDefinition was created without using injection, we need to get the proper
-                        // list of ServiceHandler as more than one instance of ServiceHandlerMapper exist
-                        ServiceHandlerMapper mapper = injector.getInstance(ServiceHandlerMapper.class);
-                        for (ServiceHandler handler : serviceDefinition.serviceHandlers()) {
-                            mapper.addServiceHandler(serviceDefinition.path(), handler);
-                        }
-
-                        if (provider.equals(PROVIDER.JAXRS)) {
-                            injector.getInstance(JAXRSServiceDefinitionGenerator.class).generate(serviceDefinition);
-                            HashMap<String, String> initParams = new HashMap<String, String>();
-                            initParams.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
-                            //initParams.put("com.sun.jersey.config.feature.Trace", "true");
-                            
-                            filter("/*").through(ContentNegotiationFilter.class);
-                            serve("/*").with(GuiceContainer.class, initParams);
-                        } else {
-                            injector.getInstance(SitebricksServiceDefinitionGenerator.class).generate(serviceDefinition);
-                        }
-                    }
-                });
+                ServletModule config =  provider.equals(PROVIDER.JAXRS) ? new RestSimpleJaxrsModule() :  new RestSimpleSitebricksModule();
+                ((ServiceDefinitionConfig)config).addInstance( serviceDefinition );
+                return Guice.createInjector(config);
             }
         });
 

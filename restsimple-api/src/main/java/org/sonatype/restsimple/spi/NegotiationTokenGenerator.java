@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.sonatype.restsimple.spi;
 
+import com.google.inject.ImplementedBy;
 import org.sonatype.restsimple.api.MediaType;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * Server side component for implementing a version or content negotiation challenge between a client and a server.
  */
+@ImplementedBy( RFC2295NegotiationTokenGenerator.class )
 public interface NegotiationTokenGenerator {
 
     /**

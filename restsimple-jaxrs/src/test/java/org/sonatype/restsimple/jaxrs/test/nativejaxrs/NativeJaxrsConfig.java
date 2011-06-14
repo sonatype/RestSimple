@@ -15,7 +15,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import org.sonatype.restsimple.common.test.petstore.Pet;
-import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
+import org.sonatype.restsimple.jaxrs.guice.RestSimpleJaxrsModule;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -25,7 +25,7 @@ public class NativeJaxrsConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        JaxrsConfig config = new JaxrsConfig();
+        RestSimpleJaxrsModule config = new RestSimpleJaxrsModule();
         config.scan( Extension.class.getPackage() );
         return Guice.createInjector(config);
     }

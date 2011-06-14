@@ -14,12 +14,12 @@ package org.sonatype.restsimple.sitebricks.test.serviceDiscovery;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
-import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 public class ServiceDiscoverySitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector( new SitebricksConfig().scan(ServiceDiscoverySitebricksConfig.class.getPackage() ) );
+        return Guice.createInjector( new RestSimpleSitebricksModule().scan(ServiceDiscoverySitebricksConfig.class.getPackage() ) );
     }
 }

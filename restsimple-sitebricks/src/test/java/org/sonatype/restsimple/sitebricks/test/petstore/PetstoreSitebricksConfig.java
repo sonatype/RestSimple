@@ -27,7 +27,7 @@ import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.petstore.Pet;
 import org.sonatype.restsimple.common.test.petstore.PetstoreAction;
-import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class PetstoreSitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new SitebricksConfig() {
+        return Guice.createInjector(new RestSimpleSitebricksModule() {
 
 
             @Override

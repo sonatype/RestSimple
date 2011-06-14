@@ -215,7 +215,7 @@ Currently RestSimple supports Sitebricks and JAX-RS. It is possible to extend a 
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new SitebricksConfig() {
+        return Guice.createInjector(new RestSimpleSitebricksModule() {
 
             @Override
             public List<ServiceDefinition> defineServices(Injector injector) {
@@ -279,7 +279,7 @@ There is many ways to deploy a ServiceDefinition. First, you need to decide whic
 
         @Override
         protected Injector getInjector() {
-            return Guice.createInjector(new JaxrsConfig() {
+            return Guice.createInjector(new RestSimpleJaxrsModule() {
 
                 private final MediaType JSON = new MediaType(PetstoreAction.APPLICATION, PetstoreAction.JSON);
 

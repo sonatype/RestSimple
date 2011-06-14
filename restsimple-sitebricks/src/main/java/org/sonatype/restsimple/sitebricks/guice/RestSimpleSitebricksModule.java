@@ -11,87 +11,209 @@
  *******************************************************************************/
 package org.sonatype.restsimple.sitebricks.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Binder;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.servlet.ServletModule;
+import com.google.sitebricks.At;
+import com.google.sitebricks.Show;
+import com.google.sitebricks.rendering.EmbedAs;
+import com.google.sitebricks.rendering.With;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonatype.restsimple.annotation.Service;
+import org.sonatype.restsimple.api.DefaultServiceDefinition;
+import org.sonatype.restsimple.api.ServiceDefinition;
+import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
-import org.sonatype.restsimple.api.ServiceDefinition;
-import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenerator;
-import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionProvider;
+import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
-import org.sonatype.restsimple.spi.ServiceDefinitionProvider;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
+import org.sonatype.restsimple.spi.scan.Classes;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.inject.matcher.Matchers.annotatedWith;
 
 /**
- * A Sitebricks module that install the appropriate object needed to generate Sitebricks Resource.
+ * Base class for deploying {@link org.sonatype.restsimple.api.ServiceDefinition} to a Sitebricks.
  */
-public class RestSimpleSitebricksModule extends AbstractModule {
+public class RestSimpleSitebricksModule
+    extends ServletModule implements ServiceDefinitionConfig {
 
-    private final Binder binder;
-    private final ServiceHandlerMapper mapper;
-    private final NegotiationTokenGenerator tokenGenerator;
-    private final Class<? extends ServiceDefinitionProvider> provider;
+    private final Logger logger = LoggerFactory.getLogger(RestSimpleSitebricksModule.class);
 
-    public RestSimpleSitebricksModule(Binder binder,
-                                      ServiceHandlerMapper mapper,
-                                      NegotiationTokenGenerator tokenGenerator,
-                                      Class<? extends ServiceDefinitionProvider> provider) {
-        this.binder = binder;
-        this.mapper = mapper;
-        this.tokenGenerator = tokenGenerator;
-        this.provider = provider;
+    private Injector parent;
+    private Injector injector;
+    private final List<Package> packages = new ArrayList<Package>();
+    private final Set<Class<?>> classesSet = new HashSet<Class<?>>();
+    private final Set<ServiceDefinition> sdSet = new HashSet<ServiceDefinition>();
+
+    public RestSimpleSitebricksModule() {
+        this(null, null);
     }
 
-    public RestSimpleSitebricksModule(Binder binder, NegotiationTokenGenerator tokenGenerator) {
-        this(binder, new ServiceHandlerMapper(), tokenGenerator, SitebricksServiceDefinitionProvider.class);
+    public RestSimpleSitebricksModule( Injector parent ) {
+        this(parent, null);
     }
 
-    public RestSimpleSitebricksModule(Binder binder, ServiceHandlerMapper mapper) {
-        this(binder, mapper, new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
+    public RestSimpleSitebricksModule( Injector parent, ServiceHandlerMapper mapper ) {
+        this.parent = parent;
     }
 
-    public RestSimpleSitebricksModule(Binder binder) {
-        this(binder, new ServiceHandlerMapper(), new RFC2295NegotiationTokenGenerator(), SitebricksServiceDefinitionProvider.class);
+    public RestSimpleSitebricksModule( ServiceHandlerMapper mapper ) {
+        this(null, mapper);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void configure() {
+    protected final void configureServlets() {
 
-        bind(ServiceHandlerMapper.class).toInstance(mapper);
-        bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
-        bind(ServiceDefinitionGenerator.class).to(SitebricksServiceDefinitionGenerator.class);
-        bind(ServiceDefinition.class).toProvider(ServiceDefinitionProvider.class);
-        bind(ServiceDefinitionProvider.class).to(provider);
-        binder.bind(ServiceHandlerMapper.class).toInstance(mapper);
-        binder.bind(NegotiationTokenGenerator.class).toInstance(tokenGenerator);
+        if (parent == null) {
+            injector = Guice.createInjector();
+        } else if (parent.getBinding( ServiceDefinition.class ) == null) {
+            injector = parent.createChildInjector();
+        } else {
+            injector = parent;
+        }
 
-        bind(ResourceModuleConfig.class).toInstance(new ResourceModuleConfig<Module>(){
+        sdSet.addAll( defineServices( injector ) );
+        ServiceDefinitionGenerator generator = new SitebricksServiceDefinitionGenerator( new ResourceModuleConfig<Module>(){
 
             @Override
             public <A> void bindToInstance(Class<A> clazz, A instance) {
-                binder.bind(clazz).toInstance(instance);
+                binder().bind(clazz).toInstance(instance);
             }
 
             @Override
             public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
-                binder.bind(clazz).to(clazz2);
+                binder().bind(clazz).to(clazz2);
             }
 
             @Override
             public void bind(Class<?> clazz) {
-                binder.bind(clazz);
+                binder().bind(clazz);
             }
 
             @Override
             public void install(Module module) {
-                binder.install(module);
+                binder().install(module);
             }
         });
-        
+
+        NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
+        bind(NegotiationTokenGenerator.class).toInstance( token );
+
+        ServiceHandlerMapper mapper = injector().getInstance(  ServiceHandlerMapper.class );
+        bind( ServiceHandlerMapper.class ).toInstance( mapper );
+
+        if (sdSet != null && sdSet.size() > 0) {
+            for (ServiceDefinition sd : sdSet) {
+                generator.generate(sd, mapper);
+            }
+        }
+
+        classesSet.clear();
+        for (Package pkg : packages) {
+
+            //look for any classes annotated with @At, @EmbedAs and @With
+            classesSet.addAll(Classes.matching(
+                            annotatedWith(At.class).or(
+                            annotatedWith(EmbedAs.class)).or(
+                            annotatedWith(With.class)).or(
+                            annotatedWith(Show.class))
+            ).in(pkg));
+        }
+
+        ServiceDefinition sd;
+        for (Class<?> clazz: classesSet) {
+            sd = new DefaultServiceDefinition().extendWith(clazz);
+            generator.generate(sd, mapper);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ServiceDefinition> defineServices(Injector injector) {
+        for (Package pkg : packages) {
+            //look for any classes annotated with @Service
+            classesSet.addAll(Classes.matching(
+                    annotatedWith(Service.class)
+            ).in(pkg));
+        }
+
+        List<ServiceDefinition> list = new ArrayList<ServiceDefinition>();
+        // Now let's find the method that returns a ServiceDefinition
+        for(Class<?> clazz : classesSet) {
+
+            Object o = injector.getInstance(clazz);
+            Method[] methods = clazz.getMethods();
+            for(Method method: methods) {
+                Class<?> returnType = method.getReturnType();
+                ServiceDefinition sd;
+                if (returnType.equals(ServiceDefinition.class)) {
+                    try {
+                        sd  = ServiceDefinition.class.cast(method.invoke(o, null));
+                        list.add(sd);
+                    } catch (IllegalAccessException e) {
+                        logger.trace("defineServices",e);
+                    } catch (InvocationTargetException e) {
+                        logger.trace("defineServices",e);
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NegotiationTokenGenerator configureNegotiationTokenGenerator(){
+        return new RFC2295NegotiationTokenGenerator();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Injector injector() {
+        return injector;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RestSimpleSitebricksModule scan(Package packageName) {
+        packages.add(packageName);
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public RestSimpleSitebricksModule addClass( Class<?> className ) {
+        classesSet.add( className );
+        return this;
+    }
+
+    @Override
+    public RestSimpleSitebricksModule addInstance( ServiceDefinition instance ) {
+        sdSet.add( instance );
+        return this;
     }
 }

@@ -11,9 +11,6 @@
  *******************************************************************************/
 package org.sonatype.restsimple.api;
 
-import com.google.inject.Inject;
-import org.sonatype.restsimple.spi.ServiceHandlerMapper;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,17 +24,10 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     private final List<MediaType> mediaTypeToProduce = new ArrayList<MediaType>();
     private final List<MediaType> mediaTypeToConsume = new ArrayList<MediaType>();
     private final List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
-    private final ServiceHandlerMapper serviceHandlerMapper;
     private final AtomicBoolean configured = new AtomicBoolean(false);
     private final List<Class<?>> extensions = new ArrayList<Class<?>>();
 
     public DefaultServiceDefinition() {
-        this(new ServiceHandlerMapper());
-    }
-
-    @Inject
-    public DefaultServiceDefinition(ServiceHandlerMapper serviceHandlerMapper) {
-        this.serviceHandlerMapper = serviceHandlerMapper;
     }
 
     @Override
@@ -47,7 +37,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
                 ", mediaTypeToProduce=" + mediaTypeToProduce +
                 ", mediaTypeToConsume=" + mediaTypeToConsume +
                 ", serviceHandlers=" + serviceHandlers +
-                ", serviceHandlerMapper=" + serviceHandlerMapper +
                 '}';
     }
 
@@ -66,7 +55,6 @@ public class DefaultServiceDefinition implements ServiceDefinition {
     @Override
     public ServiceDefinition withHandler(ServiceHandler serviceHandler) {
         serviceHandlers.add(serviceHandler);
-        serviceHandlerMapper.addServiceHandler(path, serviceHandler);
         return this;
     }
 

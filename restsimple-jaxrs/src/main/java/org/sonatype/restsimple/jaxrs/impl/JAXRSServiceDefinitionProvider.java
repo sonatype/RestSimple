@@ -11,21 +11,17 @@
  *******************************************************************************/
 package org.sonatype.restsimple.jaxrs.impl;
 
-import com.google.inject.Inject;
 import org.sonatype.restsimple.api.DefaultServiceDefinition;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.spi.ServiceDefinitionProvider;
-import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 
 public class JAXRSServiceDefinitionProvider implements ServiceDefinitionProvider {
 
-    @Inject
-    ServiceHandlerMapper mapper;
     /**
      * {@inheritDoc}
      */
     @Override
     public ServiceDefinition get() {
-        return new DefaultServiceDefinition(mapper);
+        return new DefaultServiceDefinition();
     }
 }

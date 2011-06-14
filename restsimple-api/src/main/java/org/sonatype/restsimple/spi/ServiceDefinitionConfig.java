@@ -46,8 +46,22 @@ public interface ServiceDefinitionConfig {
     /**
      * Scan for native REST resource located in the package name
      *
-     * @param packageName the package name
+     * @param  packageName the package name
      */
     ServiceDefinitionConfig scan(Package packageName);
+
+    /**
+     * Add a Rest resource.
+     *
+     * @param className the class name
+     */
+    ServiceDefinitionConfig addClass(Class<?> className);
+
+    /**
+     * Add a Rest resource.
+     *
+     * @param instance the class name
+     */
+    ServiceDefinitionConfig addInstance(ServiceDefinition instance);
 
 }

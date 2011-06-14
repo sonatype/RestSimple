@@ -23,7 +23,7 @@ import org.sonatype.restsimple.api.PutServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.addressbook.AddressBook;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
-import org.sonatype.restsimple.sitebricks.guice.SitebricksConfig;
+import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class AddressBookSitebricksConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new SitebricksConfig() {
+        return Guice.createInjector(new RestSimpleSitebricksModule() {
 
             @Override
             public List<ServiceDefinition> defineServices(Injector injector) {

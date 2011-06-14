@@ -20,7 +20,7 @@ import org.sonatype.restsimple.api.MediaType;
 import org.sonatype.restsimple.api.PostServiceHandler;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.common.test.addressbook.AddressBookAction;
-import org.sonatype.restsimple.jaxrs.guice.JaxrsConfig;
+import org.sonatype.restsimple.jaxrs.guice.RestSimpleJaxrsModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class AddressBookJaxrsConfig extends GuiceServletContextListener {
 
     @Override
     protected Injector getInjector() {
-        return Guice.createInjector(new JaxrsConfig() {
+        return Guice.createInjector(new RestSimpleJaxrsModule() {
 
             @Override
             public List<ServiceDefinition> defineServices(Injector injector) {
