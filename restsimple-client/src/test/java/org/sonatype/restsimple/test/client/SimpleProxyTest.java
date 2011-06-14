@@ -32,6 +32,7 @@ import static org.testng.FileAssert.fail;
 
 public abstract class SimpleProxyTest extends BaseTest {
 
+    @Path("/")
     public static interface ProxyClient {
 
         @Get

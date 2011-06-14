@@ -233,7 +233,11 @@ public class WebProxy {
 
             final Path atMethod = method.getAnnotation(Path.class);
             if (atMethod != null) {
-                rawUrl.append(atMethod.value());
+                String value = atMethod.value();
+                if (rawUrl.toString().endsWith( "/" ) && value.startsWith( "/" )) {
+                    value = value.substring( 1 );
+                }
+                rawUrl.append(value);
             }
 
             if (rawUrl.toString().trim().length() == 0) {
