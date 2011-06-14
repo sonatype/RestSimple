@@ -99,10 +99,14 @@ public class RestSimpleJaxrsModule
         }
 
         NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
-        bind(NegotiationTokenGenerator.class).toInstance( token );
+        if (parent == null || parent.getBinding(NegotiationTokenGenerator.class ) == null) {
+            bind(NegotiationTokenGenerator.class).toInstance( token );
+        }
 
-        ServiceHandlerMapper mapper = injector.getInstance( ServiceHandlerMapper.class );
-        bind( ServiceHandlerMapper.class ).toInstance( mapper );
+        ServiceHandlerMapper mapper = injector().getInstance(  ServiceHandlerMapper.class );
+        if (parent == null || parent.getBinding(ServiceHandlerMapper.class ) == null) {
+            bind( ServiceHandlerMapper.class ).toInstance( mapper );
+        }
 
         sdSet.addAll( defineServices( injector ) );
         ServiceDefinitionGenerator generator = new JAXRSServiceDefinitionGenerator( new ResourceModuleConfig<Module>() {

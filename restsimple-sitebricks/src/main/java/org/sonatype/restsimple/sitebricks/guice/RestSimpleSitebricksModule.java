@@ -111,10 +111,14 @@ public class RestSimpleSitebricksModule
         });
 
         NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
-        bind(NegotiationTokenGenerator.class).toInstance( token );
+        if (parent == null || parent.getBinding(NegotiationTokenGenerator.class ) == null) {        
+            bind(NegotiationTokenGenerator.class).toInstance( token );
+        }
 
         ServiceHandlerMapper mapper = injector().getInstance(  ServiceHandlerMapper.class );
-        bind( ServiceHandlerMapper.class ).toInstance( mapper );
+        if (parent == null || parent.getBinding(ServiceHandlerMapper.class ) == null) {
+            bind( ServiceHandlerMapper.class ).toInstance( mapper );
+        }
 
         if (sdSet != null && sdSet.size() > 0) {
             for (ServiceDefinition sd : sdSet) {
