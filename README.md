@@ -284,7 +284,8 @@ There is many ways to deploy a ServiceDefinition. First, you need to decide whic
                 public List<ServiceDefinition> defineServices(Injector injector) {
 
                     Action action = new PetstoreAction();
-                    ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class) // Can also be created using new DefaultServiceDefinition();
+                    // Can also be created using new DefaultServiceDefinition();
+                    ServiceDefinition serviceDefinition = injector.getInstance(ServiceDefinition.class)
                     serviceDefinition
                        .consuming(JSON)
                        .producing(JSON);
@@ -310,6 +311,8 @@ You can also let scan for classes annotated with the @Service annotation that co
        ServiceDefinition serviceDefinition;
 
        public ServiceDefinition create() {
+           Action action = new PetstoreAction();
+
            serviceDefinition
                .consuming(JSON)
                .producing(JSON);
