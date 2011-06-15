@@ -90,26 +90,18 @@ public class RestSimpleJaxrsModule
      */
     @Override
     protected final void configureServlets() {
-        boolean bindServiceDefinition = true;
         if (parent == null) {
             injector = Guice.createInjector();
-        } else if (parent.getBinding( ServiceDefinition.class ) == null) {
-            injector = parent.createChildInjector();
-            bindServiceDefinition = false;
         } else {
             injector = parent;
         }
 
         NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
-        if (parent == null || bindServiceDefinition || parent.getBinding(NegotiationTokenGenerator.class ) == null) {
-            bind(NegotiationTokenGenerator.class).toInstance( token );
-        }
+        bind(NegotiationTokenGenerator.class).toInstance( token );
 
         ServiceHandlerMapper mapper = injector().getInstance(  ServiceHandlerMapper.class );
-        if (parent == null || bindServiceDefinition || parent.getBinding(ServiceHandlerMapper.class ) == null) {
-            bind( ServiceHandlerMapper.class ).toInstance( mapper );
-        }
-
+        bind( ServiceHandlerMapper.class ).toInstance( mapper );
+        
         sdSet.addAll( defineServices( injector ) );
         ServiceDefinitionGenerator generator = new JAXRSServiceDefinitionGenerator( new ResourceModuleConfig<Module>() {
 

@@ -81,9 +81,6 @@ public class RestSimpleSitebricksModule
         boolean bindServiceDefinition = true;
         if (parent == null) {
             injector = Guice.createInjector();
-        } else if (parent.getBinding( ServiceDefinition.class ) == null) {
-            injector = parent.createChildInjector();
-            bindServiceDefinition = false;
         } else {
             injector = parent;
         }
@@ -113,14 +110,10 @@ public class RestSimpleSitebricksModule
         });
 
         NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
-        if (parent == null || bindServiceDefinition || parent.getBinding(NegotiationTokenGenerator.class ) == null) {
-            bind(NegotiationTokenGenerator.class).toInstance( token );
-        }
-
-        ServiceHandlerMapper mapper = injector().getInstance(  ServiceHandlerMapper.class );
-        if (parent == null || bindServiceDefinition || parent.getBinding(ServiceHandlerMapper.class ) == null) {
-            bind( ServiceHandlerMapper.class ).toInstance( mapper );
-        }
+        bind(NegotiationTokenGenerator.class).toInstance( token );
+        
+        ServiceHandlerMapper mapper = injector.getInstance(  ServiceHandlerMapper.class );
+        bind( ServiceHandlerMapper.class ).toInstance( mapper );
 
         if (sdSet != null && sdSet.size() > 0) {
             for (ServiceDefinition sd : sdSet) {
