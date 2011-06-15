@@ -235,7 +235,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             ServiceHandler serviceHandler = mapper.map("put", hreq.getServletPath());
 
             if (serviceHandler == null) {
-                return Reply.with("Method not allowed").status(405);
+                return Reply.with("Method not allowed or ServiceDefinitionMapper not correctly binded").status(405);
             }
 
             Object body = readBody(serviceHandler, request);
@@ -268,7 +268,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
             ServiceHandler serviceHandler = mapper.map("post", hreq.getServletPath());
 
             if (serviceHandler == null) {
-                return Reply.with("Method not allowed").status(405);
+                return Reply.with("Method not allowed or ServiceDefinitionMapper not correctly binded").status(405);
             }
 
             Object body = readBody(serviceHandler, request);
@@ -393,7 +393,7 @@ public class SitebricksServiceDefinitionGenerator implements ServiceDefinitionGe
         ServiceHandler serviceHandler = mapper.map(methodName, convertToJaxRs(servletPath));
 
         if (serviceHandler == null) {
-            return Reply.with("Method not allowed").status(405);
+            return Reply.with("Method not allowed or ServiceDefinitionMapper not correctly binded").status(405);
         }
 
         if (!contentNegotiate(request.headers(), serviceHandler.mediaToProduce())) {
