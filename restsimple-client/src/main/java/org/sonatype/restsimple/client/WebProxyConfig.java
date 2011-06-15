@@ -60,7 +60,7 @@ public class WebProxyConfig {
 
         private Map<String,String> bindings = Collections.<String, String>emptyMap();
         private Map<String,String> properties = Collections.<String, String>emptyMap();
-        private ObjectMapper objectMapper = null;
+        private ObjectMapper objectMapper = new ObjectMapper();
 
         public Map<String, String> getBindings() {
             return bindings;

@@ -109,7 +109,7 @@ public class WebProxy {
      * @return an instance of T
      */
     public static final <T> T createProxy(Class<T> clazz, URI uri) {
-        return createProxy(clazz, uri, Collections.<String, String>emptyMap());
+        return createProxy(clazz, uri, new WebProxyConfig.Builder().build());
     }
 
     /**
@@ -117,72 +117,15 @@ public class WebProxy {
      *
      * @param clazz A class an interface annotated with RestSimple annotations.
      * @param uri   the based uri.
+     * @param config a {@link WebProxyConfig}
      * @param <T>
      * @return an instance of T
      */
     public static final <T> T createProxy(Class<T> clazz,
                                           URI uri,
-                                          Map<String,String> bindings) {
-
-        return createProxy(new ObjectMapper(), clazz, uri, bindings);
-    }
-
-    /**
-     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
-     *
-     * @param clazz A class an interface annotated with RestSimple annotations.
-     * @param uri   the based uri.
-     * @param <T>
-     * @return an instance of T
-     */
-    public static final <T> T createProxy(Class<T> clazz,
-                                          URI uri,
-                                          Map<String,String> bindings,
-                                          Map<String,String> properties) {
-
-        return createProxy(new ObjectMapper(), clazz, uri, bindings, properties);
-    }
-    /**
-     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
-     *
-     * @param objectMapper The Jackson's {@link ObjectMapper}
-     * @param clazz A class an interface annotated with RestSimple annotations.
-     * @param uri   the based uri.
-     * @param <T>
-     * @return an instance of T
-     */
-    public static final <T> T createProxy(ObjectMapper objectMapper,
-                                          Class<T> clazz,
-                                          URI uri) {
-
-        return createProxy(objectMapper, clazz, uri, Collections.<String, String>emptyMap());
-
-    }
-
-    /**
-     * Generate a HTTP client proxy based on an interface annotated with RestSimple annotations.
-     *
-     * @param objectMapper The Jackson's {@link ObjectMapper}
-     * @param clazz A class an interface annotated with RestSimple annotations.
-     * @param uri   the based uri.
-     * @param <T>
-     * @return an instance of T
-     */
-    public static final <T> T createProxy(ObjectMapper objectMapper,
-                                          Class<T> clazz,
-                                          URI uri,
-                                          Map<String,String> bindings) {
-
-        return createProxy(objectMapper, clazz, uri, bindings, Collections.<String, String>emptyMap());
-    }
-
-    public static final <T> T createProxy(ObjectMapper objectMapper,
-                                          Class<T> clazz, URI uri,
-                                          Map<String,String> bindings,
-                                          Map<String,String> properties ) {
-
+                                          WebProxyConfig config) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz},
-                new WebProxyHandler(uri, createServiceDefinition(clazz), clazz, objectMapper, bindings, properties));
+                new WebProxyHandler(uri, createServiceDefinition(clazz), clazz, config.getObjectMapper(), config.getBindings(), config.getProperties()));
     }
 
     private static class WebProxyHandler implements InvocationHandler {
