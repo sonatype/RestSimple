@@ -223,7 +223,12 @@ public class WebProxy {
             final Path atClass = clazz.getAnnotation(Path.class);
 
             if (atClass != null) {
-                rawUrl.append(atClass.value());
+                String s = atClass.value();
+                if (rawUrl.toString().endsWith("/") ){
+                    rawUrl.append(s.startsWith("/") ? s.substring(1) : s);
+                } else {
+                    rawUrl.append(s.startsWith("/") ? s : "/" + s);
+                }
             } else {
                 final Path atDeclaringClass = method.getDeclaringClass().getAnnotation(Path.class);
                 if (atDeclaringClass != null) {
@@ -233,11 +238,12 @@ public class WebProxy {
 
             final Path atMethod = method.getAnnotation(Path.class);
             if (atMethod != null) {
-                String value = atMethod.value();
-                if (rawUrl.toString().endsWith( "/" ) && value.startsWith( "/" )) {
-                    value = value.substring( 1 );
+                String s = atMethod.value();
+                if (rawUrl.toString().endsWith("/") ){
+                    rawUrl.append(s.startsWith("/") ? s.substring(1) : s);
+                } else {
+                    rawUrl.append(s.startsWith("/") ? s : "/" + s);
                 }
-                rawUrl.append(value);
             }
 
             if (rawUrl.toString().trim().length() == 0) {
