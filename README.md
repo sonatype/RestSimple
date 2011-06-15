@@ -152,9 +152,6 @@ You can also generate ServiceDefinition on the fly from any POJO object. Let's s
         private static int idx = 4;
 
         public AddressBook() {
-            peoplea.put("1", new Person("1", "jason@maven.org", "Jason", "van Zyl"));
-            peoplea.put("2", new Person("2", "bob@maven.org", "Bob", "McWhirter"));
-            peoplea.put("3", new Person("3", "james@maven.org", "James", "Strachan"));
         }
 
         public Person createPerson(Person person) {
@@ -252,9 +249,9 @@ Existing JAXRS or Sitebricks resource can be used as it with RestSimple. All you
 
         @Override
         protected Injector getInjector() {
-            JaxrsConfig config = new JaxrsConfig();
+            RestSimpleJaxrsModule module = new RestSimpleJaxrsModule();
             config.scan( Extension.class.getPackage() );
-            return Guice.createInjector(config);
+            return Guice.createInjector(module);
         }
 
         @Path("/lolipet/{myPet}")
@@ -302,7 +299,54 @@ There is many ways to deploy a ServiceDefinition. First, you need to decide whic
         }
     }
 
-All you need to do is to extends the appropriate ServiceDefinitionConfig: JaxrsConfig or SitebricksConfig. The abstract method defineServices is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
+All you need to do is to extends the appropriate Guice Module: RestSimpleJaxrsModule or RestSimpleSitebricksModule. The abstract method defineServices is where you define one or many ServiceDefinition. That's it: the framework will take care of deploying your ServiceDefinition.
+
+You can also let scan for classes annotated with the @Service annotation that contains a method returning a ServiceDefinition like:
+
+    @Service
+    public class Foo {
+
+       @Inject
+       ServiceDefinition serviceDefinition;
+
+       public ServiceDefinition create() {
+           serviceDefinition
+               .consuming(JSON)
+               .producing(JSON);
+               .get("/getPet/{pet}", action)
+               .delete("/deletePet/{pet}", action)
+               .post("/addPet/{pet}", action);
+
+           return serviceDefinition
+       }
+    }
+
+and then just do:
+
+     public class ScanServiceDefinition extends GuiceServletContextListener {
+
+        @Override
+        protected Injector getInjector() {
+            RestSimpleJaxrsModule module = new RestSimpleJaxrsModule();
+            config.scan( Foo.class.getPackage() );
+            return Guice.createInjector(module);
+        }
+    }
+
+You can also add ServiceDefinition classes or instance directly by doing:
+
+     public class ManuallyServiceDefinition extends GuiceServletContextListener {
+
+        @Override
+        protected Injector getInjector() {
+            RestSimpleJaxrsModule module = new RestSimpleJaxrsModule();
+
+            module.addClass( Foo.class );  // Guice will take care of creating the class.
+            module.addInstance ( new Foo() );
+
+            return Guice.createInjector(module);
+        }
+    }
 
 
 Building the client side of a RestSimple application.
@@ -343,17 +387,17 @@ Finally, you can also generate a client implementation using the WebProxy class.
 
         @Get
         @Path("getPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Produces("application/json)
         public Pet get(@PathParam("myPet") String path);
 
         @Post
         @Path("addPet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Produces("application/json)
         public Pet post(@PathParam("myPet") String myPet, String body);
 
         @Delete
         @Path("deletePet")
-        @Produces(PetstoreAction.APPLICATION + "/" + PetstoreAction.JSON)
+        @Produces("application/json)
         public Pet delete(@PathParam("myPet") String path);
 
     }

@@ -26,7 +26,7 @@ import org.sonatype.restsimple.jaxrs.impl.JAXRSServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
-import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
+import org.sonatype.restsimple.spi.ServiceDefinitionModule;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import org.sonatype.restsimple.spi.scan.Classes;
@@ -48,7 +48,7 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
  * Base class for deploying {@link ServiceDefinition} to a JAXRS implementation.
  */
 public class RestSimpleJaxrsModule
-    extends ServletModule implements ServiceDefinitionConfig {
+    extends ServletModule implements ServiceDefinitionModule {
     private final Logger logger = LoggerFactory.getLogger(RestSimpleJaxrsModule.class);
 
     private Injector parent;
@@ -99,7 +99,7 @@ public class RestSimpleJaxrsModule
         NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
         bind(NegotiationTokenGenerator.class).toInstance( token );
 
-        ServiceHandlerMapper mapper = injector().getInstance(  ServiceHandlerMapper.class );
+        ServiceHandlerMapper mapper = injector().getInstance(ServiceHandlerMapper.class);
         bind( ServiceHandlerMapper.class ).toInstance( mapper );
         
         sdSet.addAll( defineServices( injector ) );
@@ -107,17 +107,17 @@ public class RestSimpleJaxrsModule
 
             @Override
             public <A> void bindToInstance(Class<A> clazz, A instance) {
-                binder().withSource( "[generated]" ).bind( clazz ).toInstance(instance);
+                binder().bind( clazz ).toInstance(instance);
             }
 
             @Override
             public <A> void bindTo(Class<A> clazz, Class<? extends A> clazz2) {
-                binder().withSource( "[generated]" ).bind( clazz ).to(clazz2);
+                binder().bind( clazz ).to(clazz2);
             }
 
             @Override
             public void bind(Class<?> clazz) {
-                binder().withSource( "[generated]" ).bind( clazz ).asEagerSingleton();
+                binder().bind( clazz ).asEagerSingleton();
             }
 
             @Override

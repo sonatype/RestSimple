@@ -20,7 +20,7 @@ import java.util.List;
  * A simple interface allowing applications to define a list of {@link ServiceDefinition} to deploy, and configure
  * the server side functionality.
  */
-public interface ServiceDefinitionConfig {
+public interface ServiceDefinitionModule {
 
     /**
      * Return the a list of ServiceDefinition to generate. By default this method scan the classpath in search
@@ -48,20 +48,20 @@ public interface ServiceDefinitionConfig {
      *
      * @param  packageName the package name
      */
-    ServiceDefinitionConfig scan(Package packageName);
+    ServiceDefinitionModule scan(Package packageName);
 
     /**
      * Add a Rest resource.
      *
      * @param className the class name
      */
-    ServiceDefinitionConfig addClass(Class<?> className);
+    ServiceDefinitionModule addClass(Class<?> className);
 
     /**
      * Add a Rest resource.
      *
      * @param instance the class name
      */
-    ServiceDefinitionConfig addInstance(ServiceDefinition instance);
+    ServiceDefinitionModule addInstance(ServiceDefinition instance);
 
 }

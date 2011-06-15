@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.restsimple.api.ServiceDefinition;
 import org.sonatype.restsimple.jaxrs.guice.RestSimpleJaxrsModule;
 import org.sonatype.restsimple.sitebricks.guice.RestSimpleSitebricksModule;
-import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
+import org.sonatype.restsimple.spi.ServiceDefinitionModule;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -107,7 +107,7 @@ public class WebDriver {
             protected Injector getInjector() {
 
                 ServletModule config =  provider.equals(PROVIDER.JAXRS) ? new RestSimpleJaxrsModule() :  new RestSimpleSitebricksModule();
-                ((ServiceDefinitionConfig)config).addInstance( serviceDefinition );
+                ((ServiceDefinitionModule)config).addInstance( serviceDefinition );
                 return Guice.createInjector(config);
             }
         });

@@ -28,7 +28,7 @@ import org.sonatype.restsimple.sitebricks.impl.SitebricksServiceDefinitionGenera
 import org.sonatype.restsimple.spi.NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.RFC2295NegotiationTokenGenerator;
 import org.sonatype.restsimple.spi.ResourceModuleConfig;
-import org.sonatype.restsimple.spi.ServiceDefinitionConfig;
+import org.sonatype.restsimple.spi.ServiceDefinitionModule;
 import org.sonatype.restsimple.spi.ServiceDefinitionGenerator;
 import org.sonatype.restsimple.spi.ServiceHandlerMapper;
 import org.sonatype.restsimple.spi.scan.Classes;
@@ -46,7 +46,7 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
  * Base class for deploying {@link org.sonatype.restsimple.api.ServiceDefinition} to a Sitebricks.
  */
 public class RestSimpleSitebricksModule
-    extends ServletModule implements ServiceDefinitionConfig {
+    extends ServletModule implements ServiceDefinitionModule {
 
     private final Logger logger = LoggerFactory.getLogger(RestSimpleSitebricksModule.class);
 
@@ -112,7 +112,7 @@ public class RestSimpleSitebricksModule
         NegotiationTokenGenerator token = injector.getInstance( NegotiationTokenGenerator.class );
         bind(NegotiationTokenGenerator.class).toInstance( token );
         
-        ServiceHandlerMapper mapper = injector.getInstance(  ServiceHandlerMapper.class );
+        ServiceHandlerMapper mapper = injector.getInstance(ServiceHandlerMapper.class);
         bind( ServiceHandlerMapper.class ).toInstance( mapper );
 
         if (sdSet != null && sdSet.size() > 0) {
