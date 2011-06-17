@@ -58,10 +58,10 @@ import java.util.Map;
  * </pre>
  * The class can also be used without a service definition. All the request information must be "manually" configured.
  * <pre>
- * {@code
+ * <p><blockquote><pre>
  *
         Web web = new WebAHCClient();
-        Map<String, String> m = new HashMap<String, String>();
+        Map&lt;String, String&gt; m = new HashMap&lt;String, String&gt;();
         m.put("Content-Type", acceptHeader);
         m.put("Accept", acceptHeader);
 
@@ -70,7 +70,7 @@ import java.util.Map;
                 .post(new Pet("pouetpouet"), Pet.class);
  *
  * }
- * </pre>
+ * </pre></blockquote>
  * The client support content negotiation as defined in RFC 2295 via the
  * {@link WebAHCClient#supportedContentType(org.sonatype.restsimple.api.MediaType)}
  *

@@ -15,10 +15,10 @@ package org.sonatype.restsimple.api;
  * Simple {@link Action} that delegate the HTTP method operation to proper method implementation of GET, POST, PUT and
  * DELETE. By default all method are throwing an exception with the status code set to 405 (NOT SUPPORTED). Override the
  * proper method.
- * {@code
+ * <p><blockquote><pre>
  * public class PetstoreAction extends TypedAction<Pet, Pet> {
  *
-    @Override
+    &#64;Override
     public Pet get(ActionContext<Pet> actionContext) {
         String pathValue = actionContext.pathParams().get("pet");
         Map<String, Collection<String>> headers = actionContext.headers();
@@ -27,7 +27,7 @@ package org.sonatype.restsimple.api;
         return pet;
     }
 
-    @Override
+    &#64;Override
     public Pet post(ActionContext<Pet> actionContext) {
         Map<String, Collection<String>> headers = actionContext.headers();
         Map<String, Collection<String>> queryStrings = actionContext.paramsString();
@@ -40,14 +40,14 @@ package org.sonatype.restsimple.api;
         return pet;
     }
 
-    @Override
+    &#64;Override
     public Pet delete(ActionContext<Pet> actionContext) {
         String pathValue = actionContext.pathParams().get("pet");
 
         return pets.remove(pathValue);
     }
  * }
- * }
+ * </pre></blockquote>
  *
  * @param <T>
  * @param <V>

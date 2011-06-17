@@ -56,29 +56,29 @@ import java.util.Map;
 
 /**
  * A simple proxy that generates RestSimple client from an annotated interface.
- * As simple as {code
- * {@code
+ * As simple as
+ * <p><blockquote><pre>
  * public static interface ProxyClient {
  *
- *    @Get
- *    @Path("getPet")
- *    @Produces("application/json")
- *    public Pet get(@PathParam("myPet") String path);
- *    <p>
- *    @Get
- *    @Path("getPetString")
- *    @Produces("application/json")
- *    public String getString(@PathParam("myPet") String path);
- *    <p></p>
- *    @Post
- *    @Path("addPet")
- *    @Produces("application/json")
- *    public Pet post(@PathParam("myPet") String myPet, String body);
- *    <p>
- *    @Delete
- *    @Path("deletePet")
- *    @Produces("application/json")
- *    public Pet delete(@PathParam("myPet") String path);
+ *    &#64;Get
+ *    &#64;Path("getPet")
+ *    &#64;Produces("application/json")
+ *    public Pet get(&#64;PathParam("myPet") String path);
+ *
+ *    &#64;Get
+ *    &#64;Path("getPetString")
+ *    &#64;Produces("application/json")
+ *    public String getString(&#64;PathParam("myPet") String path);
+ *
+ *    &#64;Post
+ *    &#64;Path("addPet")
+ *    &#64;Produces("application/json")
+ *    public Pet post(&#64;PathParam("myPet") String myPet, String body);
+ *
+ *    &#64;Delete
+ *    &#64;Path("deletePet")
+ *    &#64;Produces("application/json")
+ *    public Pet delete(&#64;PathParam("myPet") String path);
  * <p/>
  * }
  * }
@@ -88,7 +88,7 @@ import java.util.Map;
  * ProxyClient client = WebProxy.createProxy(ProxyClient.class, URI.create("http://someurl/));
  * Pet pet = client.post("myPet", "{\"name\":\"pouetpouet\"}");
  * <p/>
- * }
+ * </pre></blockquote>
  */
 public class WebProxy {
 

@@ -20,7 +20,7 @@ import java.util.List;
  * that can be deployed or integrated into other framework like SiteBricks or Jersey (JAXRS).
  *
  * As an example, the following ServiceDefinition 
- * {@code
+ * <p><blockquote><pre>
  *
         Injector injector = Guice.createInjector(new RestSimpleSitebricksModule(binder()));
         Action action = new PetstoreAction();
@@ -30,7 +30,7 @@ import java.util.List;
                 .withHandler(new GetServiceHandler("/{getPet}", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .withHandler(new PostServiceHandler("/{addPet}", action).consumeWith(JSON, Pet.class).producing(JSON))
                 .bind();
- * }
+ * }</pre></blockquote>
  * can easily be translated into a JAXRS resources by using the restsimple-jaxrs extension. A ServiceDefinition can be
  * seen as a DSL for REST application.
  *

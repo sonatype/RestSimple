@@ -16,21 +16,20 @@ package org.sonatype.restsimple.api;
  *
  * An action is associated with one or more {@link ServiceHandler}. The {@link ServiceHandler} gets mapped from the URI
  * and then its associated Action gets invoked. As an example, a pet action could look like
- * {@code
-
-    public class PetstoreAction implements Action<Pet, Pet> {
+ * <p><blockquote><pre>
+    public class PetstoreAction implements Action&lt;Pet, Pet&gt; {
 
         public final static String APPLICATION = "application";
         public final static String JSON = "vnd.org.sonatype.rest+json";
         public final static String XML = "vnd.org.sonatype.rest+xml";
         public final static String PET_EXTRA_NAME = "petType";
 
-        private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();
+        private final ConcurrentHashMap&lt;String, Pet&gt; pets = new ConcurrentHashMap&lt;String, Pet&gt;();
 
-        @Override
-        public Pet action(ActionContext<Pet> actionContext) throws ActionException {
-            Map<String, Collection<String>> headers = actionContext.headers();
-            Map<String, Collection<String>> paramsString = actionContext.paramsString();
+        &#64;Override
+        public Pet action(ActionContext&lt;Pet&gt; actionContext) throws ActionException {
+            Map&lt;String, Collection&lt;String&gt;&gt; headers = actionContext.headers();
+            Map&lt;String, Collection&lt;String&gt;&gt; paramsString = actionContext.paramsString();
 
             switch (actionContext.method()) {
                 case GET:
@@ -46,9 +45,7 @@ package org.sonatype.restsimple.api;
                     throw new ActionException(405);
             }
         }
-    }
-  
-   }
+    }</pre></blockquote>
  * You can use the {@link TypedAction} for an implementation of an {@link Action}
  *
  * The de-serialization of the Request's body is always performed before the {@link Action#action} and the result can
