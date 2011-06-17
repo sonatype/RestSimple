@@ -18,6 +18,11 @@ The framework goal is to easy allow programmatic, embeddable and portable REST a
 * restsimple-service-descriptor-creator: generate ServiceDefinition from POJO object following some convention
 * restsimple-webdriver: a framework for testing RestSimple application
 
+RestSimple API
+==============
+
+Browse it: http://sonatype.github.com/RestSimple/
+
 Building a RestSimple Application.
 ==================================
 
