@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.sonatype.plexus.template:plexus-template:0.9.2">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/template/plexus-template/0.9.2/plexus-template-0.9.2.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/template/plexus-template/0.9.2/plexus-template-0.9.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/sonatype/plexus/template/plexus-template/0.9.2/plexus-template-0.9.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,16 @@
+org.sonatype.restsimple
+org.sonatype.restsimple.annotation
+org.sonatype.restsimple.api
+org.sonatype.restsimple.client
+org.sonatype.restsimple.common.test.addressbook
+org.sonatype.restsimple.common.test.petstore
+org.sonatype.restsimple.creator
+org.sonatype.restsimple.example.hello
+org.sonatype.restsimple.jaxrs.guice
+org.sonatype.restsimple.jaxrs.impl
+org.sonatype.restsimple.sitebricks.guice
+org.sonatype.restsimple.sitebricks.impl
+org.sonatype.restsimple.spi
+org.sonatype.restsimple.spi.scan
+org.sonatype.restsimple.spi.uri
+org.sonatype.restsimple.templating

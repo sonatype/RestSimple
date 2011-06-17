@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/restsimple-acceptance-test/restsimple-acceptance-test.iml" filepath="$PROJECT_DIR$/restsimple-acceptance-test/restsimple-acceptance-test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-api/restsimple-api.iml" filepath="$PROJECT_DIR$/restsimple-api/restsimple-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-asmtemplate/restsimple-asmtemplate.iml" filepath="$PROJECT_DIR$/restsimple-asmtemplate/restsimple-asmtemplate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-client/restsimple-client.iml" filepath="$PROJECT_DIR$/restsimple-client/restsimple-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-jaxrs/restsimple-jaxrs.iml" filepath="$PROJECT_DIR$/restsimple-jaxrs/restsimple-jaxrs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-parent.iml" filepath="$PROJECT_DIR$/restsimple-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-service-descriptor-creator/restsimple-service-descriptor-creator.iml" filepath="$PROJECT_DIR$/restsimple-service-descriptor-creator/restsimple-service-descriptor-creator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-sitebricks/restsimple-sitebricks.iml" filepath="$PROJECT_DIR$/restsimple-sitebricks/restsimple-sitebricks.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-templating/restsimple-templating.iml" filepath="$PROJECT_DIR$/restsimple-templating/restsimple-templating.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-tests-common/restsimple-tests-common.iml" filepath="$PROJECT_DIR$/restsimple-tests-common/restsimple-tests-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/restsimple-webdriver/restsimple-webdriver.iml" filepath="$PROJECT_DIR$/restsimple-webdriver/restsimple-webdriver.iml" />
+    </modules>
+  </component>
+</project>
+
