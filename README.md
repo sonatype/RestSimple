@@ -10,13 +10,14 @@ RestSimple is a framework for dramatically enhancing the building of REST based 
 
 The framework goal is to easy allow programmatic, embeddable and portable REST applications. The framework is composed by the following module
 
-* restsimple-api: the core classes of the framework.
-* restsimple-client: a client library for RestSimple.
+* restsimple-api: the core classes of the framework. It contains API for application and SPI for framework who want to support RestSimple
+* restsimple-client: a client library for RestSimple. It can generate proxy from an annotated interface, or you can directly use a client API.
 * restsimple-jaxrs: an implementation of the restsimple-api using Jersey.
 * restsimple-sitebricks: an implementation of the restsimple-api using Sitebricks
 * restsimple-templating: generate HTML file from ServiceDefinition (similar to Enunciate)
 * restsimple-service-descriptor-creator: generate ServiceDefinition from POJO object following some convention
-* restsimple-webdriver: a framework for testing RestSimple application
+* restsimple-webdriver: a driver for testing RestSimple application
+* restsimple-acceptance-test: test/application for RestSimple
 
 RestSimple API
 ==============
@@ -26,7 +27,7 @@ Browse it: http://sonatype.github.com/RestSimple/
 Building a RestSimple Application.
 ==================================
 
-A RestSimple application consist of ServiceDefinition, ServiceHandler and Action. The main component of a RestSimple application is called a ServiceDefinition. A ServiceDefinition contains all information about path, serialization and deserialization of objects, entity to invoke (action), etc. To demonstrate how it works, let's build a really simple pet store application.
+A RestSimple application consist of a ServiceDefinition, ServiceHandler and Action. The main component of a RestSimple application is called a ServiceDefinition. A ServiceDefinition contains all information about path, serialization and deserialization of objects, entity to invoke (action), etc. To demonstrate how it works, let's build a really simple pet store application.
 
     Action action = new PetstoreAction();
     DefaultServiceDefinition serviceDefinition = new DefaultServiceDefinition();
@@ -45,13 +46,13 @@ First, you need to define an action. An action is where the business logic resid
         */
        public T action(ActionContext<U> actionContext) throws ActionException;
 
-Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST request can retrieve those pets. Something as simple as:
+Second, let's define a very simple Action. Let's just persist our Pet in memory, and make sure a REST requests can retrieve those pets. Something as simple as:
 
     public class PetstoreAction extends TypedAction<Pet, Pet> {
 
         public final static String APPLICATION = "application";
-        public final static String JSON = "vnd.org.sonatype.rest+json";
-        public final static String TEXT = "vnd.org.sonatype.rest+txt";
+        public final static String JSON = "json";
+        public final static String TEXT = "txt";
         public final static String PET_EXTRA_NAME = "petType";
         private final ConcurrentHashMap<String, Pet> pets = new ConcurrentHashMap<String, Pet>();
 
@@ -93,7 +94,7 @@ Second, let's define a very simple Action. Let's just persist our Pet in memory,
         }
     }
 
-Note the type of our PetAction: <Pet,Pet>: that simply means the Action will consume Pet instance, and also produce Pet. The ActionContext.get() operation will return a Pet object. This object is automatically de-serialized by the framework by using the information contained in the ServiceDefinition (more on that later). The Pet object can simply be defined as:
+Note the type of our PetAction: <Pet,Pet>: that simply means the Action will consume Pet instance, and also produce Pet. The ActionContext.get() operation will return a Pet object. This object is automatically de-serialized by the framework using the information contained in the ServiceDefinition (more on that later). The Pet object can simply be defined as:
 
     public class Pet {
 
@@ -126,11 +127,20 @@ The serialization and deserialization of the Pet class will be handled be the Re
 
     new GetServiceHandler("/getPet/{pet}", action).consumeWith(JSON, Pet.class).producing(JSON);
 
-The line above map an Action to an HTTP Get operation, consuming JSON and producing JSON. If you are familiar with JAX-RS, the functionality would be defined as
+and then add it to a ServiceDefinition like
+
+    serviceDefinition.withHandler(new GetServiceHandler ... )
+
+You can also let the ServiceDefinition creates the ServiceHandler for you as:
+
+    serviceDefinition.producing(new MediaType("application","json");
+    serviceDefinition.get("/getPet/{pet}", action); // same as new GetServiceHandler(...)
+
+The code snippet above map an Action to an HTTP Get operation, consuming JSON and producing JSON. If you are familiar with JAX-RS, the functionality would be defined as
 
     @Get
-    @Produces
-    @Consumes
+    @Produces("application/json")
+    @Consumes("application/json")
     public Response invokeAction(@PathParam("getPet") Pet pet) {...}
 
 An HTTP POST operation can simply be defined as:
@@ -212,7 +222,7 @@ Hence a method starting with foo will be mapped to a POST operation etc.
 
 Extending RestSimple via native REST support
 ============================================
-Currently RestSimple supports Sitebricks and JAX-RS. It is possible to extend a ServiceDefinition with Sitebricks or Jaxrs annotation invoking the extendedWith:
+Currently RestSimple supports Sitebricks and JAX-RS (Jersey). It is possible to extend a ServiceDefinition with Sitebricks or Jaxrs annotation invoking the extendedWith:
 
 
     @Override
@@ -268,8 +278,6 @@ Existing JAXRS or Sitebricks resource can be used as it with RestSimple. All you
             }
         }
     }
-
-
 
 
 Deploying your RestSimple application
@@ -381,11 +389,11 @@ Using the Web class
 
 You can also use the RestSimple's Web class to invoke your ServiceDefinition
 
-    Web web = new Web(serviceDefinition);
-    Pet pet = web.clientOf(targetUrl + "/addPet/myPet")
-                 .post(new Pet("pouetpouet"), Pet.class);
+    WebClient webClient = new WebClient(serviceDefinition);
+    Pet pet = webClient.clientOf(targetUrl + "/addPet/myPet")
+                       .post(new Pet("pouetpouet"), Pet.class);
 
-The Web class is constructed and can derive some information from a ServiceDefinition instance, which includes the content-type and accept headers.
+The webClient class is constructed and can derive some information from a ServiceDefinition instance, which includes the content-type and accept headers.
 
 Using the WebProxy class
 
@@ -558,3 +566,31 @@ The Html page will looks like:
             </div>
             </body>
         </html>
+
+Content Negotiation
+===================
+RestSimple supports content negotiation. By default, RestSimple support RFC 2295
+
+      http://www.ietf.org/rfc/rfc2295.txt
+
+Both client and server supports that RFC, and you can enable it by doing:
+
+        WebClient webClient = new WebAHCClient(serviceDefinition);
+        Map<String, String> m = new HashMap<String, String>();
+        m.put("Content-Type", acceptHeader);
+        m.put("Accept", "application/xml");
+
+        Pet pet = webClient.clientOf(targetUrl + "/addPet/myPet")
+                .headers(m)
+                .supportedContentType(new MediaType("application","json"))
+                .post(new Pet("pouetpouet"), Pet.class);
+
+        pet = webClient.clientOf(targetUrl + "/getPet/myPet")
+                .headers(m)
+                .get(Pet.class);
+
+ In the snippet above the Accept header is first set to application/xml. If the server doesn't support that media type, line
+
+        .supportedContentType(new MediaType("application","json"))
+
+ will tell the client to re-try using application/json. 
