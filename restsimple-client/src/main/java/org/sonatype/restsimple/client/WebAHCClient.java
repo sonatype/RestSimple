@@ -98,6 +98,13 @@ public class WebAHCClient implements WebClient {
     }
 
     /**
+     * Create a WebAHCClient Client
+     */
+    public WebAHCClient(NegotiationHandler negotiateHandler) {
+        this(new DefaultServiceDefinition(), negotiateHandler);
+    }
+
+    /**
      * Create a WebAHCClient Client and populate it using the {@link ServiceDefinition}
      *
      * @param serviceDefinition a {@link ServiceDefinition}

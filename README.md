@@ -593,4 +593,12 @@ Both client and server supports that RFC, and you can enable it by doing:
 
         .supportedContentType(new MediaType("application","json"))
 
- will tell the client to re-try using application/json. 
+ will tell the client to re-try using application/json.
+
+ You can write your own NegotiationHandler (client) and NegotiationTokenGenerator (server) and then set it on the client and server. For the server, all you need to do is:
+
+        bind(NegotiationTokenGenerator.class).to(NegotiationTokenGeneratorImpl.class);
+
+  where NegotiationTokenGeneratorImpl is your implementation. On the client side you can do:
+
+        WebClient client = new WebAHCClient(new NegotiationHandlerImpl());
